@@ -5,7 +5,7 @@ import platform.windows.*
 import kotlin.math.max
 
 private const val width: Int = 260
-private const val height: Int = 435
+private const val height: Int = 445
 
 fun main() {
 	memScoped {
@@ -176,7 +176,7 @@ private fun registerButton(window: HWND?, id: Int, text: String, gridX: Int, gri
 		text,
 		(WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON).toUInt(),
 		0 + buttonWidth * gridX,
-		45 + buttonHeight * gridY,
+		48 + buttonHeight * gridY,
 		buttonWidth,
 		buttonHeight,
 		window,
