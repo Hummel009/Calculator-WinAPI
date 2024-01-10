@@ -10,7 +10,7 @@ private const val height: Int = 453
 fun main() {
 	memScoped {
 		val className = "HummelCalculator"
-		val windowTitle = "Calc"
+		val windowTitle = "WinAPI"
 
 		val windowClass = alloc<WNDCLASS>()
 		windowClass.lpfnWndProc = staticCFunction(::wndProc)
