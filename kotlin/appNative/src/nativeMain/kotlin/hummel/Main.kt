@@ -2,106 +2,169 @@ package hummel
 
 import kotlinx.cinterop.*
 import platform.windows.*
+import kotlin.math.max
 
-val log: MutableMap<String, String> = mutableMapOf()
-
-const val name: String = "Hummel009"
-const val path: String = "Software\\RegistrySample\\"
-var changed: Boolean = false
+private const val width: Int = 260
+private const val height: Int = 405
 
 fun main() {
-	val threadOperate = CreateThread(
-		null, 0u, staticCFunction(::threadOperate), null, 0u, null
-	)
-
-	val threadNotify = CreateThread(
-		null, 0u, staticCFunction(::threadNotify), null, 0u, null
-	)
-
-	WaitForSingleObject(threadOperate, INFINITE)
-	WaitForSingleObject(threadNotify, INFINITE)
-
-	CloseHandle(threadOperate)
-	CloseHandle(threadNotify)
-
-	println("Call results:\n")
-	log.forEach { (key, value) -> println("$key: $value") }
-
-	println()
-
-	if (changed) {
-		println("The key was changed!")
-	} else {
-		println("The key wasn't changed!")
-	}
-}
-
-@Suppress("UNUSED_PARAMETER")
-fun threadNotify(lpParameter: LPVOID?): DWORD {
 	memScoped {
-		val key = alloc<HKEYVar>()
+		val className = "RenderingLauncher"
+		val windowTitle = "Windows API: Kotlin Native"
 
-		"Open Key For Monitoring" to RegOpenKeyExA(HKEY_CURRENT_USER, path, 0u, KEY_NOTIFY.toUInt(), key.ptr)
+		val windowClass = alloc<WNDCLASS>()
+		windowClass.lpfnWndProc = staticCFunction(::wndProc)
+		windowClass.lpszClassName = className.wcstr.ptr
+		windowClass.hbrBackground = COLOR_WINDOW.toLong().toCPointer()
 
-		val event = CreateEventA(null, 1, 0, null)
+		RegisterClassW(windowClass.ptr)
 
-		RegNotifyChangeKeyValue(key.value, 1, REG_NOTIFY_CHANGE_LAST_SET.toUInt(), event, 1)
+		val screenWidth = GetSystemMetrics(SM_CXSCREEN)
+		val screenHeight = GetSystemMetrics(SM_CYSCREEN)
 
-		if (WaitForSingleObject(event, INFINITE) == WAIT_OBJECT_0) {
-			changed = true
+		val windowWidth = width
+		val windowHeight = height
+
+		val windowX = max(0, (screenWidth - windowWidth) / 2)
+		val windowY = max(0, (screenHeight - windowHeight) / 2)
+
+		val window = CreateWindowExW(
+			WS_EX_CLIENTEDGE.toUInt(),
+			className,
+			windowTitle,
+			WS_OVERLAPPEDWINDOW.toUInt(),
+			windowX,
+			windowY,
+			windowWidth,
+			windowHeight,
+			null,
+			null,
+			null,
+			null
+		)
+
+		ShowWindow(window, SW_SHOW)
+		UpdateWindow(window)
+
+		val msg = alloc<MSG>()
+		while (GetMessageW(msg.ptr, null, 0u, 0u) != 0) {
+			TranslateMessage(msg.ptr)
+			DispatchMessageW(msg.ptr)
 		}
-		ResetEvent(event)
 	}
-	return 0u
 }
 
-@Suppress("UNUSED_PARAMETER")
-fun threadOperate(lpParameter: LPVOID?): DWORD {
-	memScoped {
-		Sleep(1000u)
+var i: Int = 0
 
-		val buffer = allocArray<CHARVar>(MAX_PATH)
+var BUTTON_0_ID: Int = i++
+var BUTTON_1_ID: Int = i++
+var BUTTON_2_ID: Int = i++
+var BUTTON_3_ID: Int = i++
+var BUTTON_4_ID: Int = i++
+var BUTTON_5_ID: Int = i++
+var BUTTON_6_ID: Int = i++
+var BUTTON_7_ID: Int = i++
+var BUTTON_8_ID: Int = i++
+var BUTTON_9_ID: Int = i++
+var BUTTON_C_ID: Int = i++
+var BUTTON_DIVIDE_ID: Int = i++
+var BUTTON_DOT_ID: Int = i++
+var BUTTON_EQUALS_ID: Int = i++
+var BUTTON_E_ID: Int = i++
+var BUTTON_FACTORIAL_ID: Int = i++
+var BUTTON_INVERSE_ID: Int = i++
+var BUTTON_MINUS_ID: Int = i++
+var BUTTON_MULTIPLE_ID: Int = i++
+var BUTTON_PI_ID: Int = i++
+var BUTTON_PLUS_ID: Int = i++
+var BUTTON_SQUARE_ID: Int = i++
+var BUTTON_SQUARE_ROOT_ID: Int = i++
+var BUTTON_UNARY_MINUS_ID: Int = i++
 
-		val bufferLength = allocArray<DWORDVar>(1)
-		bufferLength[0] = MAX_PATH.toUInt()
+private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {
+	when (msg.toInt()) {
+		WM_CREATE -> {
+			registerButton(window, BUTTON_PI_ID, "p", 0, 0)
+			registerButton(window, BUTTON_E_ID, "e", 1, 0)
+			registerButton(window, BUTTON_C_ID, "C", 2, 0)
+			registerButton(window, BUTTON_FACTORIAL_ID, "!", 3, 0)
+			registerButton(window, BUTTON_INVERSE_ID, "1/x", 0, 1)
+			registerButton(window, BUTTON_SQUARE_ID, "x^2", 1, 1)
+			registerButton(window, BUTTON_SQUARE_ROOT_ID, "sqrt(x)", 2, 1)
+			registerButton(window, BUTTON_DIVIDE_ID, "/", 3, 1)
+			registerButton(window, BUTTON_7_ID, "7", 0, 2)
+			registerButton(window, BUTTON_8_ID, "8", 1, 2)
+			registerButton(window, BUTTON_9_ID, "9", 2, 2)
+			registerButton(window, BUTTON_MULTIPLE_ID, "*", 3, 2)
+			registerButton(window, BUTTON_4_ID, "4", 0, 3)
+			registerButton(window, BUTTON_5_ID, "5", 1, 3)
+			registerButton(window, BUTTON_6_ID, "6", 2, 3)
+			registerButton(window, BUTTON_MINUS_ID, "-", 3, 3)
+			registerButton(window, BUTTON_1_ID, "1", 0, 4)
+			registerButton(window, BUTTON_2_ID, "2", 1, 4)
+			registerButton(window, BUTTON_3_ID, "3", 2, 4)
+			registerButton(window, BUTTON_PLUS_ID, "+", 3, 4)
+			registerButton(window, BUTTON_UNARY_MINUS_ID, "-", 0, 5)
+			registerButton(window, BUTTON_0_ID, "0", 1, 5)
+			registerButton(window, BUTTON_DOT_ID, ".", 2, 5)
+			registerButton(window, BUTTON_EQUALS_ID, "=", 3, 5)
+		}
 
-		val key = alloc<HKEYVar>()
-		val keyValue = "AMOGUS"
+		WM_COMMAND -> {
+			val buttonId = wParam.loword().toInt()
 
-		"Create Key" to RegCreateKeyExA(
-			HKEY_CURRENT_USER, path, 0u, null, REG_OPTION_VOLATILE.toUInt(), KEY_WRITE.toUInt(), null, key.ptr, null
-		)
-		"Set Value" to RegSetValueExA(key.value, name, 0u, REG_SZ.toUInt(), keyValue.ptr(), keyValue.sizeOf())
-		"Close Key" to RegCloseKey(key.value)
-		"Get Value" to RegGetValueA(HKEY_CURRENT_USER, path, name, RRF_RT_REG_SZ.toUInt(), null, buffer, bufferLength)
+			when (buttonId) {
+				BUTTON_0_ID -> {}
+				BUTTON_1_ID -> {}
+				BUTTON_2_ID -> {}
+				BUTTON_3_ID -> {}
+				BUTTON_4_ID -> {}
+				BUTTON_5_ID -> {}
+				BUTTON_6_ID -> {}
+				BUTTON_7_ID -> {}
+				BUTTON_8_ID -> {}
+				BUTTON_9_ID -> {}
+				BUTTON_C_ID -> {}
+				BUTTON_DIVIDE_ID -> {}
+				BUTTON_DOT_ID -> {}
+				BUTTON_EQUALS_ID -> {}
+				BUTTON_E_ID -> {}
+				BUTTON_FACTORIAL_ID -> {}
+				BUTTON_INVERSE_ID -> {}
+				BUTTON_MINUS_ID -> {}
+				BUTTON_MULTIPLE_ID -> {}
+				BUTTON_PI_ID -> {}
+				BUTTON_PLUS_ID -> {}
+				BUTTON_SQUARE_ID -> {}
+				BUTTON_SQUARE_ROOT_ID -> {}
+				BUTTON_UNARY_MINUS_ID -> {}
+			}
+		}
 
-		println("Initial value: ${buffer.toKString()}")
-
-		val newKey = alloc<HKEYVar>()
-		val newKeyValue = "SUS"
-
-		"Open Key Again" to RegOpenKeyExA(HKEY_CURRENT_USER, path, 0u, KEY_SET_VALUE.toUInt(), newKey.ptr)
-		"Set New Value" to RegSetValueExA(
-			newKey.value, name, 0u, REG_SZ.toUInt(), newKeyValue.ptr(), newKeyValue.sizeOf()
-		)
-		"Close Key Again" to RegCloseKey(newKey.value)
-		"Get New Value" to RegGetValueA(
-			HKEY_CURRENT_USER, path, name, RRF_RT_REG_SZ.toUInt(), null, buffer, bufferLength
-		)
-
-		println("New value: ${buffer.toKString()}")
-
-		"Delete Key" to RegDeleteKeyValueA(HKEY_CURRENT_USER, path, name)
-
-		println()
+		WM_CLOSE -> DestroyWindow(window)
+		WM_DESTROY -> PostQuitMessage(0)
 	}
-	return 0u
+	return DefWindowProcW(window, msg, wParam, lParam)
 }
 
-private infix fun String.to(signal: Int) {
-	log[this] = if (signal == ERROR_SUCCESS) "OK" else "$signal"
+private fun registerButton(window: HWND?, id: Int, text: String, gridX: Int, gridY: Int) {
+	val buttonWidth = 60
+	val buttonHeight = 60
+
+	CreateWindowExW(
+		WS_EX_CLIENTEDGE.toUInt(),
+		"BUTTON",
+		text,
+		(WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON).toUInt(),
+		0 + buttonWidth * gridX,
+		0 + buttonHeight * gridY,
+		buttonWidth,
+		buttonHeight,
+		window,
+		id.toLong().toCPointer(),
+		null,
+		null
+	)
 }
 
-private fun String.sizeOf(): DWORD = cstr.size.toUInt()
-
-private fun String.ptr(): CValuesRef<UByteVarOf<UByte>> = cstr.getBytes().toUByteArray().refTo(0)
+private fun ULong.loword(): ULong = this and 0xFFFFu

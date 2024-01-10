@@ -13,6 +13,10 @@ val embed: Configuration by configurations.creating
 
 dependencies {
 	embed("org.jetbrains.kotlin:kotlin-stdlib:1.9.21")
+	embed("net.java.dev.jna:jna:5.13.0")
+	embed("net.java.dev.jna:jna-platform:5.13.0")
+	implementation("net.java.dev.jna:jna:5.13.0")
+	implementation("net.java.dev.jna:jna-platform:5.13.0")
 }
 
 java {
