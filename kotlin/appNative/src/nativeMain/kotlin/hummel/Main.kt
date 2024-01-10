@@ -5,12 +5,12 @@ import platform.windows.*
 import kotlin.math.max
 
 private const val width: Int = 260
-private const val height: Int = 445
+private const val height: Int = 453
 
 fun main() {
 	memScoped {
-		val className = "RenderingLauncher"
-		val windowTitle = "Windows API: Kotlin Native"
+		val className = "HummelCalculator"
+		val windowTitle = "Calc"
 
 		val windowClass = alloc<WNDCLASS>()
 		windowClass.lpfnWndProc = staticCFunction(::wndProc)
@@ -176,7 +176,7 @@ private fun registerButton(window: HWND?, id: Int, text: String, gridX: Int, gri
 		text,
 		(WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON).toUInt(),
 		0 + buttonWidth * gridX,
-		48 + buttonHeight * gridY,
+		50 + buttonHeight * gridY,
 		buttonWidth,
 		buttonHeight,
 		window,
