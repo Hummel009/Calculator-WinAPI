@@ -136,7 +136,10 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 					BUTTON_DOT_ID -> pushSymbolWrapper(it, ".")
 					BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper(it, "-")
 
-					BUTTON_C_ID -> SetWindowTextW(it, "")
+					BUTTON_C_ID -> {
+						stack?.clear()
+						SetWindowTextW(it, "")
+					}
 
 					BUTTON_DIVIDE_ID -> pushOperation(it, "/")
 					BUTTON_MULTIPLE_ID -> pushOperation(it, "*")
@@ -263,9 +266,13 @@ fun pushSymbolWrapper(field: HWND, symbol: String) {
 			}
 		} else {
 			stack?.let {
-				val operator = it[1]
+				if (it.size != 0) {
+					val operator = it[1]
 
-				if (operator !in setOf("!", "s", "i", "r")) {
+					if (operator !in setOf("!", "s", "i", "r")) {
+						pushSymbol(field, symbol)
+					}
+				} else {
 					pushSymbol(field, symbol)
 				}
 			} ?: throw Exception()
