@@ -167,7 +167,7 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 	return DefWindowProcW(window, msg, wParam, lParam)
 }
 
-fun calculateWrapper(field: HWND) {
+private fun calculateWrapper(field: HWND) {
 	try {
 		calculate(field)
 	} catch (e: Exception) {
@@ -176,7 +176,7 @@ fun calculateWrapper(field: HWND) {
 	}
 }
 
-fun calculate(field: HWND) {
+private fun calculate(field: HWND) {
 	memScoped {
 		val bufferSize = 1000
 		val buffer = allocArray<WCHARVar>(bufferSize)
@@ -221,7 +221,7 @@ fun calculate(field: HWND) {
 	}
 }
 
-fun pushOperation(field: HWND, operation: String) {
+private fun pushOperation(field: HWND, operation: String) {
 	memScoped {
 		val bufferSize = 1000
 		val buffer = allocArray<WCHARVar>(bufferSize)
@@ -238,7 +238,7 @@ fun pushOperation(field: HWND, operation: String) {
 	}
 }
 
-fun pushSymbolWrapper(field: HWND, symbol: String) {
+private fun pushSymbolWrapper(field: HWND, symbol: String) {
 	memScoped {
 		val bufferSize = 1000
 		val buffer = allocArray<WCHARVar>(bufferSize)
@@ -280,7 +280,7 @@ fun pushSymbolWrapper(field: HWND, symbol: String) {
 }
 
 
-fun pushSymbol(field: HWND, number: String) {
+private fun pushSymbol(field: HWND, number: String) {
 	memScoped {
 		val bufferSize = 1000
 		val buffer = allocArray<WCHARVar>(bufferSize)
