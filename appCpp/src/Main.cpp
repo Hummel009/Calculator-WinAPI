@@ -50,13 +50,13 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_CREATE:
 			field = registerField(window);
 
-			registerButton(window, BUTTON_PI_ID, "π", 0, 0);
+			registerButton(window, BUTTON_PI_ID, "p", 0, 0);
 			registerButton(window, BUTTON_E_ID, "e", 1, 0);
 			registerButton(window, BUTTON_C_ID, "C", 2, 0);
 			registerButton(window, BUTTON_FACTORIAL_ID, "x!", 3, 0);
 			registerButton(window, BUTTON_INVERSE_ID, "1/x", 0, 1);
 			registerButton(window, BUTTON_SQUARE_ID, "x^2", 1, 1);
-			registerButton(window, BUTTON_SQUARE_ROOT_ID, "√x", 2, 1);
+			registerButton(window, BUTTON_SQUARE_ROOT_ID, "sqrt(x)", 2, 1);
 			registerButton(window, BUTTON_DIVIDE_ID, "/", 3, 1);
 			registerButton(window, BUTTON_7_ID, "7", 0, 2);
 			registerButton(window, BUTTON_8_ID, "8", 1, 2);
@@ -167,7 +167,7 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
 			PostQuitMessage(0);
 			break;
 	}
-	return DefWindowProcW(window, msg, wParam, lParam);
+	return DefWindowProcA(window, msg, wParam, lParam);
 }
 
 int main() {
@@ -187,7 +187,7 @@ int main() {
     	wc.lpszClassName = className.c_str();
     	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
-		RegisterClassEx(&wc);
+		RegisterClassExA(&wc);
 
 		int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 		int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -199,7 +199,7 @@ int main() {
 		int windowY = max(0, (screenHeight - windowHeight) / 2);
 
 		string windowTitle = "WinAPI";
-		HWND window = CreateWindowEx(
+		HWND window = CreateWindowExA(
 			WS_EX_CLIENTEDGE,
 			className.c_str(),
 			windowTitle.c_str(),
@@ -218,9 +218,9 @@ int main() {
 		UpdateWindow(window);
 
 		MSG msg;
-		while (GetMessageW(&msg, NULL, 0u, 0u) != 0) {
+		while (GetMessageA(&msg, NULL, 0u, 0u) != 0) {
 			TranslateMessage(&msg);
-			DispatchMessageW(&msg);
+			DispatchMessageA(&msg);
 		}
 }
 
@@ -383,7 +383,7 @@ static void registerButton(HWND window, int id, string text, int gridX, int grid
 		buttonWidth,
 		buttonHeight,
 		window,
-		(HMENU) id,
+		reinterpret_cast<HMENU>(id),
 		NULL,
 		NULL
 	);
