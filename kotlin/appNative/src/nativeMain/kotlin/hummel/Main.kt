@@ -248,7 +248,7 @@ fun pushOperation(field: HWND, operation: String) {
 				it.add(operation)
 				SetWindowTextW(field, "")
 			} else {
-				stack?.clear()
+				it.clear()
 				SetWindowTextW(field, "Error!")
 			}
 		}
