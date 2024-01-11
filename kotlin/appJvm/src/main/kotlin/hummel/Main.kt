@@ -8,7 +8,6 @@ import hummel.ExUser32.MINMAXINFO
 import kotlin.math.max
 import kotlin.math.sqrt
 
-
 const val WM_COMMAND: Int = 0x0111
 const val WM_GETMINMAXINFO: Int = 0x0024
 
