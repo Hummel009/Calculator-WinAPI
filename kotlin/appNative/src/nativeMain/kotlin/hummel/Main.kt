@@ -88,13 +88,13 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 			field = registerField(window)
 			stack = ArrayList()
 
-			registerButton(window, BUTTON_PI_ID, "p", 0, 0)
+			registerButton(window, BUTTON_PI_ID, "π", 0, 0)
 			registerButton(window, BUTTON_E_ID, "e", 1, 0)
 			registerButton(window, BUTTON_C_ID, "C", 2, 0)
-			registerButton(window, BUTTON_FACTORIAL_ID, "!", 3, 0)
+			registerButton(window, BUTTON_FACTORIAL_ID, "x!", 3, 0)
 			registerButton(window, BUTTON_INVERSE_ID, "1/x", 0, 1)
 			registerButton(window, BUTTON_SQUARE_ID, "x^2", 1, 1)
-			registerButton(window, BUTTON_SQUARE_ROOT_ID, "sqrt(x)", 2, 1)
+			registerButton(window, BUTTON_SQUARE_ROOT_ID, "√x", 2, 1)
 			registerButton(window, BUTTON_DIVIDE_ID, "/", 3, 1)
 			registerButton(window, BUTTON_7_ID, "7", 0, 2)
 			registerButton(window, BUTTON_8_ID, "8", 1, 2)
@@ -156,6 +156,15 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 					else -> {}
 				}
 			}
+		}
+
+		WM_GETMINMAXINFO -> {
+			val info = lParam.toCPointer<MINMAXINFO>()!!
+			info.pointed.ptMinTrackSize.x = 260
+			info.pointed.ptMinTrackSize.y = 453
+			info.pointed.ptMaxTrackSize.x = 260
+			info.pointed.ptMaxTrackSize.y = 453
+			return 0
 		}
 
 		WM_CLOSE -> DestroyWindow(window)
