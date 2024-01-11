@@ -134,6 +134,7 @@ class WndProc : WindowProc {
 
 					BUTTON_E_ID -> pushSymbolWrapper(field, "2.72")
 					BUTTON_PI_ID -> pushSymbolWrapper(field, "3.14")
+
 					BUTTON_DOT_ID -> pushSymbolWrapper(field, ".")
 					BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper(field, "-")
 
@@ -207,7 +208,7 @@ class WndProc : WindowProc {
 
 				ExUser32.INSTANCE.SetWindowText(field, "$result")
 			} else if (operator in setOf("!", "s", "i", "r")) {
-				val operand = stack.first().toDouble()
+				val operand = stack[0].toDouble()
 
 				val result = when (operator) {
 					"!" -> factorial[operand.toInt()].toDouble()

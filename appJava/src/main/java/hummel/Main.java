@@ -148,8 +148,6 @@ public class Main {
 						case BUTTON_SQUARE_ROOT_ID -> pushOperation(field, "r");
 
 						case BUTTON_EQUALS_ID -> calculateWrapper(field);
-						default -> {
-						}
 					}
 				}
 
@@ -165,8 +163,6 @@ public class Main {
 
 				case WM_CLOSE -> ExUser32.INSTANCE.DestroyWindow(window);
 				case WM_DESTROY -> ExUser32.INSTANCE.PostQuitMessage(0);
-				default -> {
-				}
 			}
 			return ExUser32.INSTANCE.DefWindowProc(window, msg, wParam, lParam);
 		}

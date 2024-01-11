@@ -5,15 +5,42 @@ import platform.windows.*
 import kotlin.math.max
 import kotlin.math.sqrt
 
+const val BUTTON_0_ID: Int = 0
+const val BUTTON_1_ID: Int = 1
+const val BUTTON_2_ID: Int = 2
+const val BUTTON_3_ID: Int = 3
+const val BUTTON_4_ID: Int = 4
+const val BUTTON_5_ID: Int = 5
+const val BUTTON_6_ID: Int = 6
+const val BUTTON_7_ID: Int = 7
+const val BUTTON_8_ID: Int = 8
+const val BUTTON_9_ID: Int = 9
+const val BUTTON_C_ID: Int = 10
+const val BUTTON_DIVIDE_ID: Int = 11
+const val BUTTON_DOT_ID: Int = 12
+const val BUTTON_EQUALS_ID: Int = 13
+const val BUTTON_E_ID: Int = 14
+const val BUTTON_FACTORIAL_ID: Int = 15
+const val BUTTON_INVERSE_ID: Int = 16
+const val BUTTON_MINUS_ID: Int = 17
+const val BUTTON_MULTIPLE_ID: Int = 18
+const val BUTTON_PI_ID: Int = 19
+const val BUTTON_PLUS_ID: Int = 20
+const val BUTTON_SQUARE_ID: Int = 21
+const val BUTTON_SQUARE_ROOT_ID: Int = 22
+const val BUTTON_UNARY_MINUS_ID: Int = 23
+
+lateinit var field: HWND
+lateinit var stack: MutableList<String>
+
+private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
+
 fun main() {
 	memScoped {
-		val className = "HummelCalculator"
-		val windowTitle = "WinAPI"
-
 		val windowClass = alloc<WNDCLASS>()
 		windowClass.lpfnWndProc = staticCFunction(::wndProc)
+		val className = "HummelCalculator"
 		windowClass.lpszClassName = className.wcstr.ptr
-		windowClass.hbrBackground = COLOR_WINDOW.toLong().toCPointer()
 
 		RegisterClassW(windowClass.ptr)
 
@@ -26,6 +53,7 @@ fun main() {
 		val windowX = max(0, (screenWidth - windowWidth) / 2)
 		val windowY = max(0, (screenHeight - windowHeight) / 2)
 
+		val windowTitle = "WinAPI"
 		val window = CreateWindowExW(
 			WS_EX_CLIENTEDGE.toUInt(),
 			className,
@@ -52,41 +80,12 @@ fun main() {
 	}
 }
 
-var i: Int = 0
-
-var BUTTON_0_ID: Int = i++
-var BUTTON_1_ID: Int = i++
-var BUTTON_2_ID: Int = i++
-var BUTTON_3_ID: Int = i++
-var BUTTON_4_ID: Int = i++
-var BUTTON_5_ID: Int = i++
-var BUTTON_6_ID: Int = i++
-var BUTTON_7_ID: Int = i++
-var BUTTON_8_ID: Int = i++
-var BUTTON_9_ID: Int = i++
-var BUTTON_C_ID: Int = i++
-var BUTTON_DIVIDE_ID: Int = i++
-var BUTTON_DOT_ID: Int = i++
-var BUTTON_EQUALS_ID: Int = i++
-var BUTTON_E_ID: Int = i++
-var BUTTON_FACTORIAL_ID: Int = i++
-var BUTTON_INVERSE_ID: Int = i++
-var BUTTON_MINUS_ID: Int = i++
-var BUTTON_MULTIPLE_ID: Int = i++
-var BUTTON_PI_ID: Int = i++
-var BUTTON_PLUS_ID: Int = i++
-var BUTTON_SQUARE_ID: Int = i++
-var BUTTON_SQUARE_ROOT_ID: Int = i++
-var BUTTON_UNARY_MINUS_ID: Int = i++
-
-var field: HWND? = null
-var stack: MutableList<String>? = null
-
 private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {
 	when (msg.toInt()) {
 		WM_CREATE -> {
-			field = registerField(window)
 			stack = ArrayList()
+
+			field = registerField(window)
 
 			registerButton(window, BUTTON_PI_ID, "π", 0, 0)
 			registerButton(window, BUTTON_E_ID, "e", 1, 0)
@@ -115,55 +114,51 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 		}
 
 		WM_COMMAND -> {
-			field?.let {
-				val buttonId = wParam.loword().toInt()
+			val buttonId = wParam.loword()
 
-				when (buttonId) {
-					BUTTON_0_ID -> pushSymbolWrapper(it, "0")
-					BUTTON_1_ID -> pushSymbolWrapper(it, "1")
-					BUTTON_2_ID -> pushSymbolWrapper(it, "2")
-					BUTTON_3_ID -> pushSymbolWrapper(it, "3")
-					BUTTON_4_ID -> pushSymbolWrapper(it, "4")
-					BUTTON_5_ID -> pushSymbolWrapper(it, "5")
-					BUTTON_6_ID -> pushSymbolWrapper(it, "6")
-					BUTTON_7_ID -> pushSymbolWrapper(it, "7")
-					BUTTON_8_ID -> pushSymbolWrapper(it, "8")
-					BUTTON_9_ID -> pushSymbolWrapper(it, "9")
+			when (buttonId) {
+				BUTTON_0_ID -> pushSymbolWrapper(field, "0")
+				BUTTON_1_ID -> pushSymbolWrapper(field, "1")
+				BUTTON_2_ID -> pushSymbolWrapper(field, "2")
+				BUTTON_3_ID -> pushSymbolWrapper(field, "3")
+				BUTTON_4_ID -> pushSymbolWrapper(field, "4")
+				BUTTON_5_ID -> pushSymbolWrapper(field, "5")
+				BUTTON_6_ID -> pushSymbolWrapper(field, "6")
+				BUTTON_7_ID -> pushSymbolWrapper(field, "7")
+				BUTTON_8_ID -> pushSymbolWrapper(field, "8")
+				BUTTON_9_ID -> pushSymbolWrapper(field, "9")
 
-					BUTTON_E_ID -> pushSymbolWrapper(it, "2.72")
-					BUTTON_PI_ID -> pushSymbolWrapper(it, "3.14")
+				BUTTON_E_ID -> pushSymbolWrapper(field, "2.72")
+				BUTTON_PI_ID -> pushSymbolWrapper(field, "3.14")
 
-					BUTTON_DOT_ID -> pushSymbolWrapper(it, ".")
-					BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper(it, "-")
+				BUTTON_DOT_ID -> pushSymbolWrapper(field, ".")
+				BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper(field, "-")
 
-					BUTTON_C_ID -> {
-						stack?.clear()
-						SetWindowTextW(it, "")
-					}
-
-					BUTTON_DIVIDE_ID -> pushOperation(it, "/")
-					BUTTON_MULTIPLE_ID -> pushOperation(it, "*")
-					BUTTON_MINUS_ID -> pushOperation(it, "-")
-					BUTTON_PLUS_ID -> pushOperation(it, "+")
-
-					BUTTON_FACTORIAL_ID -> pushOperation(it, "!")
-					BUTTON_SQUARE_ID -> pushOperation(it, "s")
-					BUTTON_INVERSE_ID -> pushOperation(it, "i")
-					BUTTON_SQUARE_ROOT_ID -> pushOperation(it, "r")
-
-					BUTTON_EQUALS_ID -> calculateWrapper(it)
-
-					else -> {}
+				BUTTON_C_ID -> {
+					stack.clear()
+					SetWindowTextW(field, "")
 				}
+
+				BUTTON_DIVIDE_ID -> pushOperation(field, "/")
+				BUTTON_MULTIPLE_ID -> pushOperation(field, "*")
+				BUTTON_MINUS_ID -> pushOperation(field, "-")
+				BUTTON_PLUS_ID -> pushOperation(field, "+")
+
+				BUTTON_FACTORIAL_ID -> pushOperation(field, "!")
+				BUTTON_SQUARE_ID -> pushOperation(field, "s")
+				BUTTON_INVERSE_ID -> pushOperation(field, "i")
+				BUTTON_SQUARE_ROOT_ID -> pushOperation(field, "r")
+
+				BUTTON_EQUALS_ID -> calculateWrapper(field)
 			}
 		}
 
 		WM_GETMINMAXINFO -> {
-			val info = lParam.toCPointer<MINMAXINFO>()!!
-			info.pointed.ptMinTrackSize.x = 260
-			info.pointed.ptMinTrackSize.y = 453
-			info.pointed.ptMaxTrackSize.x = 260
-			info.pointed.ptMaxTrackSize.y = 453
+			val info = lParam.toCPointer<MINMAXINFO>()
+			info?.pointed?.ptMinTrackSize?.x = 260
+			info?.pointed?.ptMinTrackSize?.y = 453
+			info?.pointed?.ptMaxTrackSize?.x = 260
+			info?.pointed?.ptMaxTrackSize?.y = 453
 		}
 
 		WM_CLOSE -> DestroyWindow(window)
@@ -176,7 +171,7 @@ fun calculateWrapper(field: HWND) {
 	try {
 		calculate(field)
 	} catch (e: Exception) {
-		stack?.clear()
+		stack.clear()
 		SetWindowTextW(field, "Error!")
 	}
 }
@@ -187,42 +182,40 @@ fun calculate(field: HWND) {
 		val buffer = allocArray<WCHARVar>(bufferSize)
 		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
 
-		stack?.let {
-			if (it.size == 2) {
-				val operator = it[1]
+		if (stack.size == 2) {
+			val operator = stack[1]
 
-				if (operator in setOf("+", "-", "*", "/")) {
-					it.add(buffer.toKString())
+			if (operator in setOf("+", "-", "*", "/")) {
+				stack.add(buffer.toKString())
 
-					val operand1 = it[0].toDouble()
-					val operand2 = it[2].toDouble()
+				val operand1 = stack[0].toDouble()
+				val operand2 = stack[2].toDouble()
 
-					val result = when (operator) {
-						"+" -> operand1 + operand2
-						"-" -> operand1 - operand2
-						"*" -> operand1 * operand2
-						"/" -> operand1 / operand2
-						else -> throw IllegalArgumentException("Invalid operator: $operator")
-					}
-
-					it.clear()
-
-					SetWindowTextW(field, "$result")
-				} else if (operator in setOf("!", "s", "i", "r")) {
-					val operand = it[0].toDouble()
-
-					val result = when (operator) {
-						"!" -> factorial[operand.toInt()]
-						"s" -> operand * operand
-						"i" -> 1.0 / operand
-						"r" -> sqrt(operand)
-						else -> throw IllegalArgumentException("Invalid operator: $operator")
-					}
-
-					it.clear()
-
-					SetWindowTextW(field, "$result")
+				val result = when (operator) {
+					"+" -> operand1 + operand2
+					"-" -> operand1 - operand2
+					"*" -> operand1 * operand2
+					"/" -> operand1 / operand2
+					else -> throw IllegalArgumentException("Invalid operator: $operator")
 				}
+
+				stack.clear()
+
+				SetWindowTextW(field, "$result")
+			} else if (operator in setOf("!", "s", "i", "r")) {
+				val operand = stack[0].toDouble()
+
+				val result = when (operator) {
+					"!" -> factorial[operand.toInt()]
+					"s" -> operand * operand
+					"i" -> 1.0 / operand
+					"r" -> sqrt(operand)
+					else -> throw IllegalArgumentException("Invalid operator: $operator")
+				}
+
+				stack.clear()
+
+				SetWindowTextW(field, "$result")
 			}
 		}
 	}
@@ -234,15 +227,13 @@ fun pushOperation(field: HWND, operation: String) {
 		val buffer = allocArray<WCHARVar>(bufferSize)
 		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
 
-		stack?.let {
-			if (it.size == 0) {
-				it.add(buffer.toKString())
-				it.add(operation)
-				SetWindowTextW(field, "")
-			} else {
-				it.clear()
-				SetWindowTextW(field, "Error!")
-			}
+		if (stack.isEmpty()) {
+			stack.add(buffer.toKString())
+			stack.add(operation)
+			SetWindowTextW(field, "")
+		} else {
+			stack.clear()
+			SetWindowTextW(field, "Error!")
 		}
 	}
 }
@@ -254,30 +245,36 @@ fun pushSymbolWrapper(field: HWND, symbol: String) {
 		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
 		val str = buffer.toKString()
 
-		if (symbol == "3.14" || symbol == "2.72") {
-			if (!str.contains(".")) {
-				pushSymbol(field, symbol)
+		when (symbol) {
+			"3.14", "2.72" -> {
+				if (!str.contains(".")) {
+					pushSymbol(field, symbol)
+				}
 			}
-		} else if (symbol == ".") {
-			if (!str.contains(".") && str.isNotEmpty()) {
-				pushSymbol(field, symbol)
+
+			"." -> {
+				if (!str.contains(".") && str.isNotEmpty()) {
+					pushSymbol(field, symbol)
+				}
 			}
-		} else if (symbol == "-") {
-			if (str.isEmpty()) {
-				pushSymbol(field, symbol)
+
+			"-" -> {
+				if (str.isEmpty()) {
+					pushSymbol(field, symbol)
+				}
 			}
-		} else {
-			stack?.let {
-				if (it.size != 0) {
-					val operator = it[1]
+
+			else -> {
+				if (stack.isEmpty()) {
+					pushSymbol(field, symbol)
+				} else {
+					val operator = stack[1]
 
 					if (operator !in setOf("!", "s", "i", "r")) {
 						pushSymbol(field, symbol)
 					}
-				} else {
-					pushSymbol(field, symbol)
 				}
-			} ?: throw Exception()
+			}
 		}
 	}
 }
@@ -292,7 +289,7 @@ fun pushSymbol(field: HWND, number: String) {
 	}
 }
 
-private fun registerField(window: HWND?): HWND? {
+private fun registerField(window: HWND?): HWND {
 	return CreateWindowExW(
 		WS_EX_CLIENTEDGE.toUInt(),
 		"STATIC",
@@ -306,7 +303,7 @@ private fun registerField(window: HWND?): HWND? {
 		null,
 		null,
 		null
-	)
+	)!!
 }
 
 private fun registerButton(window: HWND?, id: Int, text: String, gridX: Int, gridY: Int) {
@@ -318,7 +315,7 @@ private fun registerButton(window: HWND?, id: Int, text: String, gridX: Int, gri
 		"BUTTON",
 		text,
 		(WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON).toUInt(),
-		0 + buttonWidth * gridX,
+		buttonWidth * gridX,
 		50 + buttonHeight * gridY,
 		buttonWidth,
 		buttonHeight,
@@ -329,20 +326,4 @@ private fun registerButton(window: HWND?, id: Int, text: String, gridX: Int, gri
 	)
 }
 
-private fun ULong.loword(): ULong = this and 0xFFFFu
-
-private val factorial = arrayOf(
-	1, // 0!
-	1, // 1!
-	2, // 2!
-	6, // 3!
-	24, // 4!
-	120, // 5!
-	720, // 6!
-	5040, // 7!
-	40320, // 8!
-	362880, // 9!
-	3628800, // 10!
-	39916800, // 11!
-	479001600 // 12!
-)
+private fun WPARAM.loword(): Int = (this and 0xFFFFu).toInt()
