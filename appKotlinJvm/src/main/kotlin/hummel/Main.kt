@@ -4,53 +4,92 @@ import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.platform.win32.WinDef.*
 import com.sun.jna.platform.win32.WinUser.*
-import hummel.ExUser32.MINMAXINFO
 import kotlin.math.max
 import kotlin.math.sqrt
 
 const val WM_COMMAND: Int = 0x0111
 const val WM_GETMINMAXINFO: Int = 0x0024
 
-var i: Int = 0
+const val BUTTON_0_ID: Int = 0
+const val BUTTON_1_ID: Int = 1
+const val BUTTON_2_ID: Int = 2
+const val BUTTON_3_ID: Int = 3
+const val BUTTON_4_ID: Int = 4
+const val BUTTON_5_ID: Int = 5
+const val BUTTON_6_ID: Int = 6
+const val BUTTON_7_ID: Int = 7
+const val BUTTON_8_ID: Int = 8
+const val BUTTON_9_ID: Int = 9
+const val BUTTON_C_ID: Int = 10
+const val BUTTON_DIVIDE_ID: Int = 11
+const val BUTTON_DOT_ID: Int = 12
+const val BUTTON_EQUALS_ID: Int = 13
+const val BUTTON_E_ID: Int = 14
+const val BUTTON_FACTORIAL_ID: Int = 15
+const val BUTTON_INVERSE_ID: Int = 16
+const val BUTTON_MINUS_ID: Int = 17
+const val BUTTON_MULTIPLE_ID: Int = 18
+const val BUTTON_PI_ID: Int = 19
+const val BUTTON_PLUS_ID: Int = 20
+const val BUTTON_SQUARE_ID: Int = 21
+const val BUTTON_SQUARE_ROOT_ID: Int = 22
+const val BUTTON_UNARY_MINUS_ID: Int = 23
 
-var BUTTON_0_ID: Int = i++
-var BUTTON_1_ID: Int = i++
-var BUTTON_2_ID: Int = i++
-var BUTTON_3_ID: Int = i++
-var BUTTON_4_ID: Int = i++
-var BUTTON_5_ID: Int = i++
-var BUTTON_6_ID: Int = i++
-var BUTTON_7_ID: Int = i++
-var BUTTON_8_ID: Int = i++
-var BUTTON_9_ID: Int = i++
-var BUTTON_C_ID: Int = i++
-var BUTTON_DIVIDE_ID: Int = i++
-var BUTTON_DOT_ID: Int = i++
-var BUTTON_EQUALS_ID: Int = i++
-var BUTTON_E_ID: Int = i++
-var BUTTON_FACTORIAL_ID: Int = i++
-var BUTTON_INVERSE_ID: Int = i++
-var BUTTON_MINUS_ID: Int = i++
-var BUTTON_MULTIPLE_ID: Int = i++
-var BUTTON_PI_ID: Int = i++
-var BUTTON_PLUS_ID: Int = i++
-var BUTTON_SQUARE_ID: Int = i++
-var BUTTON_SQUARE_ROOT_ID: Int = i++
-var BUTTON_UNARY_MINUS_ID: Int = i++
+lateinit var stack: MutableList<String>
+lateinit var field: HWND
 
-var stack: MutableList<String>? = null
+private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
 
 fun main() {
-	val className = "HummelCalculator"
-	val windowTitle = "WinAPI"
-	var field: HWND? = null
-
 	val windowClass = WNDCLASSEX()
-	windowClass.lpfnWndProc = WindowProc { window, msg, wParam, lParam ->
+	windowClass.lpfnWndProc = WndProc()
+	val className = "HummelCalculator"
+	windowClass.lpszClassName = className
+
+	ExUser32.INSTANCE.RegisterClassEx(windowClass)
+
+	val screenWidth = ExUser32.INSTANCE.GetSystemMetrics(SM_CXSCREEN)
+	val screenHeight = ExUser32.INSTANCE.GetSystemMetrics(SM_CYSCREEN)
+
+	val windowWidth = 260
+	val windowHeight = 453
+
+	val windowX = max(0.0, ((screenWidth - windowWidth) / 2).toDouble()).toInt()
+	val windowY = max(0.0, ((screenHeight - windowHeight) / 2).toDouble()).toInt()
+
+	val windowTitle = "WinAPI"
+	val window = ExUser32.INSTANCE.CreateWindowEx(
+		0,
+		className,
+		windowTitle,
+		WS_OVERLAPPEDWINDOW,
+		windowX,
+		windowY,
+		windowWidth,
+		windowHeight,
+		null,
+		null,
+		null,
+		null
+	)
+
+	ExUser32.INSTANCE.ShowWindow(window, SW_SHOW)
+	ExUser32.INSTANCE.UpdateWindow(window)
+
+	val msg = MSG()
+	while (ExUser32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {
+		ExUser32.INSTANCE.TranslateMessage(msg)
+		ExUser32.INSTANCE.DispatchMessage(msg)
+	}
+}
+
+class WndProc : WindowProc {
+	override fun callback(window: HWND, msg: Int, wParam: WPARAM, lParam: LPARAM): LRESULT {
 		when (msg) {
 			WM_CREATE -> {
-				field = registerField(window)
 				stack = ArrayList()
+
+				field = registerField(window)
 
 				registerButton(window, BUTTON_PI_ID, "π", 0, 0)
 				registerButton(window, BUTTON_E_ID, "e", 1, 0)
@@ -79,51 +118,46 @@ fun main() {
 			}
 
 			WM_COMMAND -> {
-				field?.let {
-					val buttonId = wParam.loword().toInt()
+				val buttonId = wParam.loword()
 
-					when (buttonId) {
-						BUTTON_0_ID -> pushSymbolWrapper(it, "0")
-						BUTTON_1_ID -> pushSymbolWrapper(it, "1")
-						BUTTON_2_ID -> pushSymbolWrapper(it, "2")
-						BUTTON_3_ID -> pushSymbolWrapper(it, "3")
-						BUTTON_4_ID -> pushSymbolWrapper(it, "4")
-						BUTTON_5_ID -> pushSymbolWrapper(it, "5")
-						BUTTON_6_ID -> pushSymbolWrapper(it, "6")
-						BUTTON_7_ID -> pushSymbolWrapper(it, "7")
-						BUTTON_8_ID -> pushSymbolWrapper(it, "8")
-						BUTTON_9_ID -> pushSymbolWrapper(it, "9")
+				when (buttonId) {
+					BUTTON_0_ID -> pushSymbolWrapper(field, "0")
+					BUTTON_1_ID -> pushSymbolWrapper(field, "1")
+					BUTTON_2_ID -> pushSymbolWrapper(field, "2")
+					BUTTON_3_ID -> pushSymbolWrapper(field, "3")
+					BUTTON_4_ID -> pushSymbolWrapper(field, "4")
+					BUTTON_5_ID -> pushSymbolWrapper(field, "5")
+					BUTTON_6_ID -> pushSymbolWrapper(field, "6")
+					BUTTON_7_ID -> pushSymbolWrapper(field, "7")
+					BUTTON_8_ID -> pushSymbolWrapper(field, "8")
+					BUTTON_9_ID -> pushSymbolWrapper(field, "9")
 
-						BUTTON_E_ID -> pushSymbolWrapper(it, "2.72")
-						BUTTON_PI_ID -> pushSymbolWrapper(it, "3.14")
+					BUTTON_E_ID -> pushSymbolWrapper(field, "2.72")
+					BUTTON_PI_ID -> pushSymbolWrapper(field, "3.14")
+					BUTTON_DOT_ID -> pushSymbolWrapper(field, ".")
+					BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper(field, "-")
 
-						BUTTON_DOT_ID -> pushSymbolWrapper(it, ".")
-						BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper(it, "-")
-
-						BUTTON_C_ID -> {
-							stack?.clear()
-							ExUser32.INSTANCE.SetWindowText(it, "")
-						}
-
-						BUTTON_DIVIDE_ID -> pushOperation(it, "/")
-						BUTTON_MULTIPLE_ID -> pushOperation(it, "*")
-						BUTTON_MINUS_ID -> pushOperation(it, "-")
-						BUTTON_PLUS_ID -> pushOperation(it, "+")
-
-						BUTTON_FACTORIAL_ID -> pushOperation(it, "!")
-						BUTTON_SQUARE_ID -> pushOperation(it, "s")
-						BUTTON_INVERSE_ID -> pushOperation(it, "i")
-						BUTTON_SQUARE_ROOT_ID -> pushOperation(it, "r")
-
-						BUTTON_EQUALS_ID -> calculateWrapper(it)
-
-						else -> {}
+					BUTTON_C_ID -> {
+						stack.clear()
+						ExUser32.INSTANCE.SetWindowText(field, "")
 					}
+
+					BUTTON_DIVIDE_ID -> pushOperation(field, "/")
+					BUTTON_MULTIPLE_ID -> pushOperation(field, "*")
+					BUTTON_MINUS_ID -> pushOperation(field, "-")
+					BUTTON_PLUS_ID -> pushOperation(field, "+")
+
+					BUTTON_FACTORIAL_ID -> pushOperation(field, "!")
+					BUTTON_SQUARE_ID -> pushOperation(field, "s")
+					BUTTON_INVERSE_ID -> pushOperation(field, "i")
+					BUTTON_SQUARE_ROOT_ID -> pushOperation(field, "r")
+
+					BUTTON_EQUALS_ID -> calculateWrapper(field)
 				}
 			}
 
 			WM_GETMINMAXINFO -> {
-				val info = MINMAXINFO(Pointer(lParam.toLong()))
+				val info = ExUser32.MINMAXINFO(Pointer(lParam.toLong()))
 				info.read()
 				info.ptMinTrackSize!!.x = 260
 				info.ptMinTrackSize!!.y = 453
@@ -135,69 +169,31 @@ fun main() {
 			WM_CLOSE -> ExUser32.INSTANCE.DestroyWindow(window)
 			WM_DESTROY -> ExUser32.INSTANCE.PostQuitMessage(0)
 		}
-		return@WindowProc ExUser32.INSTANCE.DefWindowProc(window, msg, wParam, lParam)
+		return ExUser32.INSTANCE.DefWindowProc(window, msg, wParam, lParam)
 	}
-	windowClass.lpszClassName = className
 
-	ExUser32.INSTANCE.RegisterClassEx(windowClass)
-
-	val screenWidth = ExUser32.INSTANCE.GetSystemMetrics(SM_CXSCREEN)
-	val screenHeight = ExUser32.INSTANCE.GetSystemMetrics(SM_CYSCREEN)
-
-	val windowWidth = 260
-	val windowHeight = 453
-
-	val windowX = max(0, (screenWidth - windowWidth) / 2)
-	val windowY = max(0, (screenHeight - windowHeight) / 2)
-
-	val window = ExUser32.INSTANCE.CreateWindowEx(
-		0,
-		className,
-		windowTitle,
-		WS_OVERLAPPEDWINDOW,
-		windowX,
-		windowY,
-		windowWidth,
-		windowHeight,
-		null,
-		null,
-		null,
-		null
-	)
-
-	ExUser32.INSTANCE.ShowWindow(window, SW_SHOW)
-	ExUser32.INSTANCE.UpdateWindow(window)
-
-	val msg = MSG()
-	while (ExUser32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {
-		ExUser32.INSTANCE.TranslateMessage(msg)
-		ExUser32.INSTANCE.DispatchMessage(msg)
+	private fun calculateWrapper(field: HWND?) {
+		try {
+			calculate(field)
+		} catch (e: Exception) {
+			stack.clear()
+			ExUser32.INSTANCE.SetWindowText(field, "Error!")
+		}
 	}
-}
 
-fun calculateWrapper(field: HWND) {
-	try {
-		calculate(field)
-	} catch (e: Exception) {
-		stack?.clear()
-		ExUser32.INSTANCE.SetWindowText(field, "Error!")
-	}
-}
+	private fun calculate(field: HWND?) {
+		val bufferSize = 1000
+		val buffer = CharArray(bufferSize)
+		ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
 
-fun calculate(field: HWND) {
-	val bufferSize = 1000
-	val buffer = CharArray(bufferSize)
-	ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
-
-	stack?.let {
-		if (it.size == 2) {
-			val operator = it[1]
+		if (stack.size == 2) {
+			val operator = stack[1]
 
 			if (operator in setOf("+", "-", "*", "/")) {
-				it.add(Native.toString(buffer))
+				stack.add(Native.toString(buffer))
 
-				val operand1 = it[0].toDouble()
-				val operand2 = it[2].toDouble()
+				val operand1 = stack[0].toDouble()
+				val operand2 = stack[2].toDouble()
 
 				val result = when (operator) {
 					"+" -> operand1 + operand2
@@ -207,137 +203,124 @@ fun calculate(field: HWND) {
 					else -> throw IllegalArgumentException("Invalid operator: $operator")
 				}
 
-				it.clear()
+				stack.clear()
 
 				ExUser32.INSTANCE.SetWindowText(field, "$result")
 			} else if (operator in setOf("!", "s", "i", "r")) {
-				val operand = it[0].toDouble()
+				val operand = stack.first().toDouble()
 
 				val result = when (operator) {
-					"!" -> factorial[operand.toInt()]
+					"!" -> factorial[operand.toInt()].toDouble()
 					"s" -> operand * operand
 					"i" -> 1.0 / operand
 					"r" -> sqrt(operand)
 					else -> throw IllegalArgumentException("Invalid operator: $operator")
 				}
 
-				it.clear()
+				stack.clear()
 
 				ExUser32.INSTANCE.SetWindowText(field, "$result")
 			}
 		}
 	}
-}
 
-fun pushOperation(field: HWND, operation: String) {
-	val bufferSize = 1000
-	val buffer = CharArray(bufferSize)
-	ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
+	private fun pushOperation(field: HWND?, operation: String) {
+		val bufferSize = 1000
+		val buffer = CharArray(bufferSize)
+		ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
 
-	stack?.let {
-		if (it.size == 0) {
-			it.add(Native.toString(buffer))
-			it.add(operation)
+		if (stack.isEmpty()) {
+			stack.add(Native.toString(buffer))
+			stack.add(operation)
 			ExUser32.INSTANCE.SetWindowText(field, "")
 		} else {
-			it.clear()
+			stack.clear()
 			ExUser32.INSTANCE.SetWindowText(field, "Error!")
 		}
 	}
-}
 
-fun pushSymbolWrapper(field: HWND, symbol: String) {
-	val bufferSize = 1000
-	val buffer = CharArray(bufferSize)
-	ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
-	val str = Native.toString(buffer)
+	private fun pushSymbolWrapper(field: HWND?, symbol: String) {
+		val bufferSize = 1000
+		val buffer = CharArray(bufferSize)
+		ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
+		val str = Native.toString(buffer)
 
-	if (symbol == "3.14" || symbol == "2.72") {
-		if (!str.contains(".")) {
-			pushSymbol(field, symbol)
-		}
-	} else if (symbol == ".") {
-		if (!str.contains(".") && str.isNotEmpty()) {
-			pushSymbol(field, symbol)
-		}
-	} else if (symbol == "-") {
-		if (str.isEmpty()) {
-			pushSymbol(field, symbol)
-		}
-	} else {
-		stack?.let {
-			if (it.size != 0) {
-				val operator = it[1]
-
-				if (operator !in setOf("!", "s", "i", "r")) {
+		when (symbol) {
+			"3.14", "2.72" -> {
+				if (!str.contains(".")) {
 					pushSymbol(field, symbol)
 				}
-			} else {
-				pushSymbol(field, symbol)
 			}
-		} ?: throw Exception()
+
+			"." -> {
+				if (!str.contains(".") && str.isNotEmpty()) {
+					pushSymbol(field, symbol)
+				}
+			}
+
+			"-" -> {
+				if (str.isEmpty()) {
+					pushSymbol(field, symbol)
+				}
+			}
+
+			else -> {
+				if (stack.isEmpty()) {
+					pushSymbol(field, symbol)
+				} else {
+					val operator = stack[1]
+
+					if (operator !in setOf("!", "s", "i", "r")) {
+						pushSymbol(field, symbol)
+					}
+				}
+			}
+		}
 	}
+
+	private fun pushSymbol(field: HWND?, number: String) {
+		val bufferSize = 1000
+		val buffer = CharArray(bufferSize)
+		ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
+		ExUser32.INSTANCE.SetWindowText(field, Native.toString(buffer).replace("Error!", "") + number)
+	}
+
+	private fun registerField(window: HWND): HWND {
+		return ExUser32.INSTANCE.CreateWindowEx(
+			0,
+			"STATIC",
+			"",
+			WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON,
+			0,
+			0,
+			238,
+			50,
+			window,
+			null,
+			null,
+			null
+		)
+	}
+
+	private fun registerButton(window: HWND, id: Int, text: String, gridX: Int, gridY: Int) {
+		val buttonWidth = 60
+		val buttonHeight = 60
+
+		ExUser32.INSTANCE.CreateWindowEx(
+			0,
+			"BUTTON",
+			text,
+			WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON,
+			buttonWidth * gridX,
+			50 + buttonHeight * gridY,
+			buttonWidth,
+			buttonHeight,
+			window,
+			HMENU(Pointer(id.toLong())),
+			null,
+			null
+		)
+	}
+
+	private fun WPARAM.loword(): Int = (this.toLong() and 0xFFFF).toInt()
 }
-
-
-fun pushSymbol(field: HWND, number: String) {
-	val bufferSize = 1000
-	val buffer = CharArray(bufferSize)
-	ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
-	ExUser32.INSTANCE.SetWindowText(field, Native.toString(buffer).replace("Error!", "") + number)
-}
-
-private fun registerField(window: HWND?): HWND? {
-	return ExUser32.INSTANCE.CreateWindowEx(
-		0,
-		"STATIC",
-		"",
-		WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON,
-		0,
-		0,
-		238,
-		50,
-		window,
-		null,
-		null,
-		null
-	)
-}
-
-private fun registerButton(window: HWND?, id: Int, text: String, gridX: Int, gridY: Int) {
-	val buttonWidth = 60
-	val buttonHeight = 60
-
-	ExUser32.INSTANCE.CreateWindowEx(
-		0,
-		"BUTTON",
-		text,
-		WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON,
-		0 + buttonWidth * gridX,
-		50 + buttonHeight * gridY,
-		buttonWidth,
-		buttonHeight,
-		window,
-		HMENU(Pointer(id.toLong())),
-		null,
-		null
-	)
-}
-
-private fun WPARAM.loword(): Long = this.toLong() and 0xFFFF
-
-private val factorial = arrayOf(
-	1, // 0!
-	1, // 1!
-	2, // 2!
-	6, // 3!
-	24, // 4!
-	120, // 5!
-	720, // 6!
-	5040, // 7!
-	40320, // 8!
-	362880, // 9!
-	3628800, // 10!
-	39916800, // 11!
-	479001600 // 12!
-)

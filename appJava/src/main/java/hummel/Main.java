@@ -5,7 +5,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HMENU;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.WPARAM;
-import hummel.ExUser32.MINMAXINFO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,51 +112,49 @@ public class Main {
 				}
 
 				case WM_COMMAND -> {
-					if (field != null) {
-						var buttonId = (int) loword(wParam);
+					var buttonId = loword(wParam);
 
-						switch (buttonId) {
-							case BUTTON_0_ID -> pushSymbolWrapper(field, "0");
-							case BUTTON_1_ID -> pushSymbolWrapper(field, "1");
-							case BUTTON_2_ID -> pushSymbolWrapper(field, "2");
-							case BUTTON_3_ID -> pushSymbolWrapper(field, "3");
-							case BUTTON_4_ID -> pushSymbolWrapper(field, "4");
-							case BUTTON_5_ID -> pushSymbolWrapper(field, "5");
-							case BUTTON_6_ID -> pushSymbolWrapper(field, "6");
-							case BUTTON_7_ID -> pushSymbolWrapper(field, "7");
-							case BUTTON_8_ID -> pushSymbolWrapper(field, "8");
-							case BUTTON_9_ID -> pushSymbolWrapper(field, "9");
+					switch (buttonId) {
+						case BUTTON_0_ID -> pushSymbolWrapper(field, "0");
+						case BUTTON_1_ID -> pushSymbolWrapper(field, "1");
+						case BUTTON_2_ID -> pushSymbolWrapper(field, "2");
+						case BUTTON_3_ID -> pushSymbolWrapper(field, "3");
+						case BUTTON_4_ID -> pushSymbolWrapper(field, "4");
+						case BUTTON_5_ID -> pushSymbolWrapper(field, "5");
+						case BUTTON_6_ID -> pushSymbolWrapper(field, "6");
+						case BUTTON_7_ID -> pushSymbolWrapper(field, "7");
+						case BUTTON_8_ID -> pushSymbolWrapper(field, "8");
+						case BUTTON_9_ID -> pushSymbolWrapper(field, "9");
 
-							case BUTTON_E_ID -> pushSymbolWrapper(field, "2.72");
-							case BUTTON_PI_ID -> pushSymbolWrapper(field, "3.14");
+						case BUTTON_E_ID -> pushSymbolWrapper(field, "2.72");
+						case BUTTON_PI_ID -> pushSymbolWrapper(field, "3.14");
 
-							case BUTTON_DOT_ID -> pushSymbolWrapper(field, ".");
-							case BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper(field, "-");
+						case BUTTON_DOT_ID -> pushSymbolWrapper(field, ".");
+						case BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper(field, "-");
 
-							case BUTTON_C_ID -> {
-								stack.clear();
-								ExUser32.INSTANCE.SetWindowText(field, "");
-							}
+						case BUTTON_C_ID -> {
+							stack.clear();
+							ExUser32.INSTANCE.SetWindowText(field, "");
+						}
 
-							case BUTTON_DIVIDE_ID -> pushOperation(field, "/");
-							case BUTTON_MULTIPLE_ID -> pushOperation(field, "*");
-							case BUTTON_MINUS_ID -> pushOperation(field, "-");
-							case BUTTON_PLUS_ID -> pushOperation(field, "+");
+						case BUTTON_DIVIDE_ID -> pushOperation(field, "/");
+						case BUTTON_MULTIPLE_ID -> pushOperation(field, "*");
+						case BUTTON_MINUS_ID -> pushOperation(field, "-");
+						case BUTTON_PLUS_ID -> pushOperation(field, "+");
 
-							case BUTTON_FACTORIAL_ID -> pushOperation(field, "!");
-							case BUTTON_SQUARE_ID -> pushOperation(field, "s");
-							case BUTTON_INVERSE_ID -> pushOperation(field, "i");
-							case BUTTON_SQUARE_ROOT_ID -> pushOperation(field, "r");
+						case BUTTON_FACTORIAL_ID -> pushOperation(field, "!");
+						case BUTTON_SQUARE_ID -> pushOperation(field, "s");
+						case BUTTON_INVERSE_ID -> pushOperation(field, "i");
+						case BUTTON_SQUARE_ROOT_ID -> pushOperation(field, "r");
 
-							case BUTTON_EQUALS_ID -> calculateWrapper(field);
-							default -> {
-							}
+						case BUTTON_EQUALS_ID -> calculateWrapper(field);
+						default -> {
 						}
 					}
 				}
 
 				case WM_GETMINMAXINFO -> {
-					var info = new MINMAXINFO(new Pointer(lParam.longValue()));
+					var info = new ExUser32.MINMAXINFO(new Pointer(lParam.longValue()));
 					info.read();
 					info.ptMinTrackSize.x = 260;
 					info.ptMinTrackSize.y = 453;
@@ -202,7 +199,7 @@ public class Main {
 						case "-" -> operand1 - operand2;
 						case "*" -> operand1 * operand2;
 						case "/" -> operand1 / operand2;
-						default -> throw new IllegalArgumentException("Invarid operator: " + operator);
+						default -> throw new IllegalArgumentException("Invalid operator: " + operator);
 					};
 
 					stack.clear();
@@ -216,7 +213,7 @@ public class Main {
 						case "s" -> operand * operand;
 						case "i" -> 1.0 / operand;
 						case "r" -> Math.sqrt(operand);
-						default -> throw new IllegalArgumentException("Invarid operator: " + operator);
+						default -> throw new IllegalArgumentException("Invalid operator: " + operator);
 					};
 
 					stack.clear();
@@ -263,7 +260,7 @@ public class Main {
 						pushSymbol(field, symbol);
 					}
 				}
-				case null, default -> {
+				default -> {
 					if (stack.isEmpty()) {
 						pushSymbol(field, symbol);
 					} else {
@@ -295,8 +292,8 @@ public class Main {
 			ExUser32.INSTANCE.CreateWindowEx(0, "BUTTON", text, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, buttonWidth * gridX, 50 + buttonHeight * gridY, buttonWidth, buttonHeight, window, new HMENU(new Pointer(id)), null, null);
 		}
 
-		private static long loword(WPARAM wparam) {
-			return wparam.longValue();
+		private static int loword(WPARAM wparam) {
+			return (int) (wparam.longValue() & 0xFFFF);
 		}
 	}
 }
