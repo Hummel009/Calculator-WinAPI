@@ -15,5 +15,6 @@ dependencyResolutionManagement {
 	}
 }
 
-include(":appJvm")
-include(":appNative")
+include(":appKotlinJvm")
+include(":appKotlinNative")
+include(":appJava")
