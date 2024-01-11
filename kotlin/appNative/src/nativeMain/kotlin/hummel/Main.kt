@@ -167,7 +167,7 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 fun calculateWrapper(field: HWND) {
 	try {
 		calculate(field)
-	} catch (e: IllegalArgumentException) {
+	} catch (e: Exception) {
 		stack?.clear()
 		SetWindowTextW(field, "Error!")
 	}
