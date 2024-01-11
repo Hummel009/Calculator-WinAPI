@@ -2,7 +2,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 plugins {
-	id("org.jetbrains.kotlin.jvm")
 	id("application")
 }
 
@@ -12,7 +11,6 @@ version = "v" + LocalDate.now().format(DateTimeFormatter.ofPattern("yy.MM.dd"))
 val embed: Configuration by configurations.creating
 
 dependencies {
-	embed("org.jetbrains.kotlin:kotlin-stdlib:1.9.21")
 	embed("net.java.dev.jna:jna:5.13.0")
 	embed("net.java.dev.jna:jna-platform:5.13.0")
 	implementation("net.java.dev.jna:jna:5.13.0")
@@ -37,7 +35,7 @@ tasks {
 		manifest {
 			attributes(
 				mapOf(
-					"Main-Class" to "hummel.MainKt"
+					"Main-Class" to "hummel.Main"
 				)
 			)
 		}

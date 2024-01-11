@@ -212,14 +212,7 @@ fun calculate(field: HWND) {
 					val operand = it[0].toDouble()
 
 					val result = when (operator) {
-						"!" -> {
-							if (operand.toInt().toDouble() == operand) {
-								factorial[operand.toInt()]
-							} else {
-								throw IllegalArgumentException("Invalid operand: $operand")
-							}
-						}
-
+						"!" -> factorial[operand.toInt()]
 						"s" -> operand * operand
 						"i" -> 1.0 / operand
 						"r" -> sqrt(operand)
