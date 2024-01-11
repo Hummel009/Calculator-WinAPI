@@ -1,329 +1,390 @@
-package hummel
+#include <iostream>
+#include <windows.h>
+#include <vector>
+#include <set>
+#include <cmath>
 
-import kotlinx.cinterop.*
-import platform.windows.*
-import kotlin.math.max
-import kotlin.math.sqrt
+using namespace std;
 
-const val BUTTON_0_ID: Int = 0
-const val BUTTON_1_ID: Int = 1
-const val BUTTON_2_ID: Int = 2
-const val BUTTON_3_ID: Int = 3
-const val BUTTON_4_ID: Int = 4
-const val BUTTON_5_ID: Int = 5
-const val BUTTON_6_ID: Int = 6
-const val BUTTON_7_ID: Int = 7
-const val BUTTON_8_ID: Int = 8
-const val BUTTON_9_ID: Int = 9
-const val BUTTON_C_ID: Int = 10
-const val BUTTON_DIVIDE_ID: Int = 11
-const val BUTTON_DOT_ID: Int = 12
-const val BUTTON_EQUALS_ID: Int = 13
-const val BUTTON_E_ID: Int = 14
-const val BUTTON_FACTORIAL_ID: Int = 15
-const val BUTTON_INVERSE_ID: Int = 16
-const val BUTTON_MINUS_ID: Int = 17
-const val BUTTON_MULTIPLE_ID: Int = 18
-const val BUTTON_PI_ID: Int = 19
-const val BUTTON_PLUS_ID: Int = 20
-const val BUTTON_SQUARE_ID: Int = 21
-const val BUTTON_SQUARE_ROOT_ID: Int = 22
-const val BUTTON_UNARY_MINUS_ID: Int = 23
+const int BUTTON_0_ID = 0;
+const int BUTTON_1_ID = 1;
+const int BUTTON_2_ID = 2;
+const int BUTTON_3_ID = 3;
+const int BUTTON_4_ID = 4;
+const int BUTTON_5_ID = 5;
+const int BUTTON_6_ID = 6;
+const int BUTTON_7_ID = 7;
+const int BUTTON_8_ID = 8;
+const int BUTTON_9_ID = 9;
+const int BUTTON_C_ID = 10;
+const int BUTTON_DIVIDE_ID = 11;
+const int BUTTON_DOT_ID = 12;
+const int BUTTON_EQUALS_ID = 13;
+const int BUTTON_E_ID = 14;
+const int BUTTON_FACTORIAL_ID = 15;
+const int BUTTON_INVERSE_ID = 16;
+const int BUTTON_MINUS_ID = 17;
+const int BUTTON_MULTIPLE_ID = 18;
+const int BUTTON_PI_ID = 19;
+const int BUTTON_PLUS_ID = 20;
+const int BUTTON_SQUARE_ID = 21;
+const int BUTTON_SQUARE_ROOT_ID = 22;
+const int BUTTON_UNARY_MINUS_ID = 23;
 
-lateinit var field: HWND
-lateinit var stack: MutableList<String>
+static HWND field;
+static vector<string> stack;
 
-private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
+static vector<int> factorial = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
-fun main() {
-	memScoped {
-		val windowClass = alloc<WNDCLASS>()
-		windowClass.lpfnWndProc = staticCFunction(::wndProc)
-		val className = "HummelCalculator"
-		windowClass.lpszClassName = className.wcstr.ptr
+static void registerButton(HWND window, int id, string text, int gridX, int gridY);
+static HWND registerField(HWND window);
+static void pushSymbolWrapper(HWND field, string symbol);
+static void pushOperation(HWND field, string operation);
+static void calculateWrapper(HWND field);
 
-		RegisterClassW(windowClass.ptr)
+static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
+	int buttonId = LOWORD(wParam);
+	MINMAXINFO* info = (MINMAXINFO*) lParam;
 
-		val screenWidth = GetSystemMetrics(SM_CXSCREEN)
-		val screenHeight = GetSystemMetrics(SM_CYSCREEN)
+	switch (msg) {
+		case WM_CREATE:
+			field = registerField(window);
 
-		val windowWidth = 260
-		val windowHeight = 453
+			registerButton(window, BUTTON_PI_ID, "π", 0, 0);
+			registerButton(window, BUTTON_E_ID, "e", 1, 0);
+			registerButton(window, BUTTON_C_ID, "C", 2, 0);
+			registerButton(window, BUTTON_FACTORIAL_ID, "x!", 3, 0);
+			registerButton(window, BUTTON_INVERSE_ID, "1/x", 0, 1);
+			registerButton(window, BUTTON_SQUARE_ID, "x^2", 1, 1);
+			registerButton(window, BUTTON_SQUARE_ROOT_ID, "√x", 2, 1);
+			registerButton(window, BUTTON_DIVIDE_ID, "/", 3, 1);
+			registerButton(window, BUTTON_7_ID, "7", 0, 2);
+			registerButton(window, BUTTON_8_ID, "8", 1, 2);
+			registerButton(window, BUTTON_9_ID, "9", 2, 2);
+			registerButton(window, BUTTON_MULTIPLE_ID, "*", 3, 2);
+			registerButton(window, BUTTON_4_ID, "4", 0, 3);
+			registerButton(window, BUTTON_5_ID, "5", 1, 3);
+			registerButton(window, BUTTON_6_ID, "6", 2, 3);
+			registerButton(window, BUTTON_MINUS_ID, "-", 3, 3);
+			registerButton(window, BUTTON_1_ID, "1", 0, 4);
+			registerButton(window, BUTTON_2_ID, "2", 1, 4);
+			registerButton(window, BUTTON_3_ID, "3", 2, 4);
+			registerButton(window, BUTTON_PLUS_ID, "+", 3, 4);
+			registerButton(window, BUTTON_UNARY_MINUS_ID, "-", 0, 5);
+			registerButton(window, BUTTON_0_ID, "0", 1, 5);
+			registerButton(window, BUTTON_DOT_ID, ".", 2, 5);
+			registerButton(window, BUTTON_EQUALS_ID, "=", 3, 5);
+			break;
+		case WM_COMMAND:
+			switch (buttonId) {
+				case BUTTON_0_ID: 
+					pushSymbolWrapper(field, "0");
+					break;
+				case BUTTON_1_ID: 
+					pushSymbolWrapper(field, "1");
+					break;
+				case BUTTON_2_ID: 
+					pushSymbolWrapper(field, "2");
+					break;
+				case BUTTON_3_ID: 
+					pushSymbolWrapper(field, "3");
+					break;
+				case BUTTON_4_ID: 
+					pushSymbolWrapper(field, "4");
+					break;
+				case BUTTON_5_ID: 
+					pushSymbolWrapper(field, "5");
+					break;
+				case BUTTON_6_ID: 
+					pushSymbolWrapper(field, "6");
+					break;
+				case BUTTON_7_ID:
+					pushSymbolWrapper(field, "7");
+					break;
+				case BUTTON_8_ID: 
+					pushSymbolWrapper(field, "8");
+					break;
+				case BUTTON_9_ID: 
+					pushSymbolWrapper(field, "9");
+					break;
+				case BUTTON_E_ID: 
+					pushSymbolWrapper(field, "2.72");
+					break;
+				case BUTTON_PI_ID: 
+					pushSymbolWrapper(field, "3.14");
+					break;
+				case BUTTON_DOT_ID: 
+					pushSymbolWrapper(field, ".");
+					break;
+				case BUTTON_UNARY_MINUS_ID: 
+					pushSymbolWrapper(field, "-");
+					break;
+				case BUTTON_C_ID:
+					stack.clear();
+					SetWindowText(field, "");
+					break;
+				case BUTTON_DIVIDE_ID: 
+					pushOperation(field, "/");
+					break;
+				case BUTTON_MULTIPLE_ID: 
+					pushOperation(field, "*");
+					break;
+				case BUTTON_MINUS_ID: 
+					pushOperation(field, "-");
+					break;
+				case BUTTON_PLUS_ID: 
+					pushOperation(field, "+");
+					break;
+				case BUTTON_FACTORIAL_ID: 
+					pushOperation(field, "!");
+					break;
+				case BUTTON_SQUARE_ID: 
+					pushOperation(field, "s");
+					break;
+				case BUTTON_INVERSE_ID: 
+					pushOperation(field, "i");
+					break;
+				case BUTTON_SQUARE_ROOT_ID: 
+					pushOperation(field, "r");
+					break;
+				case BUTTON_EQUALS_ID: 
+					calculateWrapper(field);
+					break;
+			}
+			break;
 
-		val windowX = max(0, (screenWidth - windowWidth) / 2)
-		val windowY = max(0, (screenHeight - windowHeight) / 2)
+		case WM_GETMINMAXINFO:
+			info->ptMinTrackSize.x = 260;
+			info->ptMinTrackSize.y = 453;
+			info->ptMaxTrackSize.x = 260;
+			info->ptMaxTrackSize.y = 453;
+			break;
 
-		val windowTitle = "WinAPI"
-		val window = CreateWindowExW(
-			WS_EX_CLIENTEDGE.toUInt(),
-			className,
-			windowTitle,
-			WS_OVERLAPPEDWINDOW.toUInt(),
+		case WM_CLOSE:
+		 	DestroyWindow(window);
+		 	break;
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			break;
+	}
+	return DefWindowProcW(window, msg, wParam, lParam);
+}
+
+int main() {
+		string className = "HummelCalculator";
+
+    	WNDCLASSEX wc;
+    	wc.cbSize = sizeof(WNDCLASSEX);
+    	wc.style = CS_HREDRAW | CS_VREDRAW;
+    	wc.lpfnWndProc = wndProc;
+    	wc.cbClsExtra = 0;
+    	wc.cbWndExtra = 0;
+    	wc.hInstance = NULL;
+    	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+   	 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    	wc.lpszMenuName = NULL;
+    	wc.lpszClassName = className.c_str();
+    	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+
+		RegisterClassEx(&wc);
+
+		int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+		int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+		int windowWidth = 260;
+		int windowHeight = 453;
+
+		int windowX = max(0, (screenWidth - windowWidth) / 2);
+		int windowY = max(0, (screenHeight - windowHeight) / 2);
+
+		string windowTitle = "WinAPI";
+		HWND window = CreateWindowEx(
+			WS_EX_CLIENTEDGE,
+			className.c_str(),
+			windowTitle.c_str(),
+			WS_OVERLAPPEDWINDOW,
 			windowX,
 			windowY,
 			windowWidth,
 			windowHeight,
-			null,
-			null,
-			null,
-			null
-		)
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		);
 
-		ShowWindow(window, SW_SHOW)
-		UpdateWindow(window)
+		ShowWindow(window, SW_SHOW);
+		UpdateWindow(window);
 
-		val msg = alloc<MSG>()
-		while (GetMessageW(msg.ptr, null, 0u, 0u) != 0) {
-			TranslateMessage(msg.ptr)
-			DispatchMessageW(msg.ptr)
+		MSG msg;
+		while (GetMessageW(&msg, NULL, 0u, 0u) != 0) {
+			TranslateMessage(&msg);
+			DispatchMessageW(&msg);
 		}
-	}
 }
 
-private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {
-	when (msg.toInt()) {
-		WM_CREATE -> {
-			stack = ArrayList()
-
-			field = registerField(window)
-
-			registerButton(window, BUTTON_PI_ID, "π", 0, 0)
-			registerButton(window, BUTTON_E_ID, "e", 1, 0)
-			registerButton(window, BUTTON_C_ID, "C", 2, 0)
-			registerButton(window, BUTTON_FACTORIAL_ID, "x!", 3, 0)
-			registerButton(window, BUTTON_INVERSE_ID, "1/x", 0, 1)
-			registerButton(window, BUTTON_SQUARE_ID, "x^2", 1, 1)
-			registerButton(window, BUTTON_SQUARE_ROOT_ID, "√x", 2, 1)
-			registerButton(window, BUTTON_DIVIDE_ID, "/", 3, 1)
-			registerButton(window, BUTTON_7_ID, "7", 0, 2)
-			registerButton(window, BUTTON_8_ID, "8", 1, 2)
-			registerButton(window, BUTTON_9_ID, "9", 2, 2)
-			registerButton(window, BUTTON_MULTIPLE_ID, "*", 3, 2)
-			registerButton(window, BUTTON_4_ID, "4", 0, 3)
-			registerButton(window, BUTTON_5_ID, "5", 1, 3)
-			registerButton(window, BUTTON_6_ID, "6", 2, 3)
-			registerButton(window, BUTTON_MINUS_ID, "-", 3, 3)
-			registerButton(window, BUTTON_1_ID, "1", 0, 4)
-			registerButton(window, BUTTON_2_ID, "2", 1, 4)
-			registerButton(window, BUTTON_3_ID, "3", 2, 4)
-			registerButton(window, BUTTON_PLUS_ID, "+", 3, 4)
-			registerButton(window, BUTTON_UNARY_MINUS_ID, "-", 0, 5)
-			registerButton(window, BUTTON_0_ID, "0", 1, 5)
-			registerButton(window, BUTTON_DOT_ID, ".", 2, 5)
-			registerButton(window, BUTTON_EQUALS_ID, "=", 3, 5)
-		}
-
-		WM_COMMAND -> {
-			val buttonId = wParam.loword()
-
-			when (buttonId) {
-				BUTTON_0_ID -> pushSymbolWrapper(field, "0")
-				BUTTON_1_ID -> pushSymbolWrapper(field, "1")
-				BUTTON_2_ID -> pushSymbolWrapper(field, "2")
-				BUTTON_3_ID -> pushSymbolWrapper(field, "3")
-				BUTTON_4_ID -> pushSymbolWrapper(field, "4")
-				BUTTON_5_ID -> pushSymbolWrapper(field, "5")
-				BUTTON_6_ID -> pushSymbolWrapper(field, "6")
-				BUTTON_7_ID -> pushSymbolWrapper(field, "7")
-				BUTTON_8_ID -> pushSymbolWrapper(field, "8")
-				BUTTON_9_ID -> pushSymbolWrapper(field, "9")
-
-				BUTTON_E_ID -> pushSymbolWrapper(field, "2.72")
-				BUTTON_PI_ID -> pushSymbolWrapper(field, "3.14")
-
-				BUTTON_DOT_ID -> pushSymbolWrapper(field, ".")
-				BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper(field, "-")
-
-				BUTTON_C_ID -> {
-					stack.clear()
-					SetWindowTextW(field, "")
-				}
-
-				BUTTON_DIVIDE_ID -> pushOperation(field, "/")
-				BUTTON_MULTIPLE_ID -> pushOperation(field, "*")
-				BUTTON_MINUS_ID -> pushOperation(field, "-")
-				BUTTON_PLUS_ID -> pushOperation(field, "+")
-
-				BUTTON_FACTORIAL_ID -> pushOperation(field, "!")
-				BUTTON_SQUARE_ID -> pushOperation(field, "s")
-				BUTTON_INVERSE_ID -> pushOperation(field, "i")
-				BUTTON_SQUARE_ROOT_ID -> pushOperation(field, "r")
-
-				BUTTON_EQUALS_ID -> calculateWrapper(field)
-			}
-		}
-
-		WM_GETMINMAXINFO -> {
-			val info = lParam.toCPointer<MINMAXINFO>()
-			info?.pointed?.ptMinTrackSize?.x = 260
-			info?.pointed?.ptMinTrackSize?.y = 453
-			info?.pointed?.ptMaxTrackSize?.x = 260
-			info?.pointed?.ptMaxTrackSize?.y = 453
-		}
-
-		WM_CLOSE -> DestroyWindow(window)
-		WM_DESTROY -> PostQuitMessage(0)
-	}
-	return DefWindowProcW(window, msg, wParam, lParam)
-}
-
-fun calculateWrapper(field: HWND) {
+static void calculate(HWND field);
+static void calculateWrapper(HWND field) {
 	try {
-		calculate(field)
-	} catch (e: Exception) {
-		stack.clear()
-		SetWindowTextW(field, "Error!")
+		calculate(field);
+	} catch (exception &e) {
+		stack.clear();
+		SetWindowText(field, "Error!");
 	}
 }
 
-fun calculate(field: HWND) {
-	memScoped {
-		val bufferSize = 1000
-		val buffer = allocArray<WCHARVar>(bufferSize)
-		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
+static void calculate(HWND field) {
+		int bufferSize = 1000;
+		char* buffer = new char[1000];
+		GetWindowText(field, buffer, bufferSize);
 
-		if (stack.size == 2) {
-			val operator = stack[1]
+		if (stack.size() == 2) {
+			string op = stack[1];
+			set<string> ops1 = {"+", "-", "*", "/"};
+			set<string> ops2 = {"!", "s", "i", "r"};
 
-			if (operator in setOf("+", "-", "*", "/")) {
-				stack.add(buffer.toKString())
+			if (ops1.count(op) > 0) {
+				string str(buffer);
+				stack.push_back(str);
 
-				val operand1 = stack[0].toDouble()
-				val operand2 = stack[2].toDouble()
+				double operand1 = stod(stack[0]);
+				double operand2 = stod(stack[2]);
 
-				val result = when (operator) {
-					"+" -> operand1 + operand2
-					"-" -> operand1 - operand2
-					"*" -> operand1 * operand2
-					"/" -> operand1 / operand2
-					else -> throw IllegalArgumentException("Invalid operator: $operator")
-				}
-
-				stack.clear()
-
-				SetWindowTextW(field, "$result")
-			} else if (operator in setOf("!", "s", "i", "r")) {
-				val operand = stack[0].toDouble()
-
-				val result = when (operator) {
-					"!" -> factorial[operand.toInt()]
-					"s" -> operand * operand
-					"i" -> 1.0 / operand
-					"r" -> sqrt(operand)
-					else -> throw IllegalArgumentException("Invalid operator: $operator")
-				}
-
-				stack.clear()
-
-				SetWindowTextW(field, "$result")
-			}
-		}
-	}
-}
-
-fun pushOperation(field: HWND, operation: String) {
-	memScoped {
-		val bufferSize = 1000
-		val buffer = allocArray<WCHARVar>(bufferSize)
-		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
-
-		if (stack.isEmpty()) {
-			stack.add(buffer.toKString())
-			stack.add(operation)
-			SetWindowTextW(field, "")
-		} else {
-			stack.clear()
-			SetWindowTextW(field, "Error!")
-		}
-	}
-}
-
-fun pushSymbolWrapper(field: HWND, symbol: String) {
-	memScoped {
-		val bufferSize = 1000
-		val buffer = allocArray<WCHARVar>(bufferSize)
-		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
-		val str = buffer.toKString()
-
-		when (symbol) {
-			"3.14", "2.72" -> {
-				if (!str.contains(".")) {
-					pushSymbol(field, symbol)
-				}
-			}
-
-			"." -> {
-				if (!str.contains(".") && str.isNotEmpty()) {
-					pushSymbol(field, symbol)
-				}
-			}
-
-			"-" -> {
-				if (str.isEmpty()) {
-					pushSymbol(field, symbol)
-				}
-			}
-
-			else -> {
-				if (stack.isEmpty()) {
-					pushSymbol(field, symbol)
+				double result;
+				if (op == "+") {
+					result = operand1 + operand2;
+				} else if (op == "-") {
+					result = operand1 - operand2;
+				} else if (op == "*") {
+					result = operand1 * operand2;
+				} else if (op == "/") {
+					result = operand1 / operand2;
 				} else {
-					val operator = stack[1]
+					 throw new exception();
+				}
 
-					if (operator !in setOf("!", "s", "i", "r")) {
-						pushSymbol(field, symbol)
-					}
+				stack.clear();
+
+				SetWindowText(field, to_string(result).c_str());
+			} else if (ops2.count(op) > 0) {
+				double operand = stod(stack[0]);
+
+				double result;
+				if (op == "!") {
+					result = factorial[(int) operand];
+				} else if (op == "s") {
+					result = operand * operand;
+				} else if (op == "i") {
+					result = 1.0 / operand;
+				} else if (op == "r") {
+					result = sqrt(operand);
+				} else {
+					 throw new exception();
+				}
+
+				stack.clear();
+
+				SetWindowText(field, to_string(result).c_str());
+			}
+		}
+}
+
+static void pushOperation(HWND field, string operation) {
+	int bufferSize = 1000;
+	char* buffer = new char[1000];
+	GetWindowText(field, buffer, bufferSize);
+
+	if (stack.size() == 0) {
+		string str(buffer);
+		stack.push_back(str);
+		stack.push_back(operation);
+		SetWindowText(field, "");
+	} else {
+		stack.clear();
+		SetWindowText(field, "Error!");
+	}
+}
+
+static void pushSymbol(HWND field, string number);
+static void pushSymbolWrapper(HWND field, string symbol) {
+		int bufferSize = 1000;
+		char* buffer = new char[1000];
+		GetWindowText(field, buffer, bufferSize);
+		string str(buffer);
+
+		if (symbol == "3.14" || symbol == "2.72") {
+			if (str.find(".") == string::npos) {
+				pushSymbol(field, symbol);
+			}
+		} else if (symbol == ".") {
+			if (str.find(".") == string::npos && str.size() != 0) {
+				pushSymbol(field, symbol);
+			}
+		} else if (symbol == "-") {
+ 			if (str.size() == 0) {
+				pushSymbol(field, symbol);
+			}
+		} else {
+			if (stack.size() == 0) {
+				pushSymbol(field, symbol);
+			} else {
+				string op = stack[1];
+				set<string> ops = {"!", "s", "i", "r"};
+
+				if (ops.count(op) <= 0) {
+					pushSymbol(field, symbol);
 				}
 			}
 		}
-	}
 }
 
 
-fun pushSymbol(field: HWND, number: String) {
-	memScoped {
-		val bufferSize = 1000
-		val buffer = allocArray<WCHARVar>(bufferSize)
-		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
-		SetWindowTextW(field, buffer.toKString().replace("Error!", "") + number)
-	}
+static void pushSymbol(HWND field, string number) {
+		int bufferSize = 1000;
+		char* buffer = new char[1000];
+		GetWindowText(field, buffer, bufferSize);
+		string str(buffer);
+		size_t found = str.find("Error!");
+    	if (found != string::npos) {
+        	str.replace(found, 6, "");
+    	}
+		SetWindowText(field, (str + number).c_str());
 }
 
-private fun registerField(window: HWND?): HWND {
-	return CreateWindowExW(
-		WS_EX_CLIENTEDGE.toUInt(),
+static HWND registerField(HWND window) {
+	return CreateWindowEx(
+		0,
 		"STATIC",
 		"",
-		(WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON).toUInt(),
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
 		0,
 		0,
 		238,
 		50,
 		window,
-		null,
-		null,
-		null
-	)!!
+		NULL,
+		NULL,
+		NULL
+	);
 }
 
-private fun registerButton(window: HWND?, id: Int, text: String, gridX: Int, gridY: Int) {
-	val buttonWidth = 60
-	val buttonHeight = 60
+static void registerButton(HWND window, int id, string text, int gridX, int gridY) {
+	int buttonWidth = 60;
+	int buttonHeight = 60;
 
-	CreateWindowExW(
-		WS_EX_CLIENTEDGE.toUInt(),
+	CreateWindowEx(
+		0,
 		"BUTTON",
-		text,
-		(WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON).toUInt(),
+		text.c_str(),
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
 		buttonWidth * gridX,
 		50 + buttonHeight * gridY,
 		buttonWidth,
 		buttonHeight,
 		window,
-		id.toLong().toCPointer(),
-		null,
-		null
-	)
+		(HMENU) id,
+		NULL,
+		NULL
+	);
 }
-
-private fun WPARAM.loword(): Int = (this and 0xFFFFu).toInt()
