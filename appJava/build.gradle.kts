@@ -44,4 +44,7 @@ tasks {
 		})
 		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	}
+	withType<JavaCompile>().configureEach {
+		options.encoding = "UTF-8"
+	}
 }
