@@ -164,7 +164,6 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 			info.pointed.ptMinTrackSize.y = 453
 			info.pointed.ptMaxTrackSize.x = 260
 			info.pointed.ptMaxTrackSize.y = 453
-			return 0
 		}
 
 		WM_CLOSE -> DestroyWindow(window)
