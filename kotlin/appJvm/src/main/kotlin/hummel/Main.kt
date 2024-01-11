@@ -1,5 +1,6 @@
 package hummel
 
+import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.platform.win32.WinDef.*
 import com.sun.jna.platform.win32.WinUser.*
@@ -194,7 +195,7 @@ fun calculate(field: HWND) {
 			val operator = it[1]
 
 			if (operator in setOf("+", "-", "*", "/")) {
-				it.add(String(buffer))
+				it.add(Native.toString(buffer))
 
 				val operand1 = it[0].toDouble()
 				val operand2 = it[2].toDouble()
@@ -243,7 +244,7 @@ fun pushOperation(field: HWND, operation: String) {
 
 	stack?.let {
 		if (it.size == 0) {
-			it.add(String(buffer))
+			it.add(Native.toString(buffer))
 			it.add(operation)
 			ExUser32.INSTANCE.SetWindowText(field, "")
 		} else {
@@ -257,7 +258,7 @@ fun pushSymbolWrapper(field: HWND, symbol: String) {
 	val bufferSize = 1000
 	val buffer = CharArray(bufferSize)
 	ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
-	val str = String(buffer)
+	val str = Native.toString(buffer)
 
 	if (symbol == "3.14" || symbol == "2.72") {
 		if (!str.contains(".")) {
@@ -291,7 +292,7 @@ fun pushSymbol(field: HWND, number: String) {
 	val bufferSize = 1000
 	val buffer = CharArray(bufferSize)
 	ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
-	ExUser32.INSTANCE.SetWindowText(field, String(buffer).replace("Error!", "") + number)
+	ExUser32.INSTANCE.SetWindowText(field, Native.toString(buffer).replace("Error!", "") + number)
 }
 
 private fun registerField(window: HWND?): HWND? {
