@@ -41,8 +41,10 @@ public class Main {
 	public static final int BUTTON_SQUARE_ROOT_ID = 22;
 	public static final int BUTTON_UNARY_MINUS_ID = 23;
 
-	public static List<String> data;
+	public static final int DEFAULT_CAPACITY = 100;
+
 	public static HWND field;
+	public static List<String> data;
 
 	private static final int[] FACTORIAL = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
@@ -82,7 +84,6 @@ public class Main {
 			switch (msg) {
 				case WM_CREATE -> {
 					data = new ArrayList<>();
-
 					field = registerField(window);
 
 					registerButton(window, BUTTON_PI_ID, "π", 0, 0);
@@ -177,9 +178,8 @@ public class Main {
 		}
 
 		private static void calculate(HWND field) {
-			var bufferSize = 1000;
-			var buffer = new char[bufferSize];
-			ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize);
+			var buffer = new char[DEFAULT_CAPACITY];
+			ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY);
 
 			if (data.size() == 2) {
 				var operator = data.get(1);
@@ -220,9 +220,8 @@ public class Main {
 		}
 
 		private static void pushOperation(String operation) {
-			var bufferSize = 1000;
-			var buffer = new char[bufferSize];
-			ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize);
+			var buffer = new char[DEFAULT_CAPACITY];
+			ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY);
 
 			if (data.isEmpty()) {
 				data.add(Native.toString(buffer));
@@ -235,9 +234,8 @@ public class Main {
 		}
 
 		private static void pushSymbolWrapper(String symbol) {
-			var bufferSize = 1000;
-			var buffer = new char[bufferSize];
-			ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize);
+			var buffer = new char[DEFAULT_CAPACITY];
+			ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY);
 			var str = Native.toString(buffer);
 
 			switch (symbol) {
@@ -270,11 +268,15 @@ public class Main {
 			}
 		}
 
-		private static void pushSymbol(String number) {
-			var bufferSize = 1000;
-			var buffer = new char[bufferSize];
-			ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize);
-			ExUser32.INSTANCE.SetWindowText(field, Native.toString(buffer).replace("Error!", "") + number);
+		private static void pushSymbol(String symbol) {
+			var buffer = new char[DEFAULT_CAPACITY];
+			ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY);
+			var str = Native.toString(buffer);
+			if ("Error!".equals(str)) {
+				ExUser32.INSTANCE.SetWindowText(field, symbol);
+			} else {
+				ExUser32.INSTANCE.SetWindowText(field, str + symbol);
+			}
 		}
 
 		private static HWND registerField(HWND window) {

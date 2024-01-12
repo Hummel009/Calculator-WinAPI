@@ -30,6 +30,8 @@ const val BUTTON_SQUARE_ID: Int = 21
 const val BUTTON_SQUARE_ROOT_ID: Int = 22
 const val BUTTON_UNARY_MINUS_ID: Int = 23
 
+const val DEFAULT_CAPACITY: Int = 100
+
 lateinit var field: HWND
 lateinit var data: MutableList<String>
 
@@ -84,7 +86,6 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 	when (msg.toInt()) {
 		WM_CREATE -> {
 			data = ArrayList()
-
 			field = registerField(window)
 
 			registerButton(window, BUTTON_PI_ID, "π", 0, 0)
@@ -178,9 +179,8 @@ private fun calculateWrapper() {
 
 private fun calculate(field: HWND) {
 	memScoped {
-		val bufferSize = 1000
-		val buffer = allocArray<WCHARVar>(bufferSize)
-		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
+		val buffer = allocArray<WCHARVar>(DEFAULT_CAPACITY)
+		GetWindowTextW(field, buffer.reinterpret(), DEFAULT_CAPACITY)
 
 		if (data.size == 2) {
 			val operator = data[1]
@@ -223,9 +223,8 @@ private fun calculate(field: HWND) {
 
 private fun pushOperation(operation: String) {
 	memScoped {
-		val bufferSize = 1000
-		val buffer = allocArray<WCHARVar>(bufferSize)
-		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
+		val buffer = allocArray<WCHARVar>(DEFAULT_CAPACITY)
+		GetWindowTextW(field, buffer.reinterpret(), DEFAULT_CAPACITY)
 
 		if (data.isEmpty()) {
 			data.add(buffer.toKString())
@@ -240,9 +239,8 @@ private fun pushOperation(operation: String) {
 
 private fun pushSymbolWrapper(symbol: String) {
 	memScoped {
-		val bufferSize = 1000
-		val buffer = allocArray<WCHARVar>(bufferSize)
-		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
+		val buffer = allocArray<WCHARVar>(DEFAULT_CAPACITY)
+		GetWindowTextW(field, buffer.reinterpret(), DEFAULT_CAPACITY)
 		val str = buffer.toKString()
 
 		when (symbol) {
@@ -280,12 +278,16 @@ private fun pushSymbolWrapper(symbol: String) {
 }
 
 
-private fun pushSymbol(number: String) {
+private fun pushSymbol(symbol: String) {
 	memScoped {
-		val bufferSize = 1000
-		val buffer = allocArray<WCHARVar>(bufferSize)
-		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
-		SetWindowTextW(field, buffer.toKString().replace("Error!", "") + number)
+		val buffer = allocArray<WCHARVar>(DEFAULT_CAPACITY)
+		GetWindowTextW(field, buffer.reinterpret(), DEFAULT_CAPACITY)
+		val str = buffer.toKString()
+		if (str == "Error!") {
+			SetWindowTextW(field, symbol)
+		} else {
+			SetWindowTextW(field, str + symbol)
+		}
 	}
 }
 

@@ -35,8 +35,10 @@ const val BUTTON_SQUARE_ID: Int = 21
 const val BUTTON_SQUARE_ROOT_ID: Int = 22
 const val BUTTON_UNARY_MINUS_ID: Int = 23
 
-lateinit var data: MutableList<String>
+const val DEFAULT_CAPACITY: Int = 100
+
 lateinit var field: HWND
+lateinit var data: MutableList<String>
 
 private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
 
@@ -88,7 +90,6 @@ class WndProc : WindowProc {
 		when (msg) {
 			WM_CREATE -> {
 				data = ArrayList()
-
 				field = registerField(window)
 
 				registerButton(window, BUTTON_PI_ID, "π", 0, 0)
@@ -183,9 +184,8 @@ class WndProc : WindowProc {
 	}
 
 	private fun calculate(field: HWND?) {
-		val bufferSize = 1000
-		val buffer = CharArray(bufferSize)
-		ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
+		val buffer = CharArray(DEFAULT_CAPACITY)
+		ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY)
 
 		if (data.size == 2) {
 			val operator = data[1]
@@ -226,9 +226,8 @@ class WndProc : WindowProc {
 	}
 
 	private fun pushOperation(operation: String) {
-		val bufferSize = 1000
-		val buffer = CharArray(bufferSize)
-		ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
+		val buffer = CharArray(DEFAULT_CAPACITY)
+		ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY)
 
 		if (data.isEmpty()) {
 			data.add(Native.toString(buffer))
@@ -241,9 +240,8 @@ class WndProc : WindowProc {
 	}
 
 	private fun pushSymbolWrapper(symbol: String) {
-		val bufferSize = 1000
-		val buffer = CharArray(bufferSize)
-		ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
+		val buffer = CharArray(DEFAULT_CAPACITY)
+		ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY)
 		val str = Native.toString(buffer)
 
 		when (symbol) {
@@ -279,11 +277,15 @@ class WndProc : WindowProc {
 		}
 	}
 
-	private fun pushSymbol(number: String) {
-		val bufferSize = 1000
-		val buffer = CharArray(bufferSize)
-		ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
-		ExUser32.INSTANCE.SetWindowText(field, Native.toString(buffer).replace("Error!", "") + number)
+	private fun pushSymbol(symbol: String) {
+		val buffer = CharArray(DEFAULT_CAPACITY)
+		ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY)
+		val str = Native.toString(buffer)
+		if (str == "Error!") {
+			ExUser32.INSTANCE.SetWindowText(field, symbol)
+		} else {
+			ExUser32.INSTANCE.SetWindowText(field, str + symbol)
+		}
 	}
 
 	private fun registerField(window: HWND): HWND {
