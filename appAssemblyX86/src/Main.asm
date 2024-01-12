@@ -64,10 +64,10 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   
 .wmgetminmaxinfo:
   mov eax, [lParam] ; ptr to minmaxinfo struct   
-  mov dword [eax + MINMAXINFO.ptMinTrackSize + POINT.x], 260
-  mov dword [eax + MINMAXINFO.ptMinTrackSize + POINT.y], 453 
-  mov dword [eax + MINMAXINFO.ptMaxTrackSize + POINT.x], 260
-  mov dword [eax + MINMAXINFO.ptMaxTrackSize + POINT.y], 453
+  mov  [eax + MINMAXINFO.ptMinTrackSize + POINT.x], 260
+  mov  [eax + MINMAXINFO.ptMinTrackSize + POINT.y], 453 
+  mov  [eax + MINMAXINFO.ptMaxTrackSize + POINT.x], 260
+  mov  [eax + MINMAXINFO.ptMaxTrackSize + POINT.y], 453
  
   jmp .finish
 
