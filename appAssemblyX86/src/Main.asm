@@ -87,99 +87,99 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   mov ax, word[wParam]
   mov [buttonId], ax
   
-  cmp [buttonId], 0
+  cmp [buttonId], 0 ; pi
   jne @F
   ; TODO
 @@:
-  cmp [buttonId], 1
+  cmp [buttonId], 1 ; euler
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 2
+  cmp [buttonId], 2 ; clear
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 3
+  cmp [buttonId], 3 ; factorial
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 4
+  cmp [buttonId], 4 ; inverse
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 5
+  cmp [buttonId], 5 ; square
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 6
+  cmp [buttonId], 6 ; square root
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 7
+  cmp [buttonId], 7 ; divide
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 8
+  cmp [buttonId], 8 ; num 7
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 9
+  cmp [buttonId], 9 ; num 8
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 10
+  cmp [buttonId], 10 ; num 9
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 11
+  cmp [buttonId], 11 ; multiple
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 12
+  cmp [buttonId], 12 ; num 4
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 13
+  cmp [buttonId], 13 ; num 5
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 14
+  cmp [buttonId], 14 ; num 6
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 15
+  cmp [buttonId], 15 ; minus
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 16
+  cmp [buttonId], 16 ; num 1
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 17
+  cmp [buttonId], 17 ; num 2
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 18
+  cmp [buttonId], 18 ; num 3
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 19
+  cmp [buttonId], 19 ; plus
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 20
+  cmp [buttonId], 20 ; unary minus
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 21
+  cmp [buttonId], 21 ; num 0
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 22
+  cmp [buttonId], 22 ; dot
   jne @F 
   ; TODO
 @@:
-  cmp [buttonId], 23
+  cmp [buttonId], 23 ; equals
   jne @F 
   ; TODO
 @@:   
