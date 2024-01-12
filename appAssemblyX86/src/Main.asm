@@ -233,7 +233,7 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
 endp
 
 proc PushSymbolWrapper, symbol   
-  ;invoke GetWindowText, [field], buffer, 255    
+  invoke GetWindowText, [field], buffer, 255    
   invoke SetWindowText, [field], [symbol], 255 
   ret          
 endp
@@ -303,7 +303,7 @@ section '.data' data readable writeable
   windowX          dd 0
   windowY          dd 0
                     
-  buffer   db ?
+  buffer   db 255 dup(?)
   field    dd 0
   buttonId dw 0
 
