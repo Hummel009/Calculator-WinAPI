@@ -129,7 +129,7 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 			break;
 		case BUTTON_C_ID:
 			resetData();
-			SetWindowText(field, "");
+			SetWindowTextA(field, "");
 			break;
 		case BUTTON_DIVIDE_ID:
 			pushOperation("/");
@@ -219,7 +219,7 @@ int main()
 static void calculateWrapper()
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
-	GetWindowText(field, buffer, DEFAULT_CAPACITY);
+	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 
 	if (data_presence[0] == TRUE && data_presence[1] == TRUE)
 	{
@@ -258,7 +258,7 @@ static void calculateWrapper()
 
 			char *str = (char *)malloc(DEFAULT_CAPACITY);
 			sprintf(str, "%f", result);
-			SetWindowText(field, str);
+			SetWindowTextA(field, str);
 			free(str);
 		}
 		else if (strcmp(op, "!") == 0 || strcmp(op, "s") == 0 || strcmp(op, "i") == 0 || strcmp(op, "r") == 0)
@@ -289,7 +289,7 @@ static void calculateWrapper()
 
 			char *str = (char *)malloc(DEFAULT_CAPACITY);
 			sprintf(str, "%f", result);
-			SetWindowText(field, str);
+			SetWindowTextA(field, str);
 			free(str);
 		}
 	}
@@ -298,24 +298,24 @@ static void calculateWrapper()
 
 exception:
 	resetData();
-	SetWindowText(field, "Error!");
+	SetWindowTextA(field, "Error!");
 }
 
 static void pushOperation(char *operation)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
-	GetWindowText(field, buffer, DEFAULT_CAPACITY);
+	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 	if (data_presence[0] == FALSE)
 	{
 		push(buffer);
 		free(buffer);
 		push(operation);
-		SetWindowText(field, "");
+		SetWindowTextA(field, "");
 	}
 	else
 	{
 		resetData();
-		SetWindowText(field, "Error!");
+		SetWindowTextA(field, "Error!");
 	}
 }
 
@@ -323,7 +323,7 @@ static void pushSymbol(char *symbol);
 static void pushSymbolWrapper(char *symbol)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
-	GetWindowText(field, buffer, DEFAULT_CAPACITY);
+	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 	if (strcmp(symbol, "3.14") == 0 || strcmp(symbol, "2.72") == 0)
 	{
 		if (strchr(buffer, '.') == NULL)
@@ -367,22 +367,22 @@ static void pushSymbolWrapper(char *symbol)
 static void pushSymbol(char *symbol)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
-	GetWindowText(field, buffer, DEFAULT_CAPACITY);
+	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 	if (strcmp(buffer, "Error!") == 0)
 	{
-		SetWindowText(field, symbol);
+		SetWindowTextA(field, symbol);
 	}
 	else
 	{
 		strcat(buffer, symbol);
-		SetWindowText(field, buffer);
+		SetWindowTextA(field, buffer);
 	}
 	free(buffer);
 }
 
 static HWND registerField(HWND window)
 {
-	return CreateWindowEx(
+	return CreateWindowExA(
 		0,
 		"STATIC",
 		"",
