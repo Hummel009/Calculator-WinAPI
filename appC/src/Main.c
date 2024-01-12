@@ -447,6 +447,7 @@ static void push(char *str)
 		strcpy(data[1], str);
 		data_presence[1] = TRUE;
 		return;
+	}
 	else if (data_presence[2] == FALSE)
 	{
 		strcpy(data[2], str);
