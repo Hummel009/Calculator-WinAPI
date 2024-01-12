@@ -11,7 +11,7 @@ INCLUDE    := -Iinclude
 LIBRARIES   :=
 EXECUTABLE  := main
 
-SRCS := $(wildcard $(SRC)/*.cpp)
+SRCS := $(wildcard $(SRC)/*.c)
 OBJS := $(SRCS:$(SRC)/%.cpp=$(BUILD)/%.o)
 
 all: $(BIN)/$(EXECUTABLE)
