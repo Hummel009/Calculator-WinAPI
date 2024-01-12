@@ -9,6 +9,7 @@ import kotlin.math.sqrt
 
 const val WM_COMMAND: Int = 0x0111
 const val WM_GETMINMAXINFO: Int = 0x0024
+const val COLOR_WINDOW: Int = 0x5
 
 const val BUTTON_0_ID: Int = 0
 const val BUTTON_1_ID: Int = 1
@@ -43,9 +44,19 @@ lateinit var data: MutableList<String>
 private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
 
 fun main() {
-	val windowClass = WNDCLASSEX()
-	windowClass.lpfnWndProc = WndProc()
 	val className = "HummelCalculator"
+	val windowTitle = "WinAPI"
+
+	val windowClass = WNDCLASSEX()
+	windowClass.style = 0
+	windowClass.lpfnWndProc = WndProc()
+	windowClass.cbClsExtra = 0
+	windowClass.cbWndExtra = 0
+	windowClass.hInstance = null
+	windowClass.hIcon = null
+	windowClass.hCursor = null
+	windowClass.hbrBackground = HBRUSH(Pointer(COLOR_WINDOW.toLong()))
+	windowClass.lpszMenuName = null
 	windowClass.lpszClassName = className
 
 	ExUser32.INSTANCE.RegisterClassEx(windowClass)
@@ -59,12 +70,11 @@ fun main() {
 	val windowX = max(0.0, ((screenWidth - windowWidth) / 2).toDouble()).toInt()
 	val windowY = max(0.0, ((screenHeight - windowHeight) / 2).toDouble()).toInt()
 
-	val windowTitle = "WinAPI"
-	val window = ExUser32.INSTANCE.CreateWindowEx(
+	ExUser32.INSTANCE.CreateWindowEx(
 		0,
 		className,
 		windowTitle,
-		WS_OVERLAPPEDWINDOW,
+		WS_VISIBLE or WS_DLGFRAME or WS_SYSMENU,
 		windowX,
 		windowY,
 		windowWidth,
@@ -74,9 +84,6 @@ fun main() {
 		null,
 		null
 	)
-
-	ExUser32.INSTANCE.ShowWindow(window, SW_SHOW)
-	ExUser32.INSTANCE.UpdateWindow(window)
 
 	val msg = MSG()
 	while (ExUser32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {

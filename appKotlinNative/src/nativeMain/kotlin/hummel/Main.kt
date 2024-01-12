@@ -39,9 +39,19 @@ private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 4032
 
 fun main() {
 	memScoped {
-		val windowClass = alloc<WNDCLASS>()
-		windowClass.lpfnWndProc = staticCFunction(::wndProc)
 		val className = "HummelCalculator"
+		val windowTitle = "WinAPI"
+
+		val windowClass = alloc<WNDCLASS>()
+		windowClass.style = 0u
+		windowClass.lpfnWndProc = staticCFunction(::wndProc)
+		windowClass.cbClsExtra = 0
+		windowClass.cbWndExtra = 0
+		windowClass.hInstance = null
+		windowClass.hIcon = null
+		windowClass.hCursor = null
+		windowClass.hbrBackground = (COLOR_WINDOW + 1).toLong().toCPointer()
+		windowClass.lpszMenuName = null
 		windowClass.lpszClassName = className.wcstr.ptr
 
 		RegisterClassW(windowClass.ptr)
@@ -55,12 +65,11 @@ fun main() {
 		val windowX = max(0, (screenWidth - windowWidth) / 2)
 		val windowY = max(0, (screenHeight - windowHeight) / 2)
 
-		val windowTitle = "WinAPI"
-		val window = CreateWindowExW(
-			WS_EX_CLIENTEDGE.toUInt(),
+		CreateWindowExW(
+			0u,
 			className,
 			windowTitle,
-			WS_OVERLAPPEDWINDOW.toUInt(),
+			(WS_VISIBLE or WS_DLGFRAME or WS_SYSMENU).toUInt(),
 			windowX,
 			windowY,
 			windowWidth,
@@ -70,9 +79,6 @@ fun main() {
 			null,
 			null
 		)
-
-		ShowWindow(window, SW_SHOW)
-		UpdateWindow(window)
 
 		val msg = alloc<MSG>()
 		while (GetMessageW(msg.ptr, null, 0u, 0u) != 0) {

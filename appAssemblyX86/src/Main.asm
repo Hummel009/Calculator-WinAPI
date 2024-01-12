@@ -58,6 +58,7 @@ section '.data' data readable writeable
 
   className TCHAR 'HummelCalculator', 0
   windowTitle TCHAR 'WinAPI', 0
+  
 	screenWidth dd 0
 	screenHeight dd 0
 	windowWidth dd 260

@@ -15,6 +15,7 @@ import static com.sun.jna.platform.win32.WinUser.*;
 public class Main {
 	public static final int WM_COMMAND = 0x0111;
 	public static final int WM_GETMINMAXINFO = 0x0024;
+	public static final int COLOR_WINDOW = 0x5;
 
 	public static final int BUTTON_0_ID = 0;
 	public static final int BUTTON_1_ID = 1;
@@ -49,9 +50,19 @@ public class Main {
 	private static final int[] FACTORIAL = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
 	public static void main(String[] args) {
-		var windowClass = new WNDCLASSEX();
-		windowClass.lpfnWndProc = new WndProc();
 		var className = "HummelCalculator";
+		var windowTitle = "WinAPI";
+
+		var windowClass = new WNDCLASSEX();
+		windowClass.style = 0;
+		windowClass.lpfnWndProc = new WndProc();
+		windowClass.cbClsExtra = 0;
+		windowClass.cbWndExtra = 0;
+		windowClass.hInstance = null;
+		windowClass.hIcon = null;
+		windowClass.hCursor = null;
+		windowClass.hbrBackground = new HBRUSH(new Pointer(COLOR_WINDOW));
+		windowClass.lpszMenuName = null;
 		windowClass.lpszClassName = className;
 
 		ExUser32.INSTANCE.RegisterClassEx(windowClass);
@@ -65,11 +76,7 @@ public class Main {
 		var windowX = Math.max(0, (screenWidth - windowWidth) / 2);
 		var windowY = Math.max(0, (screenHeight - windowHeight) / 2);
 
-		var windowTitle = "WinAPI";
-		var window = ExUser32.INSTANCE.CreateWindowEx(0, className, windowTitle, WS_OVERLAPPEDWINDOW, windowX, windowY, windowWidth, windowHeight, null, null, null, null);
-
-		ExUser32.INSTANCE.ShowWindow(window, SW_SHOW);
-		ExUser32.INSTANCE.UpdateWindow(window);
+		ExUser32.INSTANCE.CreateWindowEx(0, className, windowTitle, WS_VISIBLE | WS_DLGFRAME | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, null, null, null, null);
 
 		var msg = new MSG();
 		while (ExUser32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {
