@@ -100,7 +100,8 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   jmp .finish
 @@:
   cmp [buttonId], 2 ; clear
-  jne @F 
+  jne @F   
+  invoke SetWindowText, [field], empty, 255 
   ; TODO 
   jmp .finish
 @@:
@@ -205,8 +206,8 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   jmp .finish
 @@:
   cmp [buttonId], 23 ; equals
-  jne @F 
-  ; TODO 
+  jne @F
+  stdcall CalculateWrapper
   jmp .finish
 @@:   
   jmp .finish
@@ -232,14 +233,21 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   ret
 endp
 
-proc PushSymbolWrapper, symbol   
-  invoke GetWindowText, [field], buffer, 255    
-  invoke SetWindowText, [field], [symbol], 255 
+proc CalculateWrapper
+  ; TODO
+  ret
+endp
+
+proc PushSymbolWrapper, symbol: dword
+  invoke GetWindowText, [field], buffer, 255
+  invoke lstrcat, buffer, [symbol]
+  invoke SetWindowText, [field], buffer, 255 
   ret          
 endp
 
-proc PushOperation, operation   
-  ; TODO
+proc PushOperation, operation
+  ; TODO  
+  invoke SetWindowText, [field], empty, 255  
   ret
 endp
 
@@ -303,9 +311,15 @@ section '.data' data readable writeable
   windowX          dd 0
   windowY          dd 0
                     
-  buffer   db 255 dup(?)
+  buffer   TCHAR 255 dup(?) 
+  empty    TCHAR 255 dup(?)
   field    dd 0
   buttonId dw 0
+  len      dd 0
+  
+  operand1 TCHAR 255 dup(?)   
+  operand2 TCHAR 255 dup(?)
+  operator TCHAR 255 dup(?)
 
   wc  WNDCLASS 0, WindowProc, 0, 0, NULL, NULL, NULL, COLOR_WINDOW + 1, NULL, className
   msg MSG
