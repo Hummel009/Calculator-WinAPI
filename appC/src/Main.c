@@ -34,8 +34,8 @@
 #define BUTTON_UNARY_MINUS_ID 23
 
 static HWND field;
-static char *stack_data[3];
-static boolean stack_presence[3];
+static char *stack_data[3] = {"", "", ""};
+static boolean stack_presence[3] = {FALSE, FALSE, FALSE};
 
 static int factorial[] = {
 	1,
@@ -94,6 +94,7 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 		registerButton(window, BUTTON_EQUALS_ID, "=", 3, 5);
 		break;
 	case WM_COMMAND:
+		printf("%d", buttonId);
 		switch (buttonId)
 		{
 		case BUTTON_0_ID:
@@ -270,97 +271,118 @@ static void push(char *str)
 
 static void calculateWrapper()
 {
-	int length = GetWindowTextLength(field);
-	if (length > 0)
+	int bufferSize = 1000;
+	char *buffer = (char *)malloc(bufferSize);
+	GetWindowText(field, buffer, bufferSize);
+	if (stack_presence[0] == TRUE && stack_presence[1] == TRUE)
 	{
-		char *buffer = (char *)malloc((length + 1) * sizeof(char));
-		GetWindowText(field, buffer, length + 1);
-		if (stack_presence[0] == TRUE && stack_presence[1] == TRUE)
+		char *op = stack_data[1];
+
+		if (strcmp(op, "+") == 0 || strcmp(op, "-") == 0 || strcmp(op, "*") == 0 || strcmp(op, "/") == 0)
 		{
-			char *op = stack_data[1];
+			push(buffer);
+			free(buffer);
 
-			if (strcmp(op, "+") == 0 || strcmp(op, "-") == 0 || strcmp(op, "*") == 0 || strcmp(op, "/") == 0)
+			double operand1 = strtod(stack_data[0], NULL);
+			double operand2 = strtod(stack_data[2], NULL);
+
+			double result;
+			if (strcmp(op, "+") == 0)
 			{
-				push(buffer);
-				free(buffer);
-
-				double operand1 = strtod(stack_data[0], NULL);
-				double operand2 = strtod(stack_data[2], NULL);
-
-				double result;
-				if (strcmp(op, "+") == 0)
-				{
-					result = operand1 + operand2;
-				}
-				else if (strcmp(op, "-") == 0)
-				{
-					result = operand1 - operand2;
-				}
-				else if (strcmp(op, "*") == 0)
-				{
-					result = operand1 * operand2;
-				}
-				else if (strcmp(op, "/") == 0)
-				{
-					result = operand1 / operand2;
-				}
-				else
-				{
-					goto exception;
-				}
-
-				stack_data[0] = "";
-				stack_data[1] = "";
-				stack_data[2] = "";
-				stack_presence[0] = FALSE;
-				stack_presence[1] = FALSE;
-				stack_presence[2] = FALSE;
-				char *str;
-				sprintf(str, "%f", result);
-
-				SetWindowText(field, str);
+				result = operand1 + operand2;
 			}
-			else if (strcmp(op, "!") == 0 || strcmp(op, "s") == 0 || strcmp(op, "i") == 0 || strcmp(op, "r") == 0)
+			else if (strcmp(op, "-") == 0)
 			{
-				double operand = strtod(stack_data[0], NULL);
-
-				double result;
-				if (strcmp(op, "!") == 0)
-				{
-					result = factorial[(int)operand];
-				}
-				else if (strcmp(op, "s") == 0)
-				{
-					result = operand * operand;
-				}
-				else if (strcmp(op, "i") == 0)
-				{
-					result = 1.0 / operand;
-				}
-				else if (strcmp(op, "r") == 0)
-				{
-					result = sqrt(operand);
-				}
-				else
-				{
-					goto exception;
-				}
-
-				stack_data[0] = "";
-				stack_data[1] = "";
-				stack_data[2] = "";
-				stack_presence[0] = FALSE;
-				stack_presence[1] = FALSE;
-				stack_presence[2] = FALSE;
-
-				char *str;
-				sprintf(str, "%f", result);
-				SetWindowText(field, str);
+				result = operand1 - operand2;
 			}
+			else if (strcmp(op, "*") == 0)
+			{
+				result = operand1 * operand2;
+			}
+			else if (strcmp(op, "/") == 0)
+			{
+				result = operand1 / operand2;
+			}
+			else
+			{
+				goto exception;
+			}
+
+			stack_data[0] = "";
+			stack_data[1] = "";
+			stack_data[2] = "";
+			stack_presence[0] = FALSE;
+			stack_presence[1] = FALSE;
+			stack_presence[2] = FALSE;
+			char *str;
+			sprintf(str, "%f", result);
+
+			SetWindowText(field, str);
 		}
-		return;
+		else if (strcmp(op, "!") == 0 || strcmp(op, "s") == 0 || strcmp(op, "i") == 0 || strcmp(op, "r") == 0)
+		{
+			double operand = strtod(stack_data[0], NULL);
 
-	exception:
+			double result;
+			if (strcmp(op, "!") == 0)
+			{
+				result = factorial[(int)operand];
+			}
+			else if (strcmp(op, "s") == 0)
+			{
+				result = operand * operand;
+			}
+			else if (strcmp(op, "i") == 0)
+			{
+				result = 1.0 / operand;
+			}
+			else if (strcmp(op, "r") == 0)
+			{
+				result = sqrt(operand);
+			}
+			else
+			{
+				goto exception;
+			}
+
+			stack_data[0] = "";
+			stack_data[1] = "";
+			stack_data[2] = "";
+			stack_presence[0] = FALSE;
+			stack_presence[1] = FALSE;
+			stack_presence[2] = FALSE;
+
+			char *str;
+			sprintf(str, "%f", result);
+			SetWindowText(field, str);
+		}
+	}
+	return;
+
+exception:
+	stack_data[0] = "";
+	stack_data[1] = "";
+	stack_data[2] = "";
+	stack_presence[0] = FALSE;
+	stack_presence[1] = FALSE;
+	stack_presence[2] = FALSE;
+	SetWindowText(field, "Error!");
+}
+
+static void pushOperation(char *operation)
+{
+	int bufferSize = 1000;
+	char *buffer = (char *)malloc(bufferSize);
+	GetWindowText(field, buffer, bufferSize);
+	if (stack_presence[0] == FALSE)
+	{
+		push(buffer);
+		free(buffer);
+		push(operation);
+		SetWindowText(field, "");
+	}
+	else
+	{
 		stack_data[0] = "";
 		stack_data[1] = "";
 		stack_data[2] = "";
@@ -371,101 +393,67 @@ static void calculateWrapper()
 	}
 }
 
-static void pushOperation(char *operation)
-{
-	int length = GetWindowTextLength(field);
-	if (length > 0)
-	{
-		char *buffer = (char *)malloc((length + 1) * sizeof(char));
-		GetWindowText(field, buffer, length + 1);
-		if (stack_presence[0] == FALSE)
-		{
-			push(buffer);
-			free(buffer);
-			push(operation);
-			SetWindowText(field, "");
-		}
-		else
-		{
-			stack_data[0] = "";
-			stack_data[1] = "";
-			stack_data[2] = "";
-			stack_presence[0] = FALSE;
-			stack_presence[1] = FALSE;
-			stack_presence[2] = FALSE;
-			SetWindowText(field, "Error!");
-		}
-	}
-}
-
 static void pushSymbol(char *number);
 static void pushSymbolWrapper(char *symbol)
 {
-	int length = GetWindowTextLength(field);
-	if (length > 0)
+	int bufferSize = 1000;
+	char *buffer = (char *)malloc(bufferSize);
+	GetWindowText(field, buffer, bufferSize);
+	if (strcmp(symbol, "3.14") == 0 || strcmp(symbol, "2.72") == 0)
 	{
-		char *buffer = (char *)malloc((length + 1) * sizeof(char));
-		GetWindowText(field, buffer, length + 1);
-		if (strcmp(symbol, "3.14") == 0 || strcmp(symbol, "2.72") == 0)
+		if (strchr(buffer, '.') == NULL)
 		{
-			if (strchr(buffer, '.') == NULL)
-			{
-				pushSymbol(symbol);
-			}
+			pushSymbol(symbol);
 		}
-		else if (strcmp(symbol, ".") == 0)
+	}
+	else if (strcmp(symbol, ".") == 0)
+	{
+		if (strchr(buffer, '.') == NULL && strlen(buffer) != 0)
 		{
-			if (strchr(buffer, '.') == NULL && strlen(buffer) != 0)
-			{
-				pushSymbol(symbol);
-			}
+			pushSymbol(symbol);
 		}
-		else if (strcmp(symbol, "-") == 0)
+	}
+	else if (strcmp(symbol, "-") == 0)
+	{
+		if (strlen(buffer) == 0)
 		{
-			if (strlen(buffer) == 0)
-			{
-				pushSymbol(symbol);
-			}
+			pushSymbol(symbol);
+		}
+	}
+	else
+	{
+		if (strlen(buffer) == 0)
+		{
+			pushSymbol(symbol);
 		}
 		else
 		{
-			if (strlen(buffer) == 0)
+			char *op = stack_data[1];
+
+			if (strcmp(op, "!") != 0 && strcmp(op, "s") != 0 && strcmp(op, "i") != 0 && strcmp(op, "r") != 0)
 			{
 				pushSymbol(symbol);
 			}
-			else
-			{
-				char *op = stack_data[1];
-
-				if (strcmp(op, "!") != 0 && strcmp(op, "s") != 0 && strcmp(op, "i") != 0 && strcmp(op, "r") != 0)
-				{
-					pushSymbol(symbol);
-				}
-			}
 		}
-		free(buffer);
 	}
+	free(buffer);
 }
 
 static void pushSymbol(char *number)
 {
-	int length = GetWindowTextLength(field);
-	if (length > 0)
+	int bufferSize = 1000;
+	char *buffer = (char *)malloc(bufferSize);
+	GetWindowText(field, buffer, bufferSize);
+	if (strcmp(buffer, "Error!") == 0)
 	{
-		char *buffer = (char *)malloc((length + 1) * sizeof(char));
-
-		GetWindowText(field, buffer, length + 1);
-		if (strcmp(buffer, "Error!") == 0)
-		{
-			SetWindowText(field, number);
-		}
-		else
-		{
-			strcat(buffer, number);
-			SetWindowText(field, buffer);
-		}
-		free(buffer);
+		SetWindowText(field, number);
 	}
+	else
+	{
+		strcat(buffer, number);
+		SetWindowText(field, buffer);
+	}
+	free(buffer);
 }
 
 static HWND registerField(HWND window)
