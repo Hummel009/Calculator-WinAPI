@@ -38,20 +38,20 @@ msg_loop:
 end_loop:
   invoke ExitProcess, [msg.wParam]
 
-proc WindowProc uses ebx esi edi, hwnd, wmsg, wparam, lparam
-  cmp [wmsg], WM_CREATE
+proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
+  cmp [msg], WM_CREATE
   je .wmcreate
-  cmp [wmsg], WM_COMMAND
+  cmp [msg], WM_COMMAND
   je .wmcommand
-  cmp [wmsg], WM_GETMINMAXINFO
+  cmp [msg], WM_GETMINMAXINFO
   je .wmgetminmaxinfo
-  cmp [wmsg], WM_CLOSE
+  cmp [msg], WM_CLOSE
   je .wmclose
-  cmp [wmsg], WM_DESTROY
+  cmp [msg], WM_DESTROY
   je .wmdestroy
   
 .defwndproc:
-  invoke DefWindowProc, [hwnd], [wmsg], [wparam], [lparam]
+  invoke DefWindowProc, [window], [msg], [wParam], [lParam]
   jmp .finish
 
 .wmcreate:  
@@ -67,7 +67,7 @@ proc WindowProc uses ebx esi edi, hwnd, wmsg, wparam, lparam
   jmp .finish
 
 .wmclose:  
-  invoke DestroyWindow, [hwnd]
+  invoke DestroyWindow, [window]
   jmp .finish
   
 .wmdestroy:
