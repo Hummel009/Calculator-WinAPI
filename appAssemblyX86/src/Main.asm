@@ -25,7 +25,7 @@ Start:
 	sar eax, 1 ;divide on 2
 	mov [windowY], eax
 
-  invoke CreateWindowEx, 0, className, windowTitle, WS_VISIBLE + WS_DLGFRAME + WS_SYSMENU, [windowX], [windowY], [windowWidth], [windowHeight], NULL, NULL, NULL, NULL
+  invoke CreateWindowEx, WS_EX_CLIENTEDGE, className, windowTitle, WS_VISIBLE + WS_OVERLAPPEDWINDOW, [windowX], [windowY], [windowWidth], [windowHeight], NULL, NULL, NULL, NULL
  
 msg_loop:
   invoke GetMessage, msg, NULL, 0, 0
