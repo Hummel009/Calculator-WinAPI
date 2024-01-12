@@ -66,10 +66,10 @@ fun main() {
 		val windowY = max(0, (screenHeight - windowHeight) / 2)
 
 		CreateWindowExW(
-			0u,
+			WS_EX_CLIENTEDGE.toUInt(),
 			className,
 			windowTitle,
-			(WS_VISIBLE or WS_DLGFRAME or WS_SYSMENU).toUInt(),
+			(WS_VISIBLE or WS_OVERLAPPEDWINDOW).toUInt(),
 			windowX,
 			windowY,
 			windowWidth,

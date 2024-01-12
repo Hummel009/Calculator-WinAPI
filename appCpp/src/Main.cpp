@@ -178,22 +178,21 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 int main()
 {
 	string className = "HummelCalculator";
+	string windowTitle = "WinAPI";
 
-	WNDCLASSEX wc;
-	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = wndProc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = NULL;
-	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wc.lpszMenuName = NULL;
-	wc.lpszClassName = className.c_str();
-	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+	WNDCLASS windowClass;
+	windowClass.style = 0;
+	windowClass.lpfnWndProc = wndProc;
+	windowClass.cbClsExtra = 0;
+	windowClass.cbWndExtra = 0;
+	windowClass.hInstance = NULL;
+	windowClass.hIcon = NULL;
+	windowClass.hCursor = NULL;
+	windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	windowClass.lpszMenuName = NULL;
+	windowClass.lpszClassName = className.c_str();
 
-	RegisterClassExA(&wc);
+	RegisterClassA(&windowClass);
 
 	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -204,23 +203,7 @@ int main()
 	int windowX = max(0, (screenWidth - windowWidth) / 2);
 	int windowY = max(0, (screenHeight - windowHeight) / 2);
 
-	string windowTitle = "WinAPI";
-	HWND window = CreateWindowExA(
-		WS_EX_CLIENTEDGE,
-		className.c_str(),
-		windowTitle.c_str(),
-		WS_OVERLAPPEDWINDOW,
-		windowX,
-		windowY,
-		windowWidth,
-		windowHeight,
-		NULL,
-		NULL,
-		NULL,
-		NULL);
-
-	ShowWindow(window, SW_SHOW);
-	UpdateWindow(window);
+	CreateWindowExA(WS_EX_CLIENTEDGE, className.c_str(), windowTitle.c_str(), WS_VISIBLE | WS_OVERLAPPEDWINDOW, windowX, windowY, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
 
 	MSG msg;
 	while (GetMessageA(&msg, NULL, 0u, 0u) != 0)
