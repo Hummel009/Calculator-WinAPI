@@ -336,7 +336,7 @@ static void pushOperation(char *operation)
 	}
 }
 
-static void pushSymbol(char *number);
+static void pushSymbol(char *symbol);
 static void pushSymbolWrapper(char *symbol)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
