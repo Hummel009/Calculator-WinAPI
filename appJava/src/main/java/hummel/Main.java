@@ -115,39 +115,39 @@ public class Main {
 					var buttonId = loword(wParam);
 
 					switch (buttonId) {
-						case BUTTON_0_ID -> pushSymbolWrapper(field, "0");
-						case BUTTON_1_ID -> pushSymbolWrapper(field, "1");
-						case BUTTON_2_ID -> pushSymbolWrapper(field, "2");
-						case BUTTON_3_ID -> pushSymbolWrapper(field, "3");
-						case BUTTON_4_ID -> pushSymbolWrapper(field, "4");
-						case BUTTON_5_ID -> pushSymbolWrapper(field, "5");
-						case BUTTON_6_ID -> pushSymbolWrapper(field, "6");
-						case BUTTON_7_ID -> pushSymbolWrapper(field, "7");
-						case BUTTON_8_ID -> pushSymbolWrapper(field, "8");
-						case BUTTON_9_ID -> pushSymbolWrapper(field, "9");
+						case BUTTON_0_ID -> pushSymbolWrapper("0");
+						case BUTTON_1_ID -> pushSymbolWrapper("1");
+						case BUTTON_2_ID -> pushSymbolWrapper("2");
+						case BUTTON_3_ID -> pushSymbolWrapper("3");
+						case BUTTON_4_ID -> pushSymbolWrapper("4");
+						case BUTTON_5_ID -> pushSymbolWrapper("5");
+						case BUTTON_6_ID -> pushSymbolWrapper("6");
+						case BUTTON_7_ID -> pushSymbolWrapper("7");
+						case BUTTON_8_ID -> pushSymbolWrapper("8");
+						case BUTTON_9_ID -> pushSymbolWrapper("9");
 
-						case BUTTON_E_ID -> pushSymbolWrapper(field, "2.72");
-						case BUTTON_PI_ID -> pushSymbolWrapper(field, "3.14");
+						case BUTTON_E_ID -> pushSymbolWrapper("2.72");
+						case BUTTON_PI_ID -> pushSymbolWrapper("3.14");
 
-						case BUTTON_DOT_ID -> pushSymbolWrapper(field, ".");
-						case BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper(field, "-");
+						case BUTTON_DOT_ID -> pushSymbolWrapper(".");
+						case BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper("-");
 
 						case BUTTON_C_ID -> {
 							stack.clear();
 							ExUser32.INSTANCE.SetWindowText(field, "");
 						}
 
-						case BUTTON_DIVIDE_ID -> pushOperation(field, "/");
-						case BUTTON_MULTIPLE_ID -> pushOperation(field, "*");
-						case BUTTON_MINUS_ID -> pushOperation(field, "-");
-						case BUTTON_PLUS_ID -> pushOperation(field, "+");
+						case BUTTON_DIVIDE_ID -> pushOperation("/");
+						case BUTTON_MULTIPLE_ID -> pushOperation("*");
+						case BUTTON_MINUS_ID -> pushOperation("-");
+						case BUTTON_PLUS_ID -> pushOperation("+");
 
-						case BUTTON_FACTORIAL_ID -> pushOperation(field, "!");
-						case BUTTON_SQUARE_ID -> pushOperation(field, "s");
-						case BUTTON_INVERSE_ID -> pushOperation(field, "i");
-						case BUTTON_SQUARE_ROOT_ID -> pushOperation(field, "r");
+						case BUTTON_FACTORIAL_ID -> pushOperation("!");
+						case BUTTON_SQUARE_ID -> pushOperation("s");
+						case BUTTON_INVERSE_ID -> pushOperation("i");
+						case BUTTON_SQUARE_ROOT_ID -> pushOperation("r");
 
-						case BUTTON_EQUALS_ID -> calculateWrapper(field);
+						case BUTTON_EQUALS_ID -> calculateWrapper();
 					}
 				}
 
@@ -167,7 +167,7 @@ public class Main {
 			return ExUser32.INSTANCE.DefWindowProc(window, msg, wParam, lParam);
 		}
 
-		private static void calculateWrapper(HWND field) {
+		private static void calculateWrapper() {
 			try {
 				calculate(field);
 			} catch (Exception e) {
@@ -219,7 +219,7 @@ public class Main {
 			}
 		}
 
-		private static void pushOperation(HWND field, String operation) {
+		private static void pushOperation(String operation) {
 			var bufferSize = 1000;
 			var buffer = new char[bufferSize];
 			ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize);
@@ -234,7 +234,7 @@ public class Main {
 			}
 		}
 
-		private static void pushSymbolWrapper(HWND field, String symbol) {
+		private static void pushSymbolWrapper(String symbol) {
 			var bufferSize = 1000;
 			var buffer = new char[bufferSize];
 			ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize);

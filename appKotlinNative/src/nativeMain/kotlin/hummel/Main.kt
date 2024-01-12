@@ -117,39 +117,39 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 			val buttonId = wParam.loword()
 
 			when (buttonId) {
-				BUTTON_0_ID -> pushSymbolWrapper(field, "0")
-				BUTTON_1_ID -> pushSymbolWrapper(field, "1")
-				BUTTON_2_ID -> pushSymbolWrapper(field, "2")
-				BUTTON_3_ID -> pushSymbolWrapper(field, "3")
-				BUTTON_4_ID -> pushSymbolWrapper(field, "4")
-				BUTTON_5_ID -> pushSymbolWrapper(field, "5")
-				BUTTON_6_ID -> pushSymbolWrapper(field, "6")
-				BUTTON_7_ID -> pushSymbolWrapper(field, "7")
-				BUTTON_8_ID -> pushSymbolWrapper(field, "8")
-				BUTTON_9_ID -> pushSymbolWrapper(field, "9")
+				BUTTON_0_ID -> pushSymbolWrapper("0")
+				BUTTON_1_ID -> pushSymbolWrapper("1")
+				BUTTON_2_ID -> pushSymbolWrapper("2")
+				BUTTON_3_ID -> pushSymbolWrapper("3")
+				BUTTON_4_ID -> pushSymbolWrapper("4")
+				BUTTON_5_ID -> pushSymbolWrapper("5")
+				BUTTON_6_ID -> pushSymbolWrapper("6")
+				BUTTON_7_ID -> pushSymbolWrapper("7")
+				BUTTON_8_ID -> pushSymbolWrapper("8")
+				BUTTON_9_ID -> pushSymbolWrapper("9")
 
-				BUTTON_E_ID -> pushSymbolWrapper(field, "2.72")
-				BUTTON_PI_ID -> pushSymbolWrapper(field, "3.14")
+				BUTTON_E_ID -> pushSymbolWrapper("2.72")
+				BUTTON_PI_ID -> pushSymbolWrapper("3.14")
 
-				BUTTON_DOT_ID -> pushSymbolWrapper(field, ".")
-				BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper(field, "-")
+				BUTTON_DOT_ID -> pushSymbolWrapper(".")
+				BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper("-")
 
 				BUTTON_C_ID -> {
 					stack.clear()
 					SetWindowTextW(field, "")
 				}
 
-				BUTTON_DIVIDE_ID -> pushOperation(field, "/")
-				BUTTON_MULTIPLE_ID -> pushOperation(field, "*")
-				BUTTON_MINUS_ID -> pushOperation(field, "-")
-				BUTTON_PLUS_ID -> pushOperation(field, "+")
+				BUTTON_DIVIDE_ID -> pushOperation("/")
+				BUTTON_MULTIPLE_ID -> pushOperation("*")
+				BUTTON_MINUS_ID -> pushOperation("-")
+				BUTTON_PLUS_ID -> pushOperation("+")
 
-				BUTTON_FACTORIAL_ID -> pushOperation(field, "!")
-				BUTTON_SQUARE_ID -> pushOperation(field, "s")
-				BUTTON_INVERSE_ID -> pushOperation(field, "i")
-				BUTTON_SQUARE_ROOT_ID -> pushOperation(field, "r")
+				BUTTON_FACTORIAL_ID -> pushOperation("!")
+				BUTTON_SQUARE_ID -> pushOperation("s")
+				BUTTON_INVERSE_ID -> pushOperation("i")
+				BUTTON_SQUARE_ROOT_ID -> pushOperation("r")
 
-				BUTTON_EQUALS_ID -> calculateWrapper(field)
+				BUTTON_EQUALS_ID -> calculateWrapper()
 			}
 		}
 
@@ -167,7 +167,7 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 	return DefWindowProcW(window, msg, wParam, lParam)
 }
 
-private fun calculateWrapper(field: HWND) {
+private fun calculateWrapper() {
 	try {
 		calculate(field)
 	} catch (e: Exception) {
@@ -221,7 +221,7 @@ private fun calculate(field: HWND) {
 	}
 }
 
-private fun pushOperation(field: HWND, operation: String) {
+private fun pushOperation(operation: String) {
 	memScoped {
 		val bufferSize = 1000
 		val buffer = allocArray<WCHARVar>(bufferSize)
@@ -238,7 +238,7 @@ private fun pushOperation(field: HWND, operation: String) {
 	}
 }
 
-private fun pushSymbolWrapper(field: HWND, symbol: String) {
+private fun pushSymbolWrapper(symbol: String) {
 	memScoped {
 		val bufferSize = 1000
 		val buffer = allocArray<WCHARVar>(bufferSize)
