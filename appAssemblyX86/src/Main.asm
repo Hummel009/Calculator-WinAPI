@@ -26,16 +26,18 @@ Start:
   mov [windowY], eax
 
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, className, windowTitle, WS_VISIBLE + WS_OVERLAPPEDWINDOW, [windowX], [windowY], [windowWidth], [windowHeight], NULL, NULL, NULL, NULL
- 
-msg_loop:
+     
+; loop 1 
+Cycle:
   invoke GetMessage, msg, NULL, 0, 0
   cmp eax, 0
-  je end_loop
+  je Exit
   invoke TranslateMessage, msg
   invoke DispatchMessage, msg
-  jmp msg_loop
+  jmp Cycle 
+; end loop 
 
-end_loop:
+Exit:
   invoke ExitProcess, [msg.wParam]
 
 proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
