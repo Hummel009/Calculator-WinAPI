@@ -402,7 +402,7 @@ static void registerButton(HWND window, int id, char *text, int gridX, int gridY
 	int buttonWidth = 60;
 	int buttonHeight = 60;
 
-	CreateWindowEx(
+	CreateWindowExA(
 		0,
 		"BUTTON",
 		text,

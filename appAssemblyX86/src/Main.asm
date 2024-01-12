@@ -54,8 +54,31 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   invoke DefWindowProc, [window], [msg], [wParam], [lParam]
   jmp .finish
 
-.wmcreate:  
-  ; TODO   
+.wmcreate:
+  stdcall RegisterButton, [window], 0, btnPi, 0, 60 * 1 - 10  
+  stdcall RegisterButton, [window], 1, btnE, 60, 60 * 1 - 10  
+  stdcall RegisterButton, [window], 2, btnC, 120, 60 * 1 - 10  
+  stdcall RegisterButton, [window], 3, btnFact, 180, 60 * 1 - 10
+  stdcall RegisterButton, [window], 4, btnInv, 0, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 5, btnSq, 60, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 6, btnSqrt, 120, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 7, btnDiv, 180, 60 * 2 - 10
+  stdcall RegisterButton, [window], 8, btn7, 0, 60 * 3 - 10  
+  stdcall RegisterButton, [window], 9, btn8, 60, 60 * 3 - 10  
+  stdcall RegisterButton, [window], 10, btn9, 120, 60 * 3 - 10  
+  stdcall RegisterButton, [window], 11, btnMul, 180, 60 * 3 - 10 
+  stdcall RegisterButton, [window], 12, btn4, 0, 60 * 4 - 10  
+  stdcall RegisterButton, [window], 13, btn5, 60, 60 * 4 - 10  
+  stdcall RegisterButton, [window], 14, btn6, 120, 60 * 4 - 10  
+  stdcall RegisterButton, [window], 15, btnMin, 180, 60 * 4 - 10
+  stdcall RegisterButton, [window], 16, btn1, 0, 60 * 5 - 10  
+  stdcall RegisterButton, [window], 17, btn2, 60, 60 * 5 - 10  
+  stdcall RegisterButton, [window], 18, btn3, 120, 60 * 5 - 10  
+  stdcall RegisterButton, [window], 19, btnSum, 180, 60 * 5 - 10 
+  stdcall RegisterButton, [window], 20, btnUn, 0, 60 * 6 - 10  
+  stdcall RegisterButton, [window], 21, btn0, 60, 60 * 6 - 10  
+  stdcall RegisterButton, [window], 22, btnDot, 120, 60 * 6 - 10  
+  stdcall RegisterButton, [window], 23, btnEq, 180, 60 * 6 - 10
   jmp .finish
       
 .wmcommand:
@@ -82,11 +105,42 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
 .finish:
   ret
 endp
+     
+proc RegisterButton, window, id, testEx, gridX, gridY   
+  invoke CreateWindowEx, WS_EX_CLIENTEDGE, btnClassName, [testEx], WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, [gridX], [gridY], 60, 60, [window], [id], NULL, NULL  
+  ret
+endp
 
 section '.data' data readable writeable
 
   className TCHAR 'HummelCalculator', 0
-  windowTitle TCHAR 'WinAPI', 0
+  windowTitle TCHAR 'WinAPI', 0        
+  btnClassName TCHAR 'BUTTON', 0 
+     
+  btnPi TCHAR 'PI', 0      
+  btnE TCHAR 'E', 0   
+  btnC TCHAR 'C', 0
+  btnFact TCHAR 'x!', 0
+  btnInv TCHAR '1/x', 0
+  btnSq TCHAR 'x^2', 0
+  btnSqrt TCHAR 'sqrt(x)', 0
+  btnDiv TCHAR '/', 0
+  btnMul TCHAR '*', 0
+  btnMin TCHAR '-', 0
+  btnSum TCHAR '+', 0
+  btnUn TCHAR '-', 0
+  btnDot TCHAR '.', 0
+  btnEq TCHAR '=', 0
+  btn0 TCHAR '0', 0
+  btn1 TCHAR '1', 0
+  btn2 TCHAR '2', 0
+  btn3 TCHAR '3', 0
+  btn4 TCHAR '4', 0
+  btn5 TCHAR '5', 0
+  btn6 TCHAR '6', 0
+  btn7 TCHAR '7', 0
+  btn8 TCHAR '8', 0
+  btn9 TCHAR '9', 0
   
 	screenWidth dd 0
 	screenHeight dd 0
