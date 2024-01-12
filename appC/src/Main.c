@@ -60,14 +60,21 @@ static void pushSymbolWrapper(char *symbol);
 static void pushOperation(char *operation);
 static void calculateWrapper();
 
-static void freeData()
+static void set() {
+	stack_data[0] = (char *)malloc(DEFAULT_CAPACITY);
+	stack_data[1] = (char *)malloc(DEFAULT_CAPACITY);
+	stack_data[2] = (char *)malloc(DEFAULT_CAPACITY);
+	stack_presence[0] = FALSE;
+	stack_presence[1] = FALSE;
+	stack_presence[2] = FALSE;
+}
+
+static void reset()
 {
 	free(stack_data[0]);
 	free(stack_data[1]);
 	free(stack_data[2]);
-	stack_presence[0] = FALSE;
-	stack_presence[1] = FALSE;
-	stack_presence[2] = FALSE;
+	set();
 }
 
 static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -78,6 +85,7 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 	switch (msg)
 	{
 	case WM_CREATE:
+		set();
 		field = registerField(window);
 
 		registerButton(window, BUTTON_PI_ID, "p", 0, 0);
@@ -151,7 +159,7 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 			pushSymbolWrapper("-");
 			break;
 		case BUTTON_C_ID:
-			freeData();
+			reset();
 			SetWindowText(field, "");
 			break;
 		case BUTTON_DIVIDE_ID:
@@ -260,21 +268,18 @@ static void push(char *str)
 {
 	if (stack_presence[0] == FALSE)
 	{
-		stack_data[0] = (char *)malloc(DEFAULT_CAPACITY);
 		strcpy(stack_data[0], str);
 		stack_presence[0] = TRUE;
 		return;
 	}
 	else if (stack_presence[1] == FALSE)
 	{
-		stack_data[1] = (char *)malloc(DEFAULT_CAPACITY);
 		strcpy(stack_data[1], str);
 		stack_presence[1] = TRUE;
 		return;
 	}
 	else if (stack_presence[2] == FALSE)
 	{
-		stack_data[2] = (char *)malloc(1000);
 		strcpy(stack_data[2], str);
 		stack_presence[2] = TRUE;
 		return;
@@ -298,7 +303,6 @@ static void calculateWrapper()
 
 			double operand1 = strtod(stack_data[0], NULL);
 			double operand2 = strtod(stack_data[2], NULL);
-			freeData();
 
 			double result;
 			if (strcmp(op, "+") == 0)
@@ -330,7 +334,6 @@ static void calculateWrapper()
 		else if (strcmp(op, "!") == 0 || strcmp(op, "s") == 0 || strcmp(op, "i") == 0 || strcmp(op, "r") == 0)
 		{
 			double operand = strtod(stack_data[0], NULL);
-			freeData();
 
 			double result;
 			if (strcmp(op, "!") == 0)
@@ -360,10 +363,11 @@ static void calculateWrapper()
 			free(str);
 		}
 	}
+	reset();
 	return;
 
 exception:
-	freeData();
+	reset();
 	SetWindowText(field, "Error!");
 }
 
@@ -380,7 +384,7 @@ static void pushOperation(char *operation)
 	}
 	else
 	{
-		freeData();
+		reset();
 		SetWindowText(field, "Error!");
 	}
 }
