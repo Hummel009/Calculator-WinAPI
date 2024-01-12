@@ -91,99 +91,123 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   
   cmp [buttonId], 0 ; pi
   jne @F
-  ; TODO
+  stdcall PushSymbolWrapper, buttonPValue 
+  jmp .finish
 @@:
   cmp [buttonId], 1 ; euler
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, buttonEValue  
+  jmp .finish
 @@:
   cmp [buttonId], 2 ; clear
   jne @F 
-  ; TODO
+  ; TODO 
+  jmp .finish
 @@:
   cmp [buttonId], 3 ; factorial
   jne @F 
-  ; TODO
+  stdcall PushOperation, buttonFactorial 
+  jmp .finish
 @@:
   cmp [buttonId], 4 ; inverse
   jne @F 
-  ; TODO
+  stdcall PushOperation, buttonInverse 
+  jmp .finish
 @@:
   cmp [buttonId], 5 ; square
   jne @F 
-  ; TODO
+  stdcall PushOperation, buttonSquare 
+  jmp .finish
 @@:
   cmp [buttonId], 6 ; square root
   jne @F 
-  ; TODO
+  stdcall PushOperation, buttonSquareRoot 
+  jmp .finish
 @@:
   cmp [buttonId], 7 ; divide
   jne @F 
-  ; TODO
+  stdcall PushOperation, buttonDivide  
+  jmp .finish
 @@:
   cmp [buttonId], 8 ; num 7
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, button7
+  jmp .finish
 @@:
   cmp [buttonId], 9 ; num 8
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, button8
+  jmp .finish
 @@:
   cmp [buttonId], 10 ; num 9
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, button9 
+  jmp .finish
 @@:
   cmp [buttonId], 11 ; multiple
   jne @F 
-  ; TODO
+  stdcall PushOperation, buttonMultiple  
+  jmp .finish
 @@:
   cmp [buttonId], 12 ; num 4
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, button4 
+  jmp .finish
 @@:
   cmp [buttonId], 13 ; num 5
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, button5
+  jmp .finish
 @@:
   cmp [buttonId], 14 ; num 6
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, button6 
+  jmp .finish
 @@:
   cmp [buttonId], 15 ; minus
   jne @F 
-  ; TODO
+  stdcall PushOperation, buttonMinus
+  jmp .finish
 @@:
   cmp [buttonId], 16 ; num 1
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, button1
+  jmp .finish
 @@:
   cmp [buttonId], 17 ; num 2
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, button2 
+  jmp .finish
 @@:
   cmp [buttonId], 18 ; num 3
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, button3 
+  jmp .finish
 @@:
   cmp [buttonId], 19 ; plus
   jne @F 
-  ; TODO
+  stdcall PushOperation, buttonPlus
+  jmp .finish
 @@:
   cmp [buttonId], 20 ; unary minus
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, buttonUnaryMinus 
+  jmp .finish
 @@:
   cmp [buttonId], 21 ; num 0
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, button0 
+  jmp .finish
 @@:
   cmp [buttonId], 22 ; dot
   jne @F 
-  ; TODO
+  stdcall PushSymbolWrapper, buttonDot
+  jmp .finish
 @@:
   cmp [buttonId], 23 ; equals
   jne @F 
-  ; TODO
+  ; TODO 
+  jmp .finish
 @@:   
   jmp .finish
   
@@ -208,6 +232,16 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   ret
 endp
 
+proc PushSymbolWrapper, symbol   
+  ; TODO
+  ret
+endp
+
+proc PushOperation, operation   
+  ; TODO
+  ret
+endp
+
 proc RegisterButton, window, id, text, gridX, gridY   
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, buttonClassName, [text], WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, [gridX], [gridY], 60, 60, [window], [id], NULL, NULL  
   ret
@@ -229,6 +263,9 @@ section '.data' data readable writeable
 
   buttonP          TCHAR 'P', 0      
   buttonE          TCHAR 'E', 0 
+
+  buttonPValue     TCHAR '3.14', 0      
+  buttonEValue     TCHAR '2.72', 0 
   
   buttonC          TCHAR 'C', 0
   
