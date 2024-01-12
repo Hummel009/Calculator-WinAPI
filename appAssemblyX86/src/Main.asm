@@ -219,11 +219,11 @@ endp
 
 section '.data' data readable writeable
 
-  className       TCHAR 'HummelCalculator', 0
-  windowTitle     TCHAR 'WinAPI', 0
-  buttonClassName TCHAR 'BUTTON', 0      
-  fieldClassName  TCHAR 'STATIC', 0      
-  fieldText       TCHAR '', 0 
+  className        TCHAR 'HummelCalculator', 0
+  windowTitle      TCHAR 'WinAPI', 0
+  buttonClassName  TCHAR 'BUTTON', 0      
+  fieldClassName   TCHAR 'STATIC', 0      
+  fieldText        TCHAR '', 0 
 
   buttonP          TCHAR 'P', 0      
   buttonE          TCHAR 'E', 0 
@@ -256,19 +256,17 @@ section '.data' data readable writeable
   button8          TCHAR '8', 0
   button9          TCHAR '9', 0
   
-  screenWidth  dd 0
-  screenHeight dd 0
-  windowWidth  dd 260
-  windowHeight dd 453
-  windowX      dd 0
-  windowY      dd 0
+  screenWidth      dd 0
+  screenHeight     dd 0
+  windowWidth      dd 260
+  windowHeight     dd 453
+  windowX          dd 0
+  windowY          dd 0
   
-  field dd 0
-  
+  field    dd 0
   buttonId dw 0
 
-  wc WNDCLASS 0, WindowProc, 0, 0, NULL, NULL, NULL, COLOR_WINDOW + 1, NULL, className
-
+  wc  WNDCLASS 0, WindowProc, 0, 0, NULL, NULL, NULL, COLOR_WINDOW + 1, NULL, className
   msg MSG
 
 section '.idata' import data readable writeable
