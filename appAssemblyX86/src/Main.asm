@@ -54,7 +54,9 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   invoke DefWindowProc, [window], [msg], [wParam], [lParam]
   jmp .finish
 
-.wmcreate:
+.wmcreate:      
+  stdcall RegisterField, [window]
+  
   stdcall RegisterButton, [window], 0, btnPi, 0, 60 * 1 - 10  
   stdcall RegisterButton, [window], 1, btnE, 60, 60 * 1 - 10  
   stdcall RegisterButton, [window], 2, btnC, 120, 60 * 1 - 10  
@@ -106,8 +108,13 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   ret
 endp
      
-proc RegisterButton, window, id, testEx, gridX, gridY   
-  invoke CreateWindowEx, WS_EX_CLIENTEDGE, btnClassName, [testEx], WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, [gridX], [gridY], 60, 60, [window], [id], NULL, NULL  
+proc RegisterButton, window, id, text, gridX, gridY   
+  invoke CreateWindowEx, WS_EX_CLIENTEDGE, btnClassName, [text], WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, [gridX], [gridY], 60, 60, [window], [id], NULL, NULL  
+  ret
+endp
+
+proc RegisterField, window   
+  invoke CreateWindowEx, WS_EX_CLIENTEDGE, fldClassName, fldText, WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, 0, 0, 240, 50, [window], NULL, NULL, NULL  
   ret
 endp
 
@@ -115,7 +122,9 @@ section '.data' data readable writeable
 
   className TCHAR 'HummelCalculator', 0
   windowTitle TCHAR 'WinAPI', 0        
-  btnClassName TCHAR 'BUTTON', 0 
+  btnClassName TCHAR 'BUTTON', 0      
+  fldClassName TCHAR 'STATIC', 0      
+  fldText TCHAR '', 0 
      
   btnPi TCHAR 'PI', 0      
   btnE TCHAR 'E', 0   
