@@ -1,11 +1,11 @@
 format PE GUI 4.0
-entry Start
+entry start
 
 include 'win32a.inc'
 
 section '.text' code readable executable
 
-Start:
+start:
   invoke RegisterClass, wc                            
  
   invoke GetSystemMetrics, SM_CXSCREEN
@@ -28,16 +28,16 @@ Start:
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, className, windowTitle, WS_VISIBLE + WS_OVERLAPPEDWINDOW, [windowX], [windowY], [windowWidth], [windowHeight], NULL, NULL, NULL, NULL
      
 ; loop 1 
-Cycle:
+cycle:
   invoke GetMessage, msg, NULL, 0, 0
   cmp eax, 0
-  je Exit
+  je exit
   invoke TranslateMessage, msg
   invoke DispatchMessage, msg
-  jmp Cycle 
+  jmp cycle 
 ; end loop 
 
-Exit:
+exit:
   invoke ExitProcess, [msg.wParam]
 
 proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
