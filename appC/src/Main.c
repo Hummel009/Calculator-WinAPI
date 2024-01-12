@@ -1,11 +1,7 @@
 #include <windows.h>
-
 #include <math.h>
-
 #include <stdio.h>
-
 #include <stdlib.h>
-
 #include <string.h>
 
 #define BUTTON_0_ID 0
@@ -36,46 +32,19 @@
 #define DEFAULT_CAPACITY 100
 
 static HWND field;
-static char *stack_data[3];
-static BOOL stack_presence[3];
+static char *data[3];
+static BOOL data_presence[3];
 
-static int factorial[] = {
-	1,
-	1,
-	2,
-	6,
-	24,
-	120,
-	720,
-	5040,
-	40320,
-	362880,
-	3628800,
-	39916800,
-	479001600};
+static int factorial[] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
 static void registerButton(HWND window, int id, char *text, int gridX, int gridY);
 static HWND registerField(HWND window);
 static void pushSymbolWrapper(char *symbol);
 static void pushOperation(char *operation);
 static void calculateWrapper();
-
-static void set() {
-	stack_data[0] = (char *)malloc(DEFAULT_CAPACITY);
-	stack_data[1] = (char *)malloc(DEFAULT_CAPACITY);
-	stack_data[2] = (char *)malloc(DEFAULT_CAPACITY);
-	stack_presence[0] = FALSE;
-	stack_presence[1] = FALSE;
-	stack_presence[2] = FALSE;
-}
-
-static void reset()
-{
-	free(stack_data[0]);
-	free(stack_data[1]);
-	free(stack_data[2]);
-	set();
-}
+static void initData();
+static void resetData();
+static void push(char *str);
 
 static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -85,7 +54,7 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 	switch (msg)
 	{
 	case WM_CREATE:
-		set();
+		initData();
 		field = registerField(window);
 
 		registerButton(window, BUTTON_PI_ID, "p", 0, 0);
@@ -159,7 +128,7 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 			pushSymbolWrapper("-");
 			break;
 		case BUTTON_C_ID:
-			reset();
+			resetData();
 			SetWindowText(field, "");
 			break;
 		case BUTTON_DIVIDE_ID:
@@ -264,45 +233,23 @@ int main()
 	}
 }
 
-static void push(char *str)
-{
-	if (stack_presence[0] == FALSE)
-	{
-		strcpy(stack_data[0], str);
-		stack_presence[0] = TRUE;
-		return;
-	}
-	else if (stack_presence[1] == FALSE)
-	{
-		strcpy(stack_data[1], str);
-		stack_presence[1] = TRUE;
-		return;
-	}
-	else if (stack_presence[2] == FALSE)
-	{
-		strcpy(stack_data[2], str);
-		stack_presence[2] = TRUE;
-		return;
-	}
-}
-
 static void calculateWrapper()
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowText(field, buffer, DEFAULT_CAPACITY);
 
-	if (stack_presence[0] == TRUE && stack_presence[1] == TRUE)
+	if (data_presence[0] == TRUE && data_presence[1] == TRUE)
 	{
 		char *op = (char *)malloc(DEFAULT_CAPACITY);
-		strcpy(op, stack_data[1]);
+		strcpy(op, data[1]);
 
 		if (strcmp(op, "+") == 0 || strcmp(op, "-") == 0 || strcmp(op, "*") == 0 || strcmp(op, "/") == 0)
 		{
 			push(buffer);
 			free(buffer);
 
-			double operand1 = strtod(stack_data[0], NULL);
-			double operand2 = strtod(stack_data[2], NULL);
+			double operand1 = strtod(data[0], NULL);
+			double operand2 = strtod(data[2], NULL);
 
 			double result;
 			if (strcmp(op, "+") == 0)
@@ -333,7 +280,7 @@ static void calculateWrapper()
 		}
 		else if (strcmp(op, "!") == 0 || strcmp(op, "s") == 0 || strcmp(op, "i") == 0 || strcmp(op, "r") == 0)
 		{
-			double operand = strtod(stack_data[0], NULL);
+			double operand = strtod(data[0], NULL);
 
 			double result;
 			if (strcmp(op, "!") == 0)
@@ -363,11 +310,11 @@ static void calculateWrapper()
 			free(str);
 		}
 	}
-	reset();
+	resetData();
 	return;
 
 exception:
-	reset();
+	resetData();
 	SetWindowText(field, "Error!");
 }
 
@@ -375,7 +322,7 @@ static void pushOperation(char *operation)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowText(field, buffer, DEFAULT_CAPACITY);
-	if (stack_presence[0] == FALSE)
+	if (data_presence[0] == FALSE)
 	{
 		push(buffer);
 		free(buffer);
@@ -384,7 +331,7 @@ static void pushOperation(char *operation)
 	}
 	else
 	{
-		reset();
+		resetData();
 		SetWindowText(field, "Error!");
 	}
 }
@@ -423,7 +370,7 @@ static void pushSymbolWrapper(char *symbol)
 		}
 		else
 		{
-			char *op = stack_data[1];
+			char *op = data[1];
 
 			if (strcmp(op, "!") != 0 && strcmp(op, "s") != 0 && strcmp(op, "i") != 0 && strcmp(op, "r") != 0)
 			{
@@ -434,17 +381,17 @@ static void pushSymbolWrapper(char *symbol)
 	free(buffer);
 }
 
-static void pushSymbol(char *number)
+static void pushSymbol(char *symbol)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowText(field, buffer, DEFAULT_CAPACITY);
 	if (strcmp(buffer, "Error!") == 0)
 	{
-		SetWindowText(field, number);
+		SetWindowText(field, symbol);
 	}
 	else
 	{
-		strcat(buffer, number);
+		strcat(buffer, symbol);
 		SetWindowText(field, buffer);
 	}
 	free(buffer);
@@ -485,4 +432,43 @@ static void registerButton(HWND window, int id, char *text, int gridX, int gridY
 		(HMENU)id,
 		NULL,
 		NULL);
+}
+
+static void push(char *str)
+{
+	if (data_presence[0] == FALSE)
+	{
+		strcpy(data[0], str);
+		data_presence[0] = TRUE;
+		return;
+	}
+	else if (data_presence[1] == FALSE)
+	{
+		strcpy(data[1], str);
+		data_presence[1] = TRUE;
+		return;
+	else if (data_presence[2] == FALSE)
+	{
+		strcpy(data[2], str);
+		data_presence[2] = TRUE;
+		return;
+	}
+}
+
+static void initData()
+{
+	data[0] = (char *)malloc(DEFAULT_CAPACITY);
+	data[1] = (char *)malloc(DEFAULT_CAPACITY);
+	data[2] = (char *)malloc(DEFAULT_CAPACITY);
+	data_presence[0] = FALSE;
+	data_presence[1] = FALSE;
+	data_presence[2] = FALSE;
+}
+
+static void resetData()
+{
+	free(data[0]);
+	free(data[1]);
+	free(data[2]);
+	initData();
 }

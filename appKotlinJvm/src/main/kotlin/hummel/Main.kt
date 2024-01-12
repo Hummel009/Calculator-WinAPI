@@ -35,7 +35,7 @@ const val BUTTON_SQUARE_ID: Int = 21
 const val BUTTON_SQUARE_ROOT_ID: Int = 22
 const val BUTTON_UNARY_MINUS_ID: Int = 23
 
-lateinit var stack: MutableList<String>
+lateinit var data: MutableList<String>
 lateinit var field: HWND
 
 private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
@@ -87,7 +87,7 @@ class WndProc : WindowProc {
 	override fun callback(window: HWND, msg: Int, wParam: WPARAM, lParam: LPARAM): LRESULT {
 		when (msg) {
 			WM_CREATE -> {
-				stack = ArrayList()
+				data = ArrayList()
 
 				field = registerField(window)
 
@@ -139,7 +139,7 @@ class WndProc : WindowProc {
 					BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper("-")
 
 					BUTTON_C_ID -> {
-						stack.clear()
+						data.clear()
 						ExUser32.INSTANCE.SetWindowText(field, "")
 					}
 
@@ -177,7 +177,7 @@ class WndProc : WindowProc {
 		try {
 			calculate(field)
 		} catch (e: Exception) {
-			stack.clear()
+			data.clear()
 			ExUser32.INSTANCE.SetWindowText(field, "Error!")
 		}
 	}
@@ -187,14 +187,14 @@ class WndProc : WindowProc {
 		val buffer = CharArray(bufferSize)
 		ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
 
-		if (stack.size == 2) {
-			val operator = stack[1]
+		if (data.size == 2) {
+			val operator = data[1]
 
 			if (operator in setOf("+", "-", "*", "/")) {
-				stack.add(Native.toString(buffer))
+				data.add(Native.toString(buffer))
 
-				val operand1 = stack[0].toDouble()
-				val operand2 = stack[2].toDouble()
+				val operand1 = data[0].toDouble()
+				val operand2 = data[2].toDouble()
 
 				val result = when (operator) {
 					"+" -> operand1 + operand2
@@ -204,11 +204,11 @@ class WndProc : WindowProc {
 					else -> throw IllegalArgumentException("Invalid operator: $operator")
 				}
 
-				stack.clear()
+				data.clear()
 
 				ExUser32.INSTANCE.SetWindowText(field, "$result")
 			} else if (operator in setOf("!", "s", "i", "r")) {
-				val operand = stack[0].toDouble()
+				val operand = data[0].toDouble()
 
 				val result = when (operator) {
 					"!" -> factorial[operand.toInt()].toDouble()
@@ -218,7 +218,7 @@ class WndProc : WindowProc {
 					else -> throw IllegalArgumentException("Invalid operator: $operator")
 				}
 
-				stack.clear()
+				data.clear()
 
 				ExUser32.INSTANCE.SetWindowText(field, "$result")
 			}
@@ -230,12 +230,12 @@ class WndProc : WindowProc {
 		val buffer = CharArray(bufferSize)
 		ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)
 
-		if (stack.isEmpty()) {
-			stack.add(Native.toString(buffer))
-			stack.add(operation)
+		if (data.isEmpty()) {
+			data.add(Native.toString(buffer))
+			data.add(operation)
 			ExUser32.INSTANCE.SetWindowText(field, "")
 		} else {
-			stack.clear()
+			data.clear()
 			ExUser32.INSTANCE.SetWindowText(field, "Error!")
 		}
 	}
@@ -249,37 +249,37 @@ class WndProc : WindowProc {
 		when (symbol) {
 			"3.14", "2.72" -> {
 				if (!str.contains(".")) {
-					pushSymbol(field, symbol)
+					pushSymbol(symbol)
 				}
 			}
 
 			"." -> {
 				if (!str.contains(".") && str.isNotEmpty()) {
-					pushSymbol(field, symbol)
+					pushSymbol(symbol)
 				}
 			}
 
 			"-" -> {
 				if (str.isEmpty()) {
-					pushSymbol(field, symbol)
+					pushSymbol(symbol)
 				}
 			}
 
 			else -> {
-				if (stack.isEmpty()) {
-					pushSymbol(field, symbol)
+				if (data.isEmpty()) {
+					pushSymbol(symbol)
 				} else {
-					val operator = stack[1]
+					val operator = data[1]
 
 					if (operator !in setOf("!", "s", "i", "r")) {
-						pushSymbol(field, symbol)
+						pushSymbol(symbol)
 					}
 				}
 			}
 		}
 	}
 
-	private fun pushSymbol(field: HWND?, number: String) {
+	private fun pushSymbol(number: String) {
 		val bufferSize = 1000
 		val buffer = CharArray(bufferSize)
 		ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize)

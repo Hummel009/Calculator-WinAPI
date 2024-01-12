@@ -31,7 +31,7 @@ const val BUTTON_SQUARE_ROOT_ID: Int = 22
 const val BUTTON_UNARY_MINUS_ID: Int = 23
 
 lateinit var field: HWND
-lateinit var stack: MutableList<String>
+lateinit var data: MutableList<String>
 
 private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
 
@@ -83,7 +83,7 @@ fun main() {
 private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {
 	when (msg.toInt()) {
 		WM_CREATE -> {
-			stack = ArrayList()
+			data = ArrayList()
 
 			field = registerField(window)
 
@@ -135,7 +135,7 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 				BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper("-")
 
 				BUTTON_C_ID -> {
-					stack.clear()
+					data.clear()
 					SetWindowTextW(field, "")
 				}
 
@@ -171,7 +171,7 @@ private fun calculateWrapper() {
 	try {
 		calculate(field)
 	} catch (e: Exception) {
-		stack.clear()
+		data.clear()
 		SetWindowTextW(field, "Error!")
 	}
 }
@@ -182,14 +182,14 @@ private fun calculate(field: HWND) {
 		val buffer = allocArray<WCHARVar>(bufferSize)
 		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
 
-		if (stack.size == 2) {
-			val operator = stack[1]
+		if (data.size == 2) {
+			val operator = data[1]
 
 			if (operator in setOf("+", "-", "*", "/")) {
-				stack.add(buffer.toKString())
+				data.add(buffer.toKString())
 
-				val operand1 = stack[0].toDouble()
-				val operand2 = stack[2].toDouble()
+				val operand1 = data[0].toDouble()
+				val operand2 = data[2].toDouble()
 
 				val result = when (operator) {
 					"+" -> operand1 + operand2
@@ -199,11 +199,11 @@ private fun calculate(field: HWND) {
 					else -> throw IllegalArgumentException("Invalid operator: $operator")
 				}
 
-				stack.clear()
+				data.clear()
 
 				SetWindowTextW(field, "$result")
 			} else if (operator in setOf("!", "s", "i", "r")) {
-				val operand = stack[0].toDouble()
+				val operand = data[0].toDouble()
 
 				val result = when (operator) {
 					"!" -> factorial[operand.toInt()]
@@ -213,7 +213,7 @@ private fun calculate(field: HWND) {
 					else -> throw IllegalArgumentException("Invalid operator: $operator")
 				}
 
-				stack.clear()
+				data.clear()
 
 				SetWindowTextW(field, "$result")
 			}
@@ -227,12 +227,12 @@ private fun pushOperation(operation: String) {
 		val buffer = allocArray<WCHARVar>(bufferSize)
 		GetWindowTextW(field, buffer.reinterpret(), bufferSize)
 
-		if (stack.isEmpty()) {
-			stack.add(buffer.toKString())
-			stack.add(operation)
+		if (data.isEmpty()) {
+			data.add(buffer.toKString())
+			data.add(operation)
 			SetWindowTextW(field, "")
 		} else {
-			stack.clear()
+			data.clear()
 			SetWindowTextW(field, "Error!")
 		}
 	}
@@ -248,30 +248,30 @@ private fun pushSymbolWrapper(symbol: String) {
 		when (symbol) {
 			"3.14", "2.72" -> {
 				if (!str.contains(".")) {
-					pushSymbol(field, symbol)
+					pushSymbol(symbol)
 				}
 			}
 
 			"." -> {
 				if (!str.contains(".") && str.isNotEmpty()) {
-					pushSymbol(field, symbol)
+					pushSymbol(symbol)
 				}
 			}
 
 			"-" -> {
 				if (str.isEmpty()) {
-					pushSymbol(field, symbol)
+					pushSymbol(symbol)
 				}
 			}
 
 			else -> {
-				if (stack.isEmpty()) {
-					pushSymbol(field, symbol)
+				if (data.isEmpty()) {
+					pushSymbol(symbol)
 				} else {
-					val operator = stack[1]
+					val operator = data[1]
 
 					if (operator !in setOf("!", "s", "i", "r")) {
-						pushSymbol(field, symbol)
+						pushSymbol(symbol)
 					}
 				}
 			}
@@ -280,7 +280,7 @@ private fun pushSymbolWrapper(symbol: String) {
 }
 
 
-private fun pushSymbol(field: HWND, number: String) {
+private fun pushSymbol(number: String) {
 	memScoped {
 		val bufferSize = 1000
 		val buffer = allocArray<WCHARVar>(bufferSize)

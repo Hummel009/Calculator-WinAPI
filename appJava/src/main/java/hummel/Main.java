@@ -41,7 +41,7 @@ public class Main {
 	public static final int BUTTON_SQUARE_ROOT_ID = 22;
 	public static final int BUTTON_UNARY_MINUS_ID = 23;
 
-	public static List<String> stack;
+	public static List<String> data;
 	public static HWND field;
 
 	private static final int[] FACTORIAL = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
@@ -81,7 +81,7 @@ public class Main {
 		public LRESULT callback(HWND window, int msg, WPARAM wParam, LPARAM lParam) {
 			switch (msg) {
 				case WM_CREATE -> {
-					stack = new ArrayList<>();
+					data = new ArrayList<>();
 
 					field = registerField(window);
 
@@ -133,7 +133,7 @@ public class Main {
 						case BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper("-");
 
 						case BUTTON_C_ID -> {
-							stack.clear();
+							data.clear();
 							ExUser32.INSTANCE.SetWindowText(field, "");
 						}
 
@@ -171,7 +171,7 @@ public class Main {
 			try {
 				calculate(field);
 			} catch (Exception e) {
-				stack.clear();
+				data.clear();
 				ExUser32.INSTANCE.SetWindowText(field, "Error!");
 			}
 		}
@@ -181,14 +181,14 @@ public class Main {
 			var buffer = new char[bufferSize];
 			ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize);
 
-			if (stack.size() == 2) {
-				var operator = stack.get(1);
+			if (data.size() == 2) {
+				var operator = data.get(1);
 
 				if (Set.of("+", "-", "*", "/").contains(operator)) {
-					stack.add(Native.toString(buffer));
+					data.add(Native.toString(buffer));
 
-					var operand1 = Double.parseDouble(stack.get(0));
-					var operand2 = Double.parseDouble(stack.get(2));
+					var operand1 = Double.parseDouble(data.get(0));
+					var operand2 = Double.parseDouble(data.get(2));
 
 					var result = switch (operator) {
 						case "+" -> operand1 + operand2;
@@ -198,11 +198,11 @@ public class Main {
 						default -> throw new IllegalArgumentException("Invalid operator: " + operator);
 					};
 
-					stack.clear();
+					data.clear();
 
 					ExUser32.INSTANCE.SetWindowText(field, String.valueOf(result));
 				} else if (Set.of("!", "s", "i", "r").contains(operator)) {
-					var operand = Double.parseDouble(stack.getFirst());
+					var operand = Double.parseDouble(data.getFirst());
 
 					var result = switch (operator) {
 						case "!" -> FACTORIAL[(int) operand];
@@ -212,7 +212,7 @@ public class Main {
 						default -> throw new IllegalArgumentException("Invalid operator: " + operator);
 					};
 
-					stack.clear();
+					data.clear();
 
 					ExUser32.INSTANCE.SetWindowText(field, String.valueOf(result));
 				}
@@ -224,12 +224,12 @@ public class Main {
 			var buffer = new char[bufferSize];
 			ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize);
 
-			if (stack.isEmpty()) {
-				stack.add(Native.toString(buffer));
-				stack.add(operation);
+			if (data.isEmpty()) {
+				data.add(Native.toString(buffer));
+				data.add(operation);
 				ExUser32.INSTANCE.SetWindowText(field, "");
 			} else {
-				stack.clear();
+				data.clear();
 				ExUser32.INSTANCE.SetWindowText(field, "Error!");
 			}
 		}
@@ -243,34 +243,34 @@ public class Main {
 			switch (symbol) {
 				case "3.14", "2.72" -> {
 					if (!str.contains(".")) {
-						pushSymbol(field, symbol);
+						pushSymbol(symbol);
 					}
 				}
 				case "." -> {
 					if (!str.contains(".") && !str.isEmpty()) {
-						pushSymbol(field, symbol);
+						pushSymbol(symbol);
 					}
 				}
 				case "-" -> {
 					if (str.isEmpty()) {
-						pushSymbol(field, symbol);
+						pushSymbol(symbol);
 					}
 				}
 				default -> {
-					if (stack.isEmpty()) {
-						pushSymbol(field, symbol);
+					if (data.isEmpty()) {
+						pushSymbol(symbol);
 					} else {
-						var operator = stack.get(1);
+						var operator = data.get(1);
 
 						if (!Set.of("!", "s", "i", "r").contains(operator)) {
-							pushSymbol(field, symbol);
+							pushSymbol(symbol);
 						}
 					}
 				}
 			}
 		}
 
-		private static void pushSymbol(HWND field, String number) {
+		private static void pushSymbol(String number) {
 			var bufferSize = 1000;
 			var buffer = new char[bufferSize];
 			ExUser32.INSTANCE.GetWindowText(field, buffer, bufferSize);
