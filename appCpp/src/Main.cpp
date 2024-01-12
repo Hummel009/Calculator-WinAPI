@@ -393,13 +393,13 @@ static void pushSymbol(string symbol)
 static HWND registerField(HWND window)
 {
 	return CreateWindowExA(
-		0,
+		WS_EX_CLIENTEDGE,
 		"STATIC",
 		"",
 		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
 		0,
 		0,
-		238,
+		240,
 		50,
 		window,
 		NULL,
@@ -413,7 +413,7 @@ static void registerButton(HWND window, int id, string text, int gridX, int grid
 	int buttonHeight = 60;
 
 	CreateWindowExA(
-		0,
+		WS_EX_CLIENTEDGE,
 		"BUTTON",
 		text.c_str(),
 		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
