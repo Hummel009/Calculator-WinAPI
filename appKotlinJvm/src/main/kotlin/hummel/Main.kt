@@ -10,6 +10,7 @@ import kotlin.math.sqrt
 const val WM_COMMAND: Int = 0x0111
 const val WM_GETMINMAXINFO: Int = 0x0024
 const val COLOR_WINDOW: Int = 0x5
+const val WS_EX_CLIENTEDGE: Int = 0x00000200
 
 const val BUTTON_0_ID: Int = 0
 const val BUTTON_1_ID: Int = 1
@@ -71,10 +72,10 @@ fun main() {
 	val windowY = max(0.0, ((screenHeight - windowHeight) / 2).toDouble()).toInt()
 
 	ExUser32.INSTANCE.CreateWindowEx(
-		0,
+		WS_EX_CLIENTEDGE,
 		className,
 		windowTitle,
-		WS_VISIBLE or WS_DLGFRAME or WS_SYSMENU,
+		WS_VISIBLE or WS_SYSMENU,
 		windowX,
 		windowY,
 		windowWidth,

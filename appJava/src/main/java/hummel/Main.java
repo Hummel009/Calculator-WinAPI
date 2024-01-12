@@ -16,6 +16,7 @@ public class Main {
 	public static final int WM_COMMAND = 0x0111;
 	public static final int WM_GETMINMAXINFO = 0x0024;
 	public static final int COLOR_WINDOW = 0x5;
+	public static final int WS_EX_CLIENTEDGE = 0x00000200;
 
 	public static final int BUTTON_0_ID = 0;
 	public static final int BUTTON_1_ID = 1;
@@ -76,7 +77,7 @@ public class Main {
 		var windowX = Math.max(0, (screenWidth - windowWidth) / 2);
 		var windowY = Math.max(0, (screenHeight - windowHeight) / 2);
 
-		ExUser32.INSTANCE.CreateWindowEx(0, className, windowTitle, WS_VISIBLE | WS_DLGFRAME | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, null, null, null, null);
+		ExUser32.INSTANCE.CreateWindowEx(WS_EX_CLIENTEDGE, className, windowTitle, WS_VISIBLE | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, null, null, null, null);
 
 		var msg = new MSG();
 		while (ExUser32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {

@@ -69,7 +69,7 @@ fun main() {
 			WS_EX_CLIENTEDGE.toUInt(),
 			className,
 			windowTitle,
-			(WS_VISIBLE or WS_OVERLAPPEDWINDOW).toUInt(),
+			(WS_VISIBLE or WS_SYSMENU).toUInt(),
 			windowX,
 			windowY,
 			windowWidth,
