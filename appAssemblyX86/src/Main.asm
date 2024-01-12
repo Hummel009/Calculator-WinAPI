@@ -6,7 +6,7 @@ include 'win32a.inc'
 section '.text' code readable executable
 
 Start:
-  invoke RegisteristerClass, wc                            
+  invoke RegisterClass, wc                            
  
   invoke GetSystemMetrics, SM_CXSCREEN
   mov [screenWidth], eax
@@ -57,30 +57,30 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
 .wmcreate:      
   stdcall RegisterFld, [window]
   
-  stdcall RegisterButton, [window], 0, buttonPi, 0, 60 * 1 - 10  
+  stdcall RegisterButton, [window], 0, buttonP, 0, 60 * 1 - 10  
   stdcall RegisterButton, [window], 1, buttonE, 60, 60 * 1 - 10  
   stdcall RegisterButton, [window], 2, buttonC, 120, 60 * 1 - 10  
-  stdcall RegisterButton, [window], 3, buttonFact, 180, 60 * 1 - 10
-  stdcall RegisterButton, [window], 4, buttonInv, 0, 60 * 2 - 10  
-  stdcall RegisterButton, [window], 5, buttonSq, 60, 60 * 2 - 10  
-  stdcall RegisterButton, [window], 6, buttonSqrt, 120, 60 * 2 - 10  
-  stdcall RegisterButton, [window], 7, buttonDiv, 180, 60 * 2 - 10
+  stdcall RegisterButton, [window], 3, buttonFactorial, 180, 60 * 1 - 10
+  stdcall RegisterButton, [window], 4, buttonInverse, 0, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 5, buttonSquare, 60, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 6, buttonSquareRoot, 120, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 7, buttonDivide, 180, 60 * 2 - 10
   stdcall RegisterButton, [window], 8, button7, 0, 60 * 3 - 10  
   stdcall RegisterButton, [window], 9, button8, 60, 60 * 3 - 10  
   stdcall RegisterButton, [window], 10, button9, 120, 60 * 3 - 10  
-  stdcall RegisterButton, [window], 11, buttonMul, 180, 60 * 3 - 10 
+  stdcall RegisterButton, [window], 11, buttonMultiple, 180, 60 * 3 - 10 
   stdcall RegisterButton, [window], 12, button4, 0, 60 * 4 - 10  
   stdcall RegisterButton, [window], 13, button5, 60, 60 * 4 - 10  
   stdcall RegisterButton, [window], 14, button6, 120, 60 * 4 - 10  
-  stdcall RegisterButton, [window], 15, buttonMin, 180, 60 * 4 - 10
+  stdcall RegisterButton, [window], 15, buttonMinus, 180, 60 * 4 - 10
   stdcall RegisterButton, [window], 16, button1, 0, 60 * 5 - 10  
   stdcall RegisterButton, [window], 17, button2, 60, 60 * 5 - 10  
   stdcall RegisterButton, [window], 18, button3, 120, 60 * 5 - 10  
-  stdcall RegisterButton, [window], 19, buttonSum, 180, 60 * 5 - 10 
-  stdcall RegisterButton, [window], 20, buttonUn, 0, 60 * 6 - 10  
+  stdcall RegisterButton, [window], 19, buttonPlus, 180, 60 * 5 - 10 
+  stdcall RegisterButton, [window], 20, buttonUnaryMinus, 0, 60 * 6 - 10  
   stdcall RegisterButton, [window], 21, button0, 60, 60 * 6 - 10  
   stdcall RegisterButton, [window], 22, buttonDot, 120, 60 * 6 - 10  
-  stdcall RegisterButton, [window], 23, buttonEq, 180, 60 * 6 - 10
+  stdcall RegisterButton, [window], 23, buttonEquals, 180, 60 * 6 - 10
   jmp .finish
 
 .wmcommand:
@@ -219,45 +219,52 @@ endp
 
 section '.data' data readable writeable
 
-  className TCHAR 'HummelCalculator', 0
-  windowTitle TCHAR 'WinAPI', 0        
+  className       TCHAR 'HummelCalculator', 0
+  windowTitle     TCHAR 'WinAPI', 0
   buttonClassName TCHAR 'BUTTON', 0      
-  fieldClassName TCHAR 'STATIC', 0      
-  fieldText TCHAR '', 0 
+  fieldClassName  TCHAR 'STATIC', 0      
+  fieldText       TCHAR '', 0 
 
-  buttonPi TCHAR 'PI', 0      
-  buttonE TCHAR 'E', 0   
-  buttonC TCHAR 'C', 0
-  buttonFact TCHAR 'x!', 0
-  buttonInv TCHAR '1/x', 0
-  buttonSq TCHAR 'x^2', 0
-  buttonSqrt TCHAR 'sqrt(x)', 0
-  buttonDiv TCHAR '/', 0
-  buttonMul TCHAR '*', 0
-  buttonMin TCHAR '-', 0
-  buttonSum TCHAR '+', 0
-  buttonUn TCHAR '-', 0
-  buttonDot TCHAR '.', 0
-  buttonEq TCHAR '=', 0
-  button0 TCHAR '0', 0
-  button1 TCHAR '1', 0
-  button2 TCHAR '2', 0
-  button3 TCHAR '3', 0
-  button4 TCHAR '4', 0
-  button5 TCHAR '5', 0
-  button6 TCHAR '6', 0
-  button7 TCHAR '7', 0
-  button8 TCHAR '8', 0
-  button9 TCHAR '9', 0
+  buttonP          TCHAR 'P', 0      
+  buttonE          TCHAR 'E', 0 
   
-  screenWidth dd 0
+  buttonC          TCHAR 'C', 0
+  
+  buttonDot        TCHAR '.', 0 
+  buttonUnaryMinus TCHAR '-', 0
+  
+  buttonFactorial  TCHAR 'x!', 0
+  buttonInverse    TCHAR '1/x', 0
+  buttonSquare     TCHAR 'x^2', 0
+  buttonSquareRoot TCHAR 'sqrt(x)', 0
+  
+  buttonDivide     TCHAR '/', 0
+  buttonMultiple   TCHAR '*', 0
+  buttonMinus      TCHAR '-', 0
+  buttonPlus       TCHAR '+', 0
+  
+  buttonEquals     TCHAR '=', 0
+  
+  button0          TCHAR '0', 0
+  button1          TCHAR '1', 0
+  button2          TCHAR '2', 0
+  button3          TCHAR '3', 0
+  button4          TCHAR '4', 0
+  button5          TCHAR '5', 0
+  button6          TCHAR '6', 0
+  button7          TCHAR '7', 0
+  button8          TCHAR '8', 0
+  button9          TCHAR '9', 0
+  
+  screenWidth  dd 0
   screenHeight dd 0
-  windowWidth dd 260
+  windowWidth  dd 260
   windowHeight dd 453
-  windowX dd 0
-  windowY dd 0
+  windowX      dd 0
+  windowY      dd 0
   
   field dd 0
+  
   buttonId dw 0
 
   wc WNDCLASS 0, WindowProc, 0, 0, NULL, NULL, NULL, COLOR_WINDOW + 1, NULL, className
