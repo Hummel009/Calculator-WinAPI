@@ -126,7 +126,7 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 			break;
 		case BUTTON_C_ID:
 			data.clear();
-			SetWindowText(field, "");
+			SetWindowTextA(field, "");
 			break;
 		case BUTTON_DIVIDE_ID:
 			pushOperation("/");
@@ -223,14 +223,14 @@ static void calculateWrapper()
 	catch (exception &e)
 	{
 		data.clear();
-		SetWindowText(field, "Error!");
+		SetWindowTextA(field, "Error!");
 	}
 }
 
 static void calculate()
 {
 	char *buffer = new char[DEFAULT_CAPACITY];
-	GetWindowText(field, buffer, DEFAULT_CAPACITY);
+	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 
 	if (data.size() == 2)
 	{
@@ -271,7 +271,7 @@ static void calculate()
 
 			data.clear();
 
-			SetWindowText(field, to_string(result).c_str());
+			SetWindowTextA(field, to_string(result).c_str());
 		}
 		else if (ops2.count(op) > 0)
 		{
@@ -301,7 +301,7 @@ static void calculate()
 
 			data.clear();
 
-			SetWindowText(field, to_string(result).c_str());
+			SetWindowTextA(field, to_string(result).c_str());
 		}
 	}
 }
@@ -309,7 +309,7 @@ static void calculate()
 static void pushOperation(string operation)
 {
 	char *buffer = new char[DEFAULT_CAPACITY];
-	GetWindowText(field, buffer, DEFAULT_CAPACITY);
+	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 
 	if (data.size() == 0)
 	{
@@ -317,12 +317,12 @@ static void pushOperation(string operation)
 		delete[] buffer;
 		data.push_back(str);
 		data.push_back(operation);
-		SetWindowText(field, "");
+		SetWindowTextA(field, "");
 	}
 	else
 	{
 		data.clear();
-		SetWindowText(field, "Error!");
+		SetWindowTextA(field, "Error!");
 	}
 }
 
@@ -330,7 +330,7 @@ static void pushSymbol(string symbol);
 static void pushSymbolWrapper(string symbol)
 {
 	char *buffer = new char[DEFAULT_CAPACITY];
-	GetWindowText(field, buffer, DEFAULT_CAPACITY);
+	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 	string str(buffer);
 
 	if (symbol == "3.14" || symbol == "2.72")
@@ -377,22 +377,22 @@ static void pushSymbolWrapper(string symbol)
 static void pushSymbol(string symbol)
 {
 	char *buffer = new char[DEFAULT_CAPACITY];
-	GetWindowText(field, buffer, DEFAULT_CAPACITY);
+	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 	string str(buffer);
 	if (str == "Error!")
 	{
-		SetWindowText(field, symbol.c_str());
+		SetWindowTextA(field, symbol.c_str());
 	}
 	else
 	{
-		SetWindowText(field, (str + symbol).c_str());
+		SetWindowTextA(field, (str + symbol).c_str());
 	}
 	delete[] buffer;
 }
 
 static HWND registerField(HWND window)
 {
-	return CreateWindowEx(
+	return CreateWindowExA(
 		0,
 		"STATIC",
 		"",
@@ -412,7 +412,7 @@ static void registerButton(HWND window, int id, string text, int gridX, int grid
 	int buttonWidth = 60;
 	int buttonHeight = 60;
 
-	CreateWindowEx(
+	CreateWindowExA(
 		0,
 		"BUTTON",
 		text.c_str(),
