@@ -6,26 +6,26 @@ include 'win32a.inc'
 section '.text' code readable executable
 
 Start:
-  invoke RegisterClass, wc                            
+  invoke RegisteristerClass, wc                            
  
   invoke GetSystemMetrics, SM_CXSCREEN
-	mov [screenWidth], eax
+  mov [screenWidth], eax
 
-	invoke GetSystemMetrics, SM_CYSCREEN
-	mov [screenHeight], eax
+  invoke GetSystemMetrics, SM_CYSCREEN
+  mov [screenHeight], eax
   
-  ;getting X, Y to display wnd in center
+  ; getting X, Y to display window in center
   mov eax, [screenWidth]
-	sub eax, [wndWidth]
-	sar eax, 1 ;divide on 2     
-	mov [wndX], eax
+  sub eax, [windowWidth]
+  sar eax, 1 ; divide on 2     
+  mov [windowX], eax
 
-	mov eax, [screenHeight]
-	sub eax, [wndHeight]
-	sar eax, 1 ;divide on 2
-	mov [wndY], eax
+  mov eax, [screenHeight]
+  sub eax, [windowHeight]
+  sar eax, 1 ; divide on 2
+  mov [windowY], eax
 
-  invoke CreateWindowEx, WS_EX_CLIENTEDGE, className, wndTitle, WS_VISIBLE + WS_OVERLAPPEDWINDOW, [wndX], [wndY], [wndWidth], [wndHeight], NULL, NULL, NULL, NULL
+  invoke CreateWindowEx, WS_EX_CLIENTEDGE, className, windowTitle, WS_VISIBLE + WS_OVERLAPPEDWINDOW, [windowX], [windowY], [windowWidth], [windowHeight], NULL, NULL, NULL, NULL
  
 msg_loop:
   invoke GetMessage, msg, NULL, 0, 0
@@ -38,7 +38,7 @@ msg_loop:
 end_loop:
   invoke ExitProcess, [msg.wParam]
 
-proc WindowProc uses ebx esi edi, wnd, msg, wParam, lParam
+proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   cmp [msg], WM_CREATE
   je .wmcreate
   cmp [msg], WM_COMMAND
@@ -50,136 +50,136 @@ proc WindowProc uses ebx esi edi, wnd, msg, wParam, lParam
   cmp [msg], WM_DESTROY
   je .wmdestroy
   
-.defwndproc:
-  invoke DefWindowProc, [wnd], [msg], [wParam], [lParam]
+.defwindowproc:
+  invoke DefWindowProc, [window], [msg], [wParam], [lParam]
   jmp .finish
 
 .wmcreate:      
-  stdcall RegFld, [wnd]
+  stdcall RegisterFld, [window]
   
-  stdcall RegBtn, [wnd], 0, btnPi, 0, 60 * 1 - 10  
-  stdcall RegBtn, [wnd], 1, btnE, 60, 60 * 1 - 10  
-  stdcall RegBtn, [wnd], 2, btnC, 120, 60 * 1 - 10  
-  stdcall RegBtn, [wnd], 3, btnFact, 180, 60 * 1 - 10
-  stdcall RegBtn, [wnd], 4, btnInv, 0, 60 * 2 - 10  
-  stdcall RegBtn, [wnd], 5, btnSq, 60, 60 * 2 - 10  
-  stdcall RegBtn, [wnd], 6, btnSqrt, 120, 60 * 2 - 10  
-  stdcall RegBtn, [wnd], 7, btnDiv, 180, 60 * 2 - 10
-  stdcall RegBtn, [wnd], 8, btn7, 0, 60 * 3 - 10  
-  stdcall RegBtn, [wnd], 9, btn8, 60, 60 * 3 - 10  
-  stdcall RegBtn, [wnd], 10, btn9, 120, 60 * 3 - 10  
-  stdcall RegBtn, [wnd], 11, btnMul, 180, 60 * 3 - 10 
-  stdcall RegBtn, [wnd], 12, btn4, 0, 60 * 4 - 10  
-  stdcall RegBtn, [wnd], 13, btn5, 60, 60 * 4 - 10  
-  stdcall RegBtn, [wnd], 14, btn6, 120, 60 * 4 - 10  
-  stdcall RegBtn, [wnd], 15, btnMin, 180, 60 * 4 - 10
-  stdcall RegBtn, [wnd], 16, btn1, 0, 60 * 5 - 10  
-  stdcall RegBtn, [wnd], 17, btn2, 60, 60 * 5 - 10  
-  stdcall RegBtn, [wnd], 18, btn3, 120, 60 * 5 - 10  
-  stdcall RegBtn, [wnd], 19, btnSum, 180, 60 * 5 - 10 
-  stdcall RegBtn, [wnd], 20, btnUn, 0, 60 * 6 - 10  
-  stdcall RegBtn, [wnd], 21, btn0, 60, 60 * 6 - 10  
-  stdcall RegBtn, [wnd], 22, btnDot, 120, 60 * 6 - 10  
-  stdcall RegBtn, [wnd], 23, btnEq, 180, 60 * 6 - 10
+  stdcall RegisterButton, [window], 0, buttonPi, 0, 60 * 1 - 10  
+  stdcall RegisterButton, [window], 1, buttonE, 60, 60 * 1 - 10  
+  stdcall RegisterButton, [window], 2, buttonC, 120, 60 * 1 - 10  
+  stdcall RegisterButton, [window], 3, buttonFact, 180, 60 * 1 - 10
+  stdcall RegisterButton, [window], 4, buttonInv, 0, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 5, buttonSq, 60, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 6, buttonSqrt, 120, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 7, buttonDiv, 180, 60 * 2 - 10
+  stdcall RegisterButton, [window], 8, button7, 0, 60 * 3 - 10  
+  stdcall RegisterButton, [window], 9, button8, 60, 60 * 3 - 10  
+  stdcall RegisterButton, [window], 10, button9, 120, 60 * 3 - 10  
+  stdcall RegisterButton, [window], 11, buttonMul, 180, 60 * 3 - 10 
+  stdcall RegisterButton, [window], 12, button4, 0, 60 * 4 - 10  
+  stdcall RegisterButton, [window], 13, button5, 60, 60 * 4 - 10  
+  stdcall RegisterButton, [window], 14, button6, 120, 60 * 4 - 10  
+  stdcall RegisterButton, [window], 15, buttonMin, 180, 60 * 4 - 10
+  stdcall RegisterButton, [window], 16, button1, 0, 60 * 5 - 10  
+  stdcall RegisterButton, [window], 17, button2, 60, 60 * 5 - 10  
+  stdcall RegisterButton, [window], 18, button3, 120, 60 * 5 - 10  
+  stdcall RegisterButton, [window], 19, buttonSum, 180, 60 * 5 - 10 
+  stdcall RegisterButton, [window], 20, buttonUn, 0, 60 * 6 - 10  
+  stdcall RegisterButton, [window], 21, button0, 60, 60 * 6 - 10  
+  stdcall RegisterButton, [window], 22, buttonDot, 120, 60 * 6 - 10  
+  stdcall RegisterButton, [window], 23, buttonEq, 180, 60 * 6 - 10
   jmp .finish
-      
+
 .wmcommand:
   mov ax, word[wParam]
-  mov [btnId], ax
+  mov [buttonId], ax
   
-  cmp [btnId], 0
+  cmp [buttonId], 0
   jne @F
   ; TODO
 @@:
-  cmp [btnId], 1
+  cmp [buttonId], 1
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 2
+  cmp [buttonId], 2
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 3
+  cmp [buttonId], 3
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 4
+  cmp [buttonId], 4
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 5
+  cmp [buttonId], 5
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 6
+  cmp [buttonId], 6
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 7
+  cmp [buttonId], 7
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 8
+  cmp [buttonId], 8
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 9
+  cmp [buttonId], 9
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 10
+  cmp [buttonId], 10
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 11
+  cmp [buttonId], 11
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 12
+  cmp [buttonId], 12
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 13
+  cmp [buttonId], 13
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 14
+  cmp [buttonId], 14
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 15
+  cmp [buttonId], 15
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 16
+  cmp [buttonId], 16
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 17
+  cmp [buttonId], 17
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 18
+  cmp [buttonId], 18
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 19
+  cmp [buttonId], 19
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 20
+  cmp [buttonId], 20
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 21
+  cmp [buttonId], 21
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 22
+  cmp [buttonId], 22
   jne @F 
   ; TODO
 @@:
-  cmp [btnId], 23
+  cmp [buttonId], 23
   jne @F 
   ; TODO
 @@:   
@@ -195,7 +195,7 @@ proc WindowProc uses ebx esi edi, wnd, msg, wParam, lParam
   jmp .finish
 
 .wmclose:  
-  invoke DestroyWindow, [wnd]
+  invoke DestroyWindow, [window]
   jmp .finish
   
 .wmdestroy:
@@ -205,14 +205,14 @@ proc WindowProc uses ebx esi edi, wnd, msg, wParam, lParam
 .finish:
   ret
 endp
-     
-proc RegBtn, wnd, id, text, gridX, gridY   
-  invoke CreateWindowEx, WS_EX_CLIENTEDGE, btnClassName, [text], WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, [gridX], [gridY], 60, 60, [wnd], [id], NULL, NULL  
+
+proc RegisterButton, window, id, text, gridX, gridY   
+  invoke CreateWindowEx, WS_EX_CLIENTEDGE, buttonClassName, [text], WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, [gridX], [gridY], 60, 60, [window], [id], NULL, NULL  
   ret
 endp
 
-proc RegFld, wnd   
-  invoke CreateWindowEx, WS_EX_CLIENTEDGE, fldClassName, fldText, WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, 0, 0, 240, 50, [wnd], NULL, NULL, NULL 
+proc RegisterFld, window   
+  invoke CreateWindowEx, WS_EX_CLIENTEDGE, fieldClassName, fieldText, WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, 0, 0, 240, 50, [window], NULL, NULL, NULL 
   mov [field], eax 
   ret
 endp
@@ -220,45 +220,45 @@ endp
 section '.data' data readable writeable
 
   className TCHAR 'HummelCalculator', 0
-  wndTitle TCHAR 'WinAPI', 0        
-  btnClassName TCHAR 'BUTTON', 0      
-  fldClassName TCHAR 'STATIC', 0      
-  fldText TCHAR '', 0 
+  windowTitle TCHAR 'WinAPI', 0        
+  buttonClassName TCHAR 'BUTTON', 0      
+  fieldClassName TCHAR 'STATIC', 0      
+  fieldText TCHAR '', 0 
 
-  btnPi TCHAR 'PI', 0      
-  btnE TCHAR 'E', 0   
-  btnC TCHAR 'C', 0
-  btnFact TCHAR 'x!', 0
-  btnInv TCHAR '1/x', 0
-  btnSq TCHAR 'x^2', 0
-  btnSqrt TCHAR 'sqrt(x)', 0
-  btnDiv TCHAR '/', 0
-  btnMul TCHAR '*', 0
-  btnMin TCHAR '-', 0
-  btnSum TCHAR '+', 0
-  btnUn TCHAR '-', 0
-  btnDot TCHAR '.', 0
-  btnEq TCHAR '=', 0
-  btn0 TCHAR '0', 0
-  btn1 TCHAR '1', 0
-  btn2 TCHAR '2', 0
-  btn3 TCHAR '3', 0
-  btn4 TCHAR '4', 0
-  btn5 TCHAR '5', 0
-  btn6 TCHAR '6', 0
-  btn7 TCHAR '7', 0
-  btn8 TCHAR '8', 0
-  btn9 TCHAR '9', 0
+  buttonPi TCHAR 'PI', 0      
+  buttonE TCHAR 'E', 0   
+  buttonC TCHAR 'C', 0
+  buttonFact TCHAR 'x!', 0
+  buttonInv TCHAR '1/x', 0
+  buttonSq TCHAR 'x^2', 0
+  buttonSqrt TCHAR 'sqrt(x)', 0
+  buttonDiv TCHAR '/', 0
+  buttonMul TCHAR '*', 0
+  buttonMin TCHAR '-', 0
+  buttonSum TCHAR '+', 0
+  buttonUn TCHAR '-', 0
+  buttonDot TCHAR '.', 0
+  buttonEq TCHAR '=', 0
+  button0 TCHAR '0', 0
+  button1 TCHAR '1', 0
+  button2 TCHAR '2', 0
+  button3 TCHAR '3', 0
+  button4 TCHAR '4', 0
+  button5 TCHAR '5', 0
+  button6 TCHAR '6', 0
+  button7 TCHAR '7', 0
+  button8 TCHAR '8', 0
+  button9 TCHAR '9', 0
   
   screenWidth dd 0
   screenHeight dd 0
-  wndWidth dd 260
-  wndHeight dd 453
-  wndX dd 0
-  wndY dd 0
+  windowWidth dd 260
+  windowHeight dd 453
+  windowX dd 0
+  windowY dd 0
   
   field dd 0
-  btnId dw 0
+  buttonId dw 0
 
   wc WNDCLASS 0, WindowProc, 0, 0, NULL, NULL, NULL, COLOR_WINDOW + 1, NULL, className
 
