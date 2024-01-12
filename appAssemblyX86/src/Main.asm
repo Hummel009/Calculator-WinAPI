@@ -233,8 +233,9 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
 endp
 
 proc PushSymbolWrapper, symbol   
-  ; TODO
-  ret
+  ;invoke GetWindowText, [field], buffer, 255    
+  invoke SetWindowText, [field], [symbol], 255 
+  ret          
 endp
 
 proc PushOperation, operation   
@@ -301,7 +302,8 @@ section '.data' data readable writeable
   windowHeight     dd 453
   windowX          dd 0
   windowY          dd 0
-  
+                    
+  buffer   db ?
   field    dd 0
   buttonId dw 0
 
