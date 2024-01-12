@@ -194,11 +194,6 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProcA(window, msg, wParam, lParam);
 }
 
-int max(int a, int b)
-{
-	return (a > b) ? a : b;
-}
-
 int main()
 {
 	char *className = "HummelCalculator";
