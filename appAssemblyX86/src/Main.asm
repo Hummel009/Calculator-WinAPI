@@ -14,6 +14,7 @@ Start:
 	invoke GetSystemMetrics, SM_CYSCREEN
 	mov [screenHeight], eax
   
+  ;getting X, Y to display window in center
   mov eax, [screenWidth]
 	sub eax, [windowWidth]
 	sar eax, 1 ;divide on 2     
@@ -24,13 +25,12 @@ Start:
 	sar eax, 1 ;divide on 2
 	mov [windowY], eax
 
-  invoke CreateWindowEx, 0, _class, _title, WS_VISIBLE + WS_DLGFRAME + WS_SYSMENU, [windowX], [windowY], [windowWidth], [windowHeight], NULL, NULL, [wc.hInstance], NULL
+  invoke CreateWindowEx, 0, className, windowTitle, WS_VISIBLE + WS_DLGFRAME + WS_SYSMENU, [windowX], [windowY], [windowWidth], [windowHeight], NULL, NULL, [wc.hInstance], NULL
  
 msg_loop:
   invoke GetMessage, msg, NULL, 0, 0
-  cmp eax, 1
-  jb end_loop
-  jne msg_loop
+  cmp eax, 0
+  je end_loop
   invoke TranslateMessage, msg
   invoke DispatchMessage, msg
   jmp msg_loop
@@ -56,9 +56,8 @@ endp
 
 section '.data' data readable writeable
 
-  _class TCHAR 'HummelCalculator', 0
-  _title TCHAR 'WinAPI', 0
-  _error TCHAR 'Startup failed.', 0  
+  className TCHAR 'HummelCalculator', 0
+  windowTitle TCHAR 'WinAPI', 0
   
 	screenWidth dd 0
 	screenHeight dd 0
@@ -67,7 +66,7 @@ section '.data' data readable writeable
 	windowX dd 0
 	windowY dd 0
 
-  wc WNDCLASS 0, WindowProc, 0, 0, NULL, NULL, NULL, COLOR_BTNFACE + 1, NULL, _class
+  wc WNDCLASS 0, WindowProc, 0, 0, NULL, NULL, NULL, COLOR_BTNFACE + 1, NULL, className
 
   msg MSG
 
