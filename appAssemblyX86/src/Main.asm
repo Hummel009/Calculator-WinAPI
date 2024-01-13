@@ -26,7 +26,7 @@ start:
   mov [windowY], eax
 
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, className, windowTitle, WS_VISIBLE + WS_OVERLAPPEDWINDOW, [windowX], [windowY], [windowWidth], [windowHeight], NULL, NULL, NULL, NULL
-     
+
 ; loop 1 
 cycle:
   invoke GetMessage, msg, NULL, 0, 0
@@ -57,7 +57,7 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   jmp .finish
 
 .wmcreate:      
-  stdcall RegisterFld, [window]
+  stdcall RegisterField, [window]
   
   stdcall RegisterButton, [window], 0, buttonP, 0, 60 * 1 - 10  
   stdcall RegisterButton, [window], 1, buttonE, 60, 60 * 1 - 10  
@@ -234,20 +234,57 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
 endp
 
 proc CalculateWrapper
-  ; TODO
+  invoke SetWindowText, [field], memory2, 255 
   ret
 endp
 
-proc PushSymbolWrapper, symbol: dword
+proc PushSymbolWrapper, symbol
   invoke GetWindowText, [field], buffer, 255
   invoke lstrcat, buffer, [symbol]
   invoke SetWindowText, [field], buffer, 255 
   ret          
 endp
 
+proc PushItem, item
+  cmp [memoryPresence1], 0
+  jne @F
+  invoke lstrcpy, memory1, [item]
+  mov [memoryPresence1], 1
+  jmp .finish
+@@:
+  cmp [memoryPresence2], 0
+  jne @F
+  invoke lstrcpy, memory2, [item]
+  mov [memoryPresence2], 1
+  jmp .finish
+@@:
+  cmp [memoryPresence3], 0
+  jne .finish
+  invoke lstrcpy, memory3, [item]
+  mov [memoryPresence3], 1
+  jmp .finish 
+.finish: 
+  ret
+endp
+
 proc PushOperation, operation
-  ; TODO  
-  invoke SetWindowText, [field], empty, 255  
+  invoke GetWindowText, [field], buffer, 255
+  cmp [memoryPresence1], 0
+  jne .error
+    
+  stdcall PushItem, buffer
+  stdcall PushItem, [operation]
+  invoke SetWindowText, [field], empty, 255
+  jmp .finish     
+  
+.error:   
+  mov [memoryPresence1], 0
+  mov [memoryPresence2], 0  
+  mov [memoryPresence3], 0
+  invoke SetWindowText, [field], error, 255  
+  jmp .finish     
+  
+.finish:
   ret
 endp
 
@@ -256,7 +293,7 @@ proc RegisterButton, window, id, text, gridX, gridY
   ret
 endp
 
-proc RegisterFld, window   
+proc RegisterField, window   
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, fieldClassName, fieldText, WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, 0, 0, 240, 50, [window], NULL, NULL, NULL 
   mov [field], eax 
   ret
@@ -264,65 +301,71 @@ endp
 
 section '.data' data readable writeable
 
-  className        TCHAR 'HummelCalculator', 0
-  windowTitle      TCHAR 'WinAPI', 0
-  buttonClassName  TCHAR 'BUTTON', 0      
-  fieldClassName   TCHAR 'STATIC', 0      
-  fieldText        TCHAR '', 0 
-
-  buttonP          TCHAR 'P', 0      
-  buttonE          TCHAR 'E', 0 
-
-  buttonPValue     TCHAR '3.14', 0      
-  buttonEValue     TCHAR '2.72', 0 
-  
-  buttonC          TCHAR 'C', 0
-  
-  buttonDot        TCHAR '.', 0 
-  buttonUnaryMinus TCHAR '-', 0
-  
-  buttonFactorial  TCHAR 'x!', 0
-  buttonInverse    TCHAR '1/x', 0
-  buttonSquare     TCHAR 'x^2', 0
-  buttonSquareRoot TCHAR 'sqrt(x)', 0
-  
-  buttonDivide     TCHAR '/', 0
-  buttonMultiple   TCHAR '*', 0
-  buttonMinus      TCHAR '-', 0
-  buttonPlus       TCHAR '+', 0
-  
-  buttonEquals     TCHAR '=', 0
-  
-  button0          TCHAR '0', 0
-  button1          TCHAR '1', 0
-  button2          TCHAR '2', 0
-  button3          TCHAR '3', 0
-  button4          TCHAR '4', 0
-  button5          TCHAR '5', 0
-  button6          TCHAR '6', 0
-  button7          TCHAR '7', 0
-  button8          TCHAR '8', 0
-  button9          TCHAR '9', 0
+  className        db 'HummelCalculator', 0
+  windowTitle      db 'WinAPI', 0
+  buttonClassName  db 'BUTTON', 0      
+  fieldClassName   db 'STATIC', 0      
+  fieldText        db '', 0     
   
   screenWidth      dd 0
-  screenHeight     dd 0
+  screenHeight     dd 0   
   windowWidth      dd 260
   windowHeight     dd 453
   windowX          dd 0
   windowY          dd 0
-                    
-  buffer   TCHAR 255 dup(?) 
-  empty    TCHAR 255 dup(?)
-  field    dd 0
-  buttonId dw 0
-  len      dd 0
+
+  buttonP          db 'P', 0      
+  buttonE          db 'E', 0 
+
+  buttonPValue     db '3.14', 0      
+  buttonEValue     db '2.72', 0 
   
-  operand1 TCHAR 255 dup(?)   
-  operand2 TCHAR 255 dup(?)
-  operator TCHAR 255 dup(?)
+  buttonC          db 'C', 0
+  
+  buttonDot        db '.', 0 
+  buttonUnaryMinus db '-', 0
+  
+  buttonFactorial  db 'x!', 0
+  buttonInverse    db '1/x', 0
+  buttonSquare     db 'x^2', 0
+  buttonSquareRoot db 'sqrt(x)', 0
+  
+  buttonDivide     db '/', 0
+  buttonMultiple   db '*', 0
+  buttonMinus      db '-', 0
+  buttonPlus       db '+', 0
+  
+  buttonEquals     db '=', 0
+  
+  button0          db '0', 0
+  button1          db '1', 0
+  button2          db '2', 0
+  button3          db '3', 0
+  button4          db '4', 0
+  button5          db '5', 0
+  button6          db '6', 0
+  button7          db '7', 0
+  button8          db '8', 0
+  button9          db '9', 0  
+                    
+  buffer           db 255 dup(?) 
+  empty            db 255 dup(?) 
+  error            db 'Error!', 0
+  
+  memory1          db 255 dup(?)   
+  memory2          db 255 dup(?)
+  memory3          db 255 dup(?)
+  memoryPresence1  db 0  
+  memoryPresence2  db 0  
+  memoryPresence3  db 0  
+  
+  buttonId         dw 0 
+  
+  field            dd 0
 
   wc  WNDCLASS 0, WindowProc, 0, 0, NULL, NULL, NULL, COLOR_WINDOW + 1, NULL, className
-  msg MSG
+  
+  msg MSG   
 
 section '.idata' import data readable writeable
 
