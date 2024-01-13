@@ -246,12 +246,12 @@ proc PushSymbol, symbol
   invoke GetWindowText, [field], buffer, 255  
   invoke lstrcmp, buffer, error
   cmp eax, 0
-  je .skip
+  jne .concat   
+  invoke SetWindowText, [field], [symbol]
+  jmp .finish
+.concat:     
   invoke lstrcat, buffer, [symbol]
   invoke SetWindowText, [field], buffer
-  jmp .finish
-.skip:
-  invoke SetWindowText, [field], [symbol]
 .finish:
   ret          
 endp
