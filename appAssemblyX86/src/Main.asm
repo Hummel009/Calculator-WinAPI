@@ -237,8 +237,41 @@ proc CalculateWrapper
   ret
 endp
 
-proc PushSymbolWrapper, symbol      
+proc PushSymbolWrapper, symbol    
+  invoke lstrcmp, [symbol], buttonPValue 
+  cmp eax, 0
+  je .piOrEuler
+  
+  invoke lstrcmp, [symbol], buttonEValue 
+  cmp eax, 0
+  je .piOrEuler  
+  
+  invoke lstrcmp, [symbol], buttonDot 
+  cmp eax, 0
+  je .dot
+  
+  invoke lstrcmp, [symbol], buttonUnaryMinus 
+  cmp eax, 0
+  je .unaryMinus
+  
+  jmp .allow
+   
+.piOrEuler: 
+  ; TODO
+  jmp .finish
+  
+.dot: 
+  ; TODO
+  jmp .finish
+
+.unaryMinus: 
+ ; TODO
+  jmp .finish
+  
+.allow:
   stdcall PushSymbol, [symbol]
+  
+.finish:
   ret          
 endp
 
@@ -309,12 +342,14 @@ proc PushOperation, operation
 .finish:
   ret
 endp
-
+      
+; READY
 proc RegisterButton, window, id, text, gridX, gridY   
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, buttonClassName, [text], WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, [gridX], [gridY], 60, 60, [window], [id], NULL, NULL  
   ret
 endp
-
+      
+; READY
 proc RegisterField, window   
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, fieldClassName, fieldText, WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, 0, 0, 240, 50, [window], NULL, NULL, NULL 
   mov [field], eax 
