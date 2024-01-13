@@ -27,13 +27,15 @@ start:
 
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, className, windowTitle, WS_VISIBLE + WS_OVERLAPPEDWINDOW, [windowX], [windowY], [windowWidth], [windowHeight], NULL, NULL, NULL, NULL
 
-; loop 1 
+; loop
 cycle:
   invoke GetMessage, msg, NULL, 0, 0
   cmp eax, 0
   je exit
+  
   invoke TranslateMessage, msg
   invoke DispatchMessage, msg
+  
   jmp cycle 
 ; end loop 
 
@@ -83,6 +85,7 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   stdcall RegisterButton, [window], 21, button0, 60, 60 * 6 - 10  
   stdcall RegisterButton, [window], 22, buttonDot, 120, 60 * 6 - 10  
   stdcall RegisterButton, [window], 23, buttonEquals, 180, 60 * 6 - 10
+
   jmp .finish
 
 .wmcommand:
@@ -237,7 +240,9 @@ proc CalculateWrapper
   ret
 endp
 
-proc PushSymbolWrapper, symbol    
+proc PushSymbolWrapper, symbol   
+  invoke GetWindowText, [field], buffer, 255
+   
   invoke lstrcmp, [symbol], buttonPValue 
   cmp eax, 0
   je .piOrEuler
@@ -254,7 +259,7 @@ proc PushSymbolWrapper, symbol
   cmp eax, 0
   je .unaryMinus
   
-  jmp .allow
+  jmp .other
    
 .piOrEuler: 
   ; TODO
@@ -265,10 +270,36 @@ proc PushSymbolWrapper, symbol
   jmp .finish
 
 .unaryMinus: 
- ; TODO
+  invoke lstrlen, buffer
+  cmp eax, 0
+  je .allow
+  
   jmp .finish
   
-.allow:
+.other: 
+  cmp [dataPresence0], 0
+  jne .checkOp
+  
+  jmp .allow
+
+.checkOp:
+  invoke lstrcmp, data1, buttonFactorial
+  cmp eax, 0
+  je .finish  
+  
+  invoke lstrcmp, data1, buttonSquare
+  cmp eax, 0
+  je .finish    
+  
+  invoke lstrcmp, data1, buttonSquareRoot
+  cmp eax, 0
+  je .finish 
+  
+  invoke lstrcmp, data1, buttonInverse
+  cmp eax, 0
+  je .finish
+
+.allow:  
   stdcall PushSymbol, [symbol]
   
 .finish:
@@ -295,36 +326,36 @@ endp
     
 ; READY
 proc PushItem, item
-  cmp [memoryPresence1], 0
+  cmp [dataPresence0], 0
   jne @F
   
-  invoke lstrcpy, memory1, [item]
-  mov [memoryPresence1], 1
+  invoke lstrcpy, data0, [item]
+  mov [dataPresence0], 1
   jmp .finish
   
 @@:
-  cmp [memoryPresence2], 0
+  cmp [dataPresence1], 0
   jne @F
   
-  invoke lstrcpy, memory2, [item]
-  mov [memoryPresence2], 1
+  invoke lstrcpy, data1, [item]
+  mov [dataPresence1], 1
   jmp .finish
-  
+
 @@:
-  cmp [memoryPresence3], 0
+  cmp [dataPresence2], 0
   jne .finish
   
-  invoke lstrcpy, memory3, [item]
-  mov [memoryPresence3], 1
+  invoke lstrcpy, data2, [item]
+  mov [dataPresence2], 1
   
 .finish: 
   ret
 endp
-        
+
 ; READY
 proc PushOperation, operation
   invoke GetWindowText, [field], buffer, 255
-  cmp [memoryPresence1], 0
+  cmp [dataPresence0], 0
   jne .error
     
   stdcall PushItem, buffer
@@ -333,22 +364,22 @@ proc PushOperation, operation
   jmp .finish     
   
 .error:   
-  mov [memoryPresence1], 0
-  mov [memoryPresence2], 0  
-  mov [memoryPresence3], 0
+  mov [dataPresence0], 0
+  mov [dataPresence1], 0  
+  mov [dataPresence2], 0
   invoke SetWindowText, [field], error  
   jmp .finish     
   
 .finish:
   ret
 endp
-      
+
 ; READY
 proc RegisterButton, window, id, text, gridX, gridY   
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, buttonClassName, [text], WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, [gridX], [gridY], 60, 60, [window], [id], NULL, NULL  
   ret
 endp
-      
+
 ; READY
 proc RegisterField, window   
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, fieldClassName, fieldText, WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, 0, 0, 240, 50, [window], NULL, NULL, NULL 
@@ -404,17 +435,17 @@ section '.data' data readable writeable
   button7          db '7', 0
   button8          db '8', 0
   button9          db '9', 0  
-                    
+
   buffer           db 255 dup(?) 
   empty            db '', 0 
   error            db 'Error!', 0
   
-  memory1          db 255 dup(?)   
-  memory2          db 255 dup(?)
-  memory3          db 255 dup(?)
-  memoryPresence1  db 0  
-  memoryPresence2  db 0  
-  memoryPresence3  db 0  
+  data0            db 255 dup(?)   
+  data1            db 255 dup(?)
+  data2            db 255 dup(?)
+  dataPresence0    db 0  
+  dataPresence1    db 0  
+  dataPresence2    db 0  
   
   buttonId         dw 0 
   
