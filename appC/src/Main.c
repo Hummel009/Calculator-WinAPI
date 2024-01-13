@@ -347,7 +347,7 @@ static void pushSymbolWrapper(char *symbol)
 	}
 	else
 	{
-		if (strlen(buffer) == 0)
+		if (data_presence[0] == FALSE)
 		{
 			pushSymbol(symbol);
 		}
