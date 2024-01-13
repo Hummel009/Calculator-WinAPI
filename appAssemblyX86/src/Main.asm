@@ -242,41 +242,53 @@ proc PushSymbolWrapper, symbol
   ret          
 endp
 
+; READY
 proc PushSymbol, symbol
   invoke GetWindowText, [field], buffer, 255  
   invoke lstrcmp, buffer, error
   cmp eax, 0
-  jne .concat   
+  jne .concat
+    
   invoke SetWindowText, [field], [symbol]
   jmp .finish
+  
 .concat:     
   invoke lstrcat, buffer, [symbol]
   invoke SetWindowText, [field], buffer
+  
 .finish:
   ret          
 endp
-
+    
+; READY
 proc PushItem, item
   cmp [memoryPresence1], 0
   jne @F
+  
   invoke lstrcpy, memory1, [item]
   mov [memoryPresence1], 1
   jmp .finish
+  
 @@:
   cmp [memoryPresence2], 0
   jne @F
+  
   invoke lstrcpy, memory2, [item]
   mov [memoryPresence2], 1
   jmp .finish
+  
 @@:
   cmp [memoryPresence3], 0
   jne .finish
+  
   invoke lstrcpy, memory3, [item]
   mov [memoryPresence3], 1
+  
 .finish: 
   ret
 endp
-
+        
+; READY
 proc PushOperation, operation
   invoke GetWindowText, [field], buffer, 255
   cmp [memoryPresence1], 0
