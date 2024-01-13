@@ -208,7 +208,6 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   cmp [buttonId], 23 ; equals
   jne @F
   stdcall CalculateWrapper
-  jmp .finish
 @@:   
   jmp .finish
   
@@ -233,15 +232,27 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   ret
 endp
 
-proc CalculateWrapper
-  invoke SetWindowText, [field], memory2, 255 
+proc CalculateWrapper             
+  ; TODO 
   ret
 endp
 
-proc PushSymbolWrapper, symbol
-  invoke GetWindowText, [field], buffer, 255
+proc PushSymbolWrapper, symbol      
+  stdcall PushSymbol, [symbol]
+  ret          
+endp
+
+proc PushSymbol, symbol
+  invoke GetWindowText, [field], buffer, 255  
+  invoke lstrcmp, buffer, error
+  cmp eax, 0
+  je .skip
   invoke lstrcat, buffer, [symbol]
-  invoke SetWindowText, [field], buffer, 255 
+  invoke SetWindowText, [field], buffer
+  jmp .finish
+.skip:
+  invoke SetWindowText, [field], [symbol]
+.finish:
   ret          
 endp
 
@@ -262,7 +273,6 @@ proc PushItem, item
   jne .finish
   invoke lstrcpy, memory3, [item]
   mov [memoryPresence3], 1
-  jmp .finish 
 .finish: 
   ret
 endp
@@ -274,14 +284,14 @@ proc PushOperation, operation
     
   stdcall PushItem, buffer
   stdcall PushItem, [operation]
-  invoke SetWindowText, [field], empty, 255
+  invoke SetWindowText, [field], empty
   jmp .finish     
   
 .error:   
   mov [memoryPresence1], 0
   mov [memoryPresence2], 0  
   mov [memoryPresence3], 0
-  invoke SetWindowText, [field], error, 255  
+  invoke SetWindowText, [field], error  
   jmp .finish     
   
 .finish:
@@ -349,7 +359,7 @@ section '.data' data readable writeable
   button9          db '9', 0  
                     
   buffer           db 255 dup(?) 
-  empty            db 255 dup(?) 
+  empty            db '', 0 
   error            db 'Error!', 0
   
   memory1          db 255 dup(?)   
