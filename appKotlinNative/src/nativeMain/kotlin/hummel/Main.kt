@@ -59,17 +59,17 @@ fun main() {
 		val screenWidth = GetSystemMetrics(SM_CXSCREEN)
 		val screenHeight = GetSystemMetrics(SM_CYSCREEN)
 
-		val windowWidth = 260
-		val windowHeight = 453
+		val windowWidth = 257
+		val windowHeight = 449
 
 		val windowX = max(0, (screenWidth - windowWidth) / 2)
 		val windowY = max(0, (screenHeight - windowHeight) / 2)
 
 		CreateWindowExW(
-			WS_EX_CLIENTEDGE.toUInt(),
+			0u,
 			className,
 			windowTitle,
-			(WS_VISIBLE or WS_SYSMENU).toUInt(),
+			(WS_VISIBLE or WS_CAPTION or WS_SYSMENU).toUInt(),
 			windowX,
 			windowY,
 			windowWidth,
@@ -158,14 +158,6 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 
 				BUTTON_EQUALS_ID -> calculateWrapper()
 			}
-		}
-
-		WM_GETMINMAXINFO -> {
-			val info = lParam.toCPointer<MINMAXINFO>()
-			info?.pointed?.ptMinTrackSize?.x = 260
-			info?.pointed?.ptMinTrackSize?.y = 453
-			info?.pointed?.ptMaxTrackSize?.x = 260
-			info?.pointed?.ptMaxTrackSize?.y = 453
 		}
 
 		WM_CLOSE -> DestroyWindow(window)
@@ -302,11 +294,11 @@ private fun registerField(window: HWND?): HWND {
 		WS_EX_CLIENTEDGE.toUInt(),
 		"STATIC",
 		"",
-		(WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON).toUInt(),
-		0,
-		0,
-		238,
-		50,
+		(WS_TABSTOP or WS_VISIBLE or WS_CHILD).toUInt(),
+		1,
+		1,
+		239,
+		48,
 		window,
 		null,
 		null,
@@ -322,9 +314,9 @@ private fun registerButton(window: HWND?, id: Int, text: String, gridX: Int, gri
 		WS_EX_CLIENTEDGE.toUInt(),
 		"BUTTON",
 		text,
-		(WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON).toUInt(),
-		buttonWidth * gridX,
-		50 + buttonHeight * gridY,
+		(WS_TABSTOP or WS_VISIBLE or WS_CHILD).toUInt(),
+		buttonWidth * gridX + 1,
+		buttonHeight * gridY + 50,
 		buttonWidth,
 		buttonHeight,
 		window,

@@ -8,9 +8,7 @@ import kotlin.math.max
 import kotlin.math.sqrt
 
 const val WM_COMMAND: Int = 0x0111
-const val WM_GETMINMAXINFO: Int = 0x0024
 const val COLOR_WINDOW: Int = 0x5
-const val WS_EX_CLIENTEDGE: Int = 0x00000200
 
 const val BUTTON_0_ID: Int = 0
 const val BUTTON_1_ID: Int = 1
@@ -66,16 +64,16 @@ fun main() {
 	val screenHeight = ExUser32.INSTANCE.GetSystemMetrics(SM_CYSCREEN)
 
 	val windowWidth = 260
-	val windowHeight = 453
+	val windowHeight = 458
 
 	val windowX = max(0.0, ((screenWidth - windowWidth) / 2).toDouble()).toInt()
 	val windowY = max(0.0, ((screenHeight - windowHeight) / 2).toDouble()).toInt()
 
 	ExUser32.INSTANCE.CreateWindowEx(
-		WS_EX_CLIENTEDGE,
+		0,
 		className,
 		windowTitle,
-		WS_VISIBLE or WS_SYSMENU,
+		WS_VISIBLE or WS_CAPTION or WS_SYSMENU,
 		windowX,
 		windowY,
 		windowWidth,
@@ -164,16 +162,6 @@ class WndProc : WindowProc {
 
 					BUTTON_EQUALS_ID -> calculateWrapper()
 				}
-			}
-
-			WM_GETMINMAXINFO -> {
-				val info = ExUser32.MINMAXINFO(Pointer(lParam.toLong()))
-				info.read()
-				info.ptMinTrackSize!!.x = 260
-				info.ptMinTrackSize!!.y = 453
-				info.ptMaxTrackSize!!.x = 260
-				info.ptMaxTrackSize!!.y = 453
-				info.write()
 			}
 
 			WM_CLOSE -> ExUser32.INSTANCE.DestroyWindow(window)
@@ -301,11 +289,11 @@ class WndProc : WindowProc {
 			0,
 			"STATIC",
 			"",
-			WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON,
-			0,
-			0,
-			238,
-			50,
+			WS_TABSTOP or WS_VISIBLE or WS_CHILD,
+			1,
+			1,
+			239,
+			48,
 			window,
 			null,
 			null,
@@ -321,9 +309,9 @@ class WndProc : WindowProc {
 			0,
 			"BUTTON",
 			text,
-			WS_TABSTOP or WS_VISIBLE or WS_CHILD or BS_DEFPUSHBUTTON,
-			buttonWidth * gridX,
-			50 + buttonHeight * gridY,
+			WS_TABSTOP or WS_VISIBLE or WS_CHILD,
+			buttonWidth * gridX + 1,
+			buttonHeight * gridY + 50,
 			buttonWidth,
 			buttonHeight,
 			window,

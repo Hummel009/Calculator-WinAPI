@@ -25,7 +25,7 @@ start:
   sar eax, 1 ; divide on 2
   mov [windowY], eax
 
-  invoke CreateWindowEx, WS_EX_CLIENTEDGE, className, windowTitle, WS_VISIBLE + WS_OVERLAPPEDWINDOW, [windowX], [windowY], [windowWidth], [windowHeight], NULL, NULL, NULL, NULL
+  invoke CreateWindowEx, 0, className, windowTitle, WS_VISIBLE + WS_CAPTION + WS_SYSMENU, [windowX], [windowY], [windowWidth], [windowHeight], NULL, NULL, NULL, NULL
 
 ; loop
 cycle:
@@ -47,8 +47,6 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   je .wmcreate
   cmp [msg], WM_COMMAND
   je .wmcommand
-  cmp [msg], WM_GETMINMAXINFO
-  je .wmgetminmaxinfo
   cmp [msg], WM_CLOSE
   je .wmclose
   cmp [msg], WM_DESTROY
@@ -61,30 +59,30 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
 .wmcreate:      
   stdcall RegisterField, [window]
   
-  stdcall RegisterButton, [window], 0, buttonP, 0, 60 * 1 - 10  
-  stdcall RegisterButton, [window], 1, buttonE, 60, 60 * 1 - 10  
-  stdcall RegisterButton, [window], 2, buttonC, 120, 60 * 1 - 10  
-  stdcall RegisterButton, [window], 3, buttonFactorial, 180, 60 * 1 - 10
-  stdcall RegisterButton, [window], 4, buttonInverse, 0, 60 * 2 - 10  
-  stdcall RegisterButton, [window], 5, buttonSquare, 60, 60 * 2 - 10  
-  stdcall RegisterButton, [window], 6, buttonSquareRoot, 120, 60 * 2 - 10  
-  stdcall RegisterButton, [window], 7, buttonDivide, 180, 60 * 2 - 10
-  stdcall RegisterButton, [window], 8, button7, 0, 60 * 3 - 10  
-  stdcall RegisterButton, [window], 9, button8, 60, 60 * 3 - 10  
-  stdcall RegisterButton, [window], 10, button9, 120, 60 * 3 - 10  
-  stdcall RegisterButton, [window], 11, buttonMultiple, 180, 60 * 3 - 10 
-  stdcall RegisterButton, [window], 12, button4, 0, 60 * 4 - 10  
-  stdcall RegisterButton, [window], 13, button5, 60, 60 * 4 - 10  
-  stdcall RegisterButton, [window], 14, button6, 120, 60 * 4 - 10  
-  stdcall RegisterButton, [window], 15, buttonMinus, 180, 60 * 4 - 10
-  stdcall RegisterButton, [window], 16, button1, 0, 60 * 5 - 10  
-  stdcall RegisterButton, [window], 17, button2, 60, 60 * 5 - 10  
-  stdcall RegisterButton, [window], 18, button3, 120, 60 * 5 - 10  
-  stdcall RegisterButton, [window], 19, buttonPlus, 180, 60 * 5 - 10 
-  stdcall RegisterButton, [window], 20, buttonUnaryMinus, 0, 60 * 6 - 10  
-  stdcall RegisterButton, [window], 21, button0, 60, 60 * 6 - 10  
-  stdcall RegisterButton, [window], 22, buttonDot, 120, 60 * 6 - 10  
-  stdcall RegisterButton, [window], 23, buttonEquals, 180, 60 * 6 - 10
+  stdcall RegisterButton, [window], 0, buttonP, 0 + 1, 60 * 1 - 10  
+  stdcall RegisterButton, [window], 1, buttonE, 60 + 1, 60 * 1 - 10  
+  stdcall RegisterButton, [window], 2, buttonC, 120 + 1, 60 * 1 - 10  
+  stdcall RegisterButton, [window], 3, buttonFactorial, 180 + 1, 60 * 1 - 10
+  stdcall RegisterButton, [window], 4, buttonInverse, 0 + 1, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 5, buttonSquare, 60 + 1, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 6, buttonSquareRoot, 120 + 1, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 7, buttonDivide, 180 + 1, 60 * 2 - 10
+  stdcall RegisterButton, [window], 8, button7, 0 + 1, 60 * 3 - 10  
+  stdcall RegisterButton, [window], 9, button8, 60 + 1, 60 * 3 - 10  
+  stdcall RegisterButton, [window], 10, button9, 120 + 1, 60 * 3 - 10  
+  stdcall RegisterButton, [window], 11, buttonMultiple, 180 + 1, 60 * 3 - 10 
+  stdcall RegisterButton, [window], 12, button4, 0 + 1, 60 * 4 - 10  
+  stdcall RegisterButton, [window], 13, button5, 60 + 1, 60 * 4 - 10  
+  stdcall RegisterButton, [window], 14, button6, 120 + 1, 60 * 4 - 10  
+  stdcall RegisterButton, [window], 15, buttonMinus, 180 + 1, 60 * 4 - 10
+  stdcall RegisterButton, [window], 16, button1, 0 + 1, 60 * 5 - 10  
+  stdcall RegisterButton, [window], 17, button2, 60 + 1, 60 * 5 - 10  
+  stdcall RegisterButton, [window], 18, button3, 120 + 1, 60 * 5 - 10  
+  stdcall RegisterButton, [window], 19, buttonPlus, 180 + 1, 60 * 5 - 10 
+  stdcall RegisterButton, [window], 20, buttonUnaryMinus, 0 + 1, 60 * 6 - 10  
+  stdcall RegisterButton, [window], 21, button0, 60 + 1, 60 * 6 - 10  
+  stdcall RegisterButton, [window], 22, buttonDot, 120 + 1, 60 * 6 - 10  
+  stdcall RegisterButton, [window], 23, buttonEquals, 180 + 1, 60 * 6 - 10
 
   jmp .finish
 
@@ -212,15 +210,6 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   jne @F
   stdcall CalculateWrapper
 @@:   
-  jmp .finish
-  
-.wmgetminmaxinfo:
-  mov eax, [lParam] ; ptr to minmaxinfo struct   
-  mov [eax + MINMAXINFO.ptMinTrackSize + POINT.x], 260
-  mov [eax + MINMAXINFO.ptMinTrackSize + POINT.y], 453 
-  mov [eax + MINMAXINFO.ptMaxTrackSize + POINT.x], 260
-  mov [eax + MINMAXINFO.ptMaxTrackSize + POINT.y], 453
- 
   jmp .finish
 
 .wmclose:  
@@ -376,13 +365,13 @@ endp
 
 ; READY
 proc RegisterButton, window, id, text, gridX, gridY   
-  invoke CreateWindowEx, WS_EX_CLIENTEDGE, buttonClassName, [text], WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, [gridX], [gridY], 60, 60, [window], [id], NULL, NULL  
+  invoke CreateWindowEx, WS_EX_CLIENTEDGE, buttonClassName, [text], WS_TABSTOP + WS_VISIBLE + WS_CHILD, [gridX], [gridY], 60, 60, [window], [id], NULL, NULL  
   ret
 endp
 
 ; READY
 proc RegisterField, window   
-  invoke CreateWindowEx, WS_EX_CLIENTEDGE, fieldClassName, fieldText, WS_TABSTOP + WS_VISIBLE + WS_CHILD + BS_DEFPUSHBUTTON, 0, 0, 240, 50, [window], NULL, NULL, NULL 
+  invoke CreateWindowEx, WS_EX_CLIENTEDGE, fieldClassName, fieldText, WS_TABSTOP + WS_VISIBLE + WS_CHILD, 1, 1, 239, 48, [window], NULL, NULL, NULL 
   mov [field], eax 
   ret
 endp
@@ -397,8 +386,8 @@ section '.data' data readable writeable
   
   screenWidth      dd 0
   screenHeight     dd 0   
-  windowWidth      dd 260
-  windowHeight     dd 453
+  windowWidth      dd 248
+  windowHeight     dd 440
   windowX          dd 0
   windowY          dd 0
 

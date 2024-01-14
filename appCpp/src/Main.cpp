@@ -158,13 +158,6 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
-	case WM_GETMINMAXINFO:
-		info->ptMinTrackSize.x = 260;
-		info->ptMinTrackSize.y = 453;
-		info->ptMaxTrackSize.x = 260;
-		info->ptMaxTrackSize.y = 453;
-		break;
-
 	case WM_CLOSE:
 		DestroyWindow(window);
 		break;
@@ -197,13 +190,13 @@ int main()
 	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-	int windowWidth = 260;
-	int windowHeight = 453;
+	int windowWidth = 248;
+	int windowHeight = 440;
 
 	int windowX = max(0, (screenWidth - windowWidth) / 2);
 	int windowY = max(0, (screenHeight - windowHeight) / 2);
 
-	CreateWindowExA(WS_EX_CLIENTEDGE, className.c_str(), windowTitle.c_str(), WS_VISIBLE | WS_OVERLAPPEDWINDOW, windowX, windowY, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
+	CreateWindowExA(0, className.c_str(), windowTitle.c_str(), WS_VISIBLE | WS_CAPTION | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
 
 	MSG msg;
 	while (GetMessageA(&msg, NULL, 0u, 0u) != 0)
@@ -396,11 +389,11 @@ static HWND registerField(HWND window)
 		WS_EX_CLIENTEDGE,
 		"STATIC",
 		"",
-		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-		0,
-		0,
-		240,
-		50,
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD,
+		1,
+		1,
+		239,
+		48,
 		window,
 		NULL,
 		NULL,
@@ -416,9 +409,9 @@ static void registerButton(HWND window, int id, string text, int gridX, int grid
 		WS_EX_CLIENTEDGE,
 		"BUTTON",
 		text.c_str(),
-		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-		buttonWidth * gridX,
-		50 + buttonHeight * gridY,
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD,
+		buttonWidth * gridX + 1,
+		buttonHeight * gridY + 50,
 		buttonWidth,
 		buttonHeight,
 		window,

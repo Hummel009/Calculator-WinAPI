@@ -14,9 +14,7 @@ import static com.sun.jna.platform.win32.WinUser.*;
 
 public class Main {
 	public static final int WM_COMMAND = 0x0111;
-	public static final int WM_GETMINMAXINFO = 0x0024;
 	public static final int COLOR_WINDOW = 0x5;
-	public static final int WS_EX_CLIENTEDGE = 0x00000200;
 
 	public static final int BUTTON_0_ID = 0;
 	public static final int BUTTON_1_ID = 1;
@@ -72,12 +70,12 @@ public class Main {
 		var screenHeight = ExUser32.INSTANCE.GetSystemMetrics(SM_CYSCREEN);
 
 		var windowWidth = 260;
-		var windowHeight = 453;
+		var windowHeight = 458;
 
 		var windowX = Math.max(0, (screenWidth - windowWidth) / 2);
 		var windowY = Math.max(0, (screenHeight - windowHeight) / 2);
 
-		ExUser32.INSTANCE.CreateWindowEx(WS_EX_CLIENTEDGE, className, windowTitle, WS_VISIBLE | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, null, null, null, null);
+		ExUser32.INSTANCE.CreateWindowEx(0, className, windowTitle, WS_VISIBLE | WS_CAPTION | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, null, null, null, null);
 
 		var msg = new MSG();
 		while (ExUser32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {
@@ -158,16 +156,6 @@ public class Main {
 
 						case BUTTON_EQUALS_ID -> calculateWrapper();
 					}
-				}
-
-				case WM_GETMINMAXINFO -> {
-					var info = new ExUser32.MINMAXINFO(new Pointer(lParam.longValue()));
-					info.read();
-					info.ptMinTrackSize.x = 260;
-					info.ptMinTrackSize.y = 453;
-					info.ptMaxTrackSize.x = 260;
-					info.ptMaxTrackSize.y = 453;
-					info.write();
 				}
 
 				case WM_CLOSE -> ExUser32.INSTANCE.DestroyWindow(window);
@@ -288,14 +276,14 @@ public class Main {
 		}
 
 		private static HWND registerField(HWND window) {
-			return ExUser32.INSTANCE.CreateWindowEx(0, "STATIC", "", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 0, 0, 238, 50, window, null, null, null);
+			return ExUser32.INSTANCE.CreateWindowEx(0, "STATIC", "", WS_TABSTOP | WS_VISIBLE | WS_CHILD, 1, 1, 239, 48, window, null, null, null);
 		}
 
 		private static void registerButton(HWND window, int id, String text, int gridX, int gridY) {
 			var buttonWidth = 60;
 			var buttonHeight = 60;
 
-			ExUser32.INSTANCE.CreateWindowEx(0, "BUTTON", text, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, buttonWidth * gridX, 50 + buttonHeight * gridY, buttonWidth, buttonHeight, window, new HMENU(new Pointer(id)), null, null);
+			ExUser32.INSTANCE.CreateWindowEx(0, "BUTTON", text, WS_TABSTOP | WS_VISIBLE | WS_CHILD, buttonWidth * gridX + 1, buttonHeight * gridY + 50, buttonWidth, buttonHeight, window, new HMENU(new Pointer(id)), null, null);
 		}
 
 		private static int loword(WPARAM wparam) {
