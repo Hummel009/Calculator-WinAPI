@@ -2,9 +2,6 @@ package hummel;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WinDef.HMENU;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.WPARAM;
 
 import java.util.ArrayList;
 import java.util.List;
