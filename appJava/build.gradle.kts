@@ -24,7 +24,7 @@ java {
 }
 
 application {
-	mainClass = "hummel.MainKt"
+	mainClass = "hummel.Main"
 }
 
 tasks {
