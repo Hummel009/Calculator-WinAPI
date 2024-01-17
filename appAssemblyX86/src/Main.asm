@@ -224,12 +224,12 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   ret
 endp
 
-proc CalculateWrapper             
-  ; TODO 
+proc CalculateWrapper   
+  ; TODO
   ret
 endp
 
-proc PushSymbolWrapper, symbol   
+proc PushSymbolWrapper uses eax, symbol   
   invoke GetWindowText, [field], buffer, 255
    
   invoke lstrcmp, [symbol], buttonPValue 
@@ -250,17 +250,28 @@ proc PushSymbolWrapper, symbol
   
   jmp .other
    
-.piOrEuler: 
-  ; TODO
+.piOrEuler:
+  ; BUG
+  invoke lstrlen, buffer
+  mov [bufferLen], eax
+  stdcall CountSymbol, [symbol]
+  cmp [quantity], 0
+  je .allow
   jmp .finish
   
-.dot: 
-  ; TODO
+.dot:
+  ; BUG 
+  invoke lstrlen, buffer
+  mov [bufferLen], eax
+  stdcall CountSymbol, [symbol]
+  cmp [quantity], 0
+  je .allow
   jmp .finish
 
 .unaryMinus: 
-  invoke lstrlen, buffer
-  cmp eax, 0
+  invoke lstrlen, buffer    
+  mov [bufferLen], eax
+  cmp [bufferLen], 0
   je .allow
   
   jmp .finish
@@ -296,7 +307,7 @@ proc PushSymbolWrapper, symbol
 endp
 
 ; READY
-proc PushSymbol, symbol
+proc PushSymbol uses eax, symbol
   invoke GetWindowText, [field], buffer, 255  
   invoke lstrcmp, buffer, error
   cmp eax, 0
@@ -370,9 +381,28 @@ proc RegisterButton, window, id, text, gridX, gridY
 endp
 
 ; READY
-proc RegisterField, window   
+proc RegisterField uses eax, window   
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, fieldClassName, fieldText, WS_TABSTOP + WS_VISIBLE + WS_CHILD, 1, 1, 239, 48, [window], NULL, NULL, NULL 
   mov [field], eax 
+  ret
+endp
+
+proc CountSymbol uses eax edi ecx, symbol
+  mov [quantity], 0
+  mov eax, [symbol]
+  mov edi, buffer
+  mov ecx, [bufferLen]
+
+; loop: find symbol
+.cycle:
+  repne scasb
+  jnz .finish
+
+  inc [quantity]
+  jmp .cycle
+; end loop 
+
+.finish:     
   ret
 endp
 
@@ -384,6 +414,9 @@ section '.data' data readable writeable
   fieldClassName   db 'STATIC', 0      
   fieldText        db '', 0     
   
+  quantity         db 0     
+  bufferLen        dd 0
+       
   screenWidth      dd 0
   screenHeight     dd 0   
   windowWidth      dd 248
