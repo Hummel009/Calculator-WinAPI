@@ -47,6 +47,7 @@ fun main() {
 	val windowTitle = "WinAPI"
 
 	val windowClass = WNDCLASSEX()
+	windowClass.cbSize = windowClass.size()
 	windowClass.style = 0
 	windowClass.lpfnWndProc = WndProc()
 	windowClass.cbClsExtra = 0
@@ -57,6 +58,7 @@ fun main() {
 	windowClass.hbrBackground = HBRUSH(Pointer(COLOR_WINDOW.toLong()))
 	windowClass.lpszMenuName = null
 	windowClass.lpszClassName = className
+	windowClass.hIcon = null
 
 	ExUser32.INSTANCE.RegisterClassEx(windowClass)
 

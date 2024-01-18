@@ -50,6 +50,7 @@ public class Main {
 		var windowTitle = "WinAPI";
 
 		var windowClass = new WNDCLASSEX();
+		windowClass.cbSize = windowClass.size();
 		windowClass.style = 0;
 		windowClass.lpfnWndProc = new WndProc();
 		windowClass.cbClsExtra = 0;
@@ -60,6 +61,7 @@ public class Main {
 		windowClass.hbrBackground = new HBRUSH(new Pointer(COLOR_WINDOW));
 		windowClass.lpszMenuName = null;
 		windowClass.lpszClassName = className;
+		windowClass.hIcon = null;
 
 		ExUser32.INSTANCE.RegisterClassEx(windowClass);
 

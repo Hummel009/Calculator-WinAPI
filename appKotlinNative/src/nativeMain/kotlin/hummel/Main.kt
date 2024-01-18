@@ -42,7 +42,7 @@ fun main() {
 		val className = "HummelCalculator"
 		val windowTitle = "WinAPI"
 
-		val windowClass = alloc<WNDCLASS>()
+		val windowClass = alloc<WNDCLASSW>()
 		windowClass.style = 0u
 		windowClass.lpfnWndProc = staticCFunction(::wndProc)
 		windowClass.cbClsExtra = 0

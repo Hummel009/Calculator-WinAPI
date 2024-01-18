@@ -47,7 +47,6 @@ static void calculateWrapper();
 static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	int buttonId = LOWORD(wParam);
-	MINMAXINFO *info = (MINMAXINFO *)lParam;
 
 	switch (msg)
 	{
@@ -173,7 +172,7 @@ int main()
 	string className = "HummelCalculator";
 	string windowTitle = "WinAPI";
 
-	WNDCLASS windowClass;
+	WNDCLASSA windowClass;
 	windowClass.style = 0;
 	windowClass.lpfnWndProc = wndProc;
 	windowClass.cbClsExtra = 0;

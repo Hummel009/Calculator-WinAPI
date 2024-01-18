@@ -49,7 +49,6 @@ static void push(char *str);
 static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	int buttonId = LOWORD(wParam);
-	MINMAXINFO *info = (MINMAXINFO *)lParam;
 
 	switch (msg)
 	{
@@ -176,7 +175,7 @@ int main()
 	char *className = "HummelCalculator";
 	char *windowTitle = "WinAPI";
 
-	WNDCLASS windowClass;
+	WNDCLASSA windowClass;
 	windowClass.style = 0;
 	windowClass.lpfnWndProc = wndProc;
 	windowClass.cbClsExtra = 0;
