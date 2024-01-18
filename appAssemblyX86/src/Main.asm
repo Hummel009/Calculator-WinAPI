@@ -267,8 +267,18 @@ proc CalculateWrapper
   
   jmp .resetData
   
-.twoOperandAction: 
-  ; TODO 
+.twoOperandAction:
+  invoke lstrlen, buffer
+  stdcall CountSymbol, eax, '.'
+  cmp [quantity], 0
+  jne .pushAsIs
+  
+  invoke lstrcat, buffer, float
+
+.pushAsIs:  
+  stdcall PushItem, buffer
+  
+  invoke SetWindowText, [field], data2  
   jmp .resetData
   
 .oneOperandAction:
@@ -416,7 +426,15 @@ proc PushOperation, operation
   invoke GetWindowText, [field], buffer, 255
   cmp [dataPresence0], 0
   jne .error
-    
+  
+  invoke lstrlen, buffer
+  stdcall CountSymbol, eax, '.'
+  cmp [quantity], 0
+  jne .pushAsIs
+  
+  invoke lstrcat, buffer, float
+
+.pushAsIs:  
   stdcall PushItem, buffer
   stdcall PushItem, [operation]
   invoke SetWindowText, [field], empty
@@ -525,7 +543,9 @@ section '.data' data readable writeable
   data2            db 255 dup(?)
   dataPresence0    db 0  
   dataPresence1    db 0  
-  dataPresence2    db 0  
+  dataPresence2    db 0
+  
+  float            db '.0', 0  
   
   buttonId         dw 0 
   
