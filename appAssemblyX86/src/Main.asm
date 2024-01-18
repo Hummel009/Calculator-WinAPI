@@ -229,9 +229,7 @@ proc CalculateWrapper
   ret
 endp
 
-proc PushSymbolWrapper uses eax, symbol   
-  invoke GetWindowText, [field], buffer, 255
-   
+proc PushSymbolWrapper uses eax, symbol  
   invoke lstrcmp, [symbol], buttonPValue 
   cmp eax, 0
   je .piOrEuler
@@ -250,28 +248,26 @@ proc PushSymbolWrapper uses eax, symbol
   
   jmp .other
    
-.piOrEuler:
-  ; BUG
-  invoke lstrlen, buffer
-  mov [bufferLen], eax
-  stdcall CountSymbol, [symbol]
+.piOrEuler:     
+  invoke GetWindowText, [field], buffer, 255
+  stdcall GetBufferDots, eax
   cmp [quantity], 0
   je .allow
   jmp .finish
+   
+.dot:              
+  invoke GetWindowText, [field], buffer, 255
+  cmp eax, 0
+  je .finish
   
-.dot:
-  ; BUG 
-  invoke lstrlen, buffer
-  mov [bufferLen], eax
-  stdcall CountSymbol, [symbol]
+  stdcall GetBufferDots, eax
   cmp [quantity], 0
   je .allow
   jmp .finish
 
-.unaryMinus: 
-  invoke lstrlen, buffer    
-  mov [bufferLen], eax
-  cmp [bufferLen], 0
+.unaryMinus:      
+  invoke GetWindowText, [field], buffer, 255
+  cmp eax, 0
   je .allow
   
   jmp .finish
@@ -387,11 +383,11 @@ proc RegisterField uses eax, window
   ret
 endp
 
-proc CountSymbol uses eax edi ecx, symbol
-  mov [quantity], 0
-  mov eax, [symbol]
-  mov edi, buffer
+proc GetBufferDots uses eax edi ecx, bufferLen
+  mov [quantity], 0   
   mov ecx, [bufferLen]
+  mov al, '.'
+  mov edi, buffer
 
 ; loop: find symbol
 .cycle:
@@ -400,9 +396,9 @@ proc CountSymbol uses eax edi ecx, symbol
 
   inc [quantity]
   jmp .cycle
-; end loop 
+; end loop
 
-.finish:     
+.finish:
   ret
 endp
 
@@ -413,9 +409,9 @@ section '.data' data readable writeable
   buttonClassName  db 'BUTTON', 0      
   fieldClassName   db 'STATIC', 0      
   fieldText        db '', 0     
-  
-  quantity         db 0     
+     
   bufferLen        dd 0
+  quantity         db 0
        
   screenWidth      dd 0
   screenHeight     dd 0   
