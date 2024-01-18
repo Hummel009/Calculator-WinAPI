@@ -231,7 +231,9 @@ proc CalculateWrapper
 endp
 
 ; READY
-proc PushSymbolWrapper uses eax, symbol  
+proc PushSymbolWrapper uses eax, symbol 
+  invoke GetWindowText, [field], buffer, 255
+   
   invoke lstrcmp, [symbol], buttonPValue 
   cmp eax, 0
   je .piOrEuler
@@ -250,27 +252,27 @@ proc PushSymbolWrapper uses eax, symbol
   
   jmp .other
    
-.piOrEuler:     
-  invoke GetWindowText, [field], buffer, 255
-  cmp ax, 0
+.piOrEuler: 
+  invoke lstrlen, buffer    
+  cmp eax, 0
   je .allow
   jmp .finish
    
-.dot:              
-  invoke GetWindowText, [field], buffer, 255
+.dot:
+  invoke lstrlen, buffer               
   cmp eax, 0
   je .finish
-  
+                   
+  invoke lstrlen, buffer
   stdcall GetBufferDots, eax
   cmp [quantity], 0
   je .allow
   jmp .finish
 
-.unaryMinus:      
-  invoke GetWindowText, [field], buffer, 255
+.unaryMinus:
+  invoke lstrlen, buffer        
   cmp eax, 0
   je .allow
-  
   jmp .finish
   
 .other: 
@@ -402,7 +404,7 @@ proc GetBufferDots uses eax edi ecx, bufferLen
 
 .finish:
   ret
-endp
+endp 
 
 section '.data' data readable writeable
 
