@@ -224,10 +224,70 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
 .finish:
   ret
 endp
+     
+; TODO
+proc CalculateWrapper  
+  invoke GetWindowText, [field], buffer, 255
+  cmp [dataPresence0], 1
+  jne .resetData
+  cmp [dataPresence1], 1
+  jne .resetData 
 
-proc CalculateWrapper   
-  ; TODO
-  ret
+  invoke lstrcmp, data1, buttonPlus
+  cmp eax, 0
+  je .twoOperandAction 
+
+  invoke lstrcmp, data1, buttonMinus
+  cmp eax, 0
+  je .twoOperandAction 
+
+  invoke lstrcmp, data1, buttonMultiple
+  cmp eax, 0
+  je .twoOperandAction
+
+  invoke lstrcmp, data1, buttonDivide
+  cmp eax, 0
+  je .twoOperandAction 
+
+  invoke lstrcmp, data1, buttonFactorial
+  cmp eax, 0
+  je .oneOperandAction   
+
+  invoke lstrcmp, data1, buttonSquare
+  cmp eax, 0
+  je .oneOperandAction  
+
+  invoke lstrcmp, data1, buttonSquareRoot
+  cmp eax, 0
+  je .oneOperandAction 
+
+  invoke lstrcmp, data1, buttonInverse
+  cmp eax, 0
+  je .oneOperandAction 
+  
+  jmp .resetData
+  
+.twoOperandAction: 
+  ; TODO 
+  jmp .resetData
+  
+.oneOperandAction:
+  ; TODO 
+  jmp .resetData
+  
+.resetData:
+  mov [dataPresence0], 0
+  mov [dataPresence1], 0  
+  mov [dataPresence2], 0
+  ret 
+  
+.error:
+  mov [dataPresence0], 0
+  mov [dataPresence1], 0  
+  mov [dataPresence2], 0 
+  invoke SetWindowText, [field], error  
+  ret 
+  
 endp
 
 ; READY
@@ -413,7 +473,6 @@ section '.data' data readable writeable
   fieldClassName   db 'STATIC', 0      
   fieldText        db '', 0     
      
-  bufferLen        dd 0
   quantity         db 0
        
   screenWidth      dd 0
