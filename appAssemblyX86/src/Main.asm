@@ -267,7 +267,8 @@ proc CalculateWrapper
   
   jmp .resetData
   
-.twoOperandAction:
+.twoOperandAction: 
+  ; TODO 
   invoke lstrlen, buffer
   stdcall CountSymbol, eax, '.'
   cmp [quantity], 0
