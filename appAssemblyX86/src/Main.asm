@@ -250,8 +250,7 @@ proc PushSymbolWrapper uses eax, symbol
    
 .piOrEuler:     
   invoke GetWindowText, [field], buffer, 255
-  stdcall GetBufferDots, eax
-  cmp [quantity], 0
+  cmp ax, 0
   je .allow
   jmp .finish
    
