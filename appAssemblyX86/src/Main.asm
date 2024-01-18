@@ -42,6 +42,7 @@ cycle:
 exit:
   invoke ExitProcess, [msg.wParam]
 
+; READY
 proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   cmp [msg], WM_CREATE
   je .wmcreate
@@ -229,6 +230,7 @@ proc CalculateWrapper
   ret
 endp
 
+; READY
 proc PushSymbolWrapper uses eax, symbol  
   invoke lstrcmp, [symbol], buttonPValue 
   cmp eax, 0
@@ -381,7 +383,8 @@ proc RegisterField uses eax, window
   mov [field], eax 
   ret
 endp
-
+   
+; READY
 proc GetBufferDots uses eax edi ecx, bufferLen
   mov [quantity], 0   
   mov ecx, [bufferLen]
