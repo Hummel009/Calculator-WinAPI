@@ -8,9 +8,8 @@ namespace Hummel
         public delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct WNDCLASSEX
+        public struct WNDCLASS
         {
-            public int cbSize;
             public int style;
             public WndProc lpfnWndProc;
             public int cbClsExtra;
@@ -21,12 +20,11 @@ namespace Hummel
             public IntPtr hbrBackground;
             public string lpszMenuName;
             public string lpszClassName;
-            public IntPtr hIconSm;
         }
 
 
         [DllImport("user32.dll")]
-        public static extern ushort RegisterClassEx(ref WNDCLASSEX lpwcx);
+        public static extern ushort RegisterClass(ref WNDCLASS lpwcx);
 
         public enum SystemMetric : int
         {
@@ -77,7 +75,7 @@ namespace Hummel
         public static extern bool TranslateMessage(ref MSG lpMsg);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr DispatchMessage(ref MSG lpMsg);
+        public static extern IntPtr DispatchMessage(ref MSG lpmsg);
 
         [DllImport("user32.dll")]
         public static extern IntPtr DefWindowProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);

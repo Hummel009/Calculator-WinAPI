@@ -48,9 +48,8 @@ namespace Hummel
             var windowTitle = "WinAPI";
             delegWndProc = ParentWndProc;
 
-            var windowClass = new WinAPI.WNDCLASSEX
+            var windowClass = new WinAPI.WNDCLASS
             {
-                cbSize = Marshal.SizeOf<WinAPI.WNDCLASSEX>(),
                 style = 0,
                 lpfnWndProc = delegWndProc,
                 cbClsExtra = 0,
@@ -63,7 +62,7 @@ namespace Hummel
                 lpszClassName = className
             };
 
-            var atom = WinAPI.RegisterClassEx(ref windowClass);
+            var atom = WinAPI.RegisterClass(ref windowClass);
 
             var screenWidth = WinAPI.GetSystemMetrics(WinAPI.SystemMetric.SM_CXSCREEN);
             var screenHeight = WinAPI.GetSystemMetrics(WinAPI.SystemMetric.SM_CYSCREEN);
