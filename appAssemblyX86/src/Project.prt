@@ -4,9 +4,10 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=1
+  countAsm=2
   countInc=0
 [asm]
   asm1="Main.asm"
+  asm2="Convert.asm"
 [inc]
 end if

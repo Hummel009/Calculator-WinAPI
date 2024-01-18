@@ -1,7 +1,8 @@
 format PE GUI 4.0
 entry start
 
-include 'win32a.inc'
+include 'win32a.inc'  
+include 'Convert.asm'
 
 section '.text' code readable executable
 
@@ -459,26 +460,6 @@ proc RegisterField uses eax, window
   mov [field], eax 
   ret
 endp
-   
-; READY
-proc CountSymbol uses eax edi ecx, bufferLen, symbol: byte
-  mov [quantity], 0 
-  mov al, [symbol]  
-  mov edi, buffer    
-  mov ecx, [bufferLen]
-
-; loop: find symbol
-.cycle:
-  repne scasb
-  jnz .finish
-
-  inc [quantity]
-  jmp .cycle
-; end loop
-
-.finish:
-  ret
-endp 
 
 section '.data' data readable writeable
 
