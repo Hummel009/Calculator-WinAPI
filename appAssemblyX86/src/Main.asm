@@ -279,8 +279,6 @@ proc CalculateWrapper
   stdcall PushItem, buffer
   
   ; TODO 
-  
-  invoke SetWindowText, [field], data0 
    
   jmp .resetData
   
@@ -311,23 +309,23 @@ proc PushSymbolWrapper uses eax, symbol
    
   invoke lstrcmp, [symbol], buttonPValue 
   cmp eax, 0
-  je .piOrEuler
+  je .checkFirst
   
   invoke lstrcmp, [symbol], buttonEValue 
   cmp eax, 0
-  je .piOrEuler  
+  je .checkFirst 
+  
+  invoke lstrcmp, [symbol], buttonUnaryMinus 
+  cmp eax, 0
+  je .checkFirst 
   
   invoke lstrcmp, [symbol], buttonDot 
   cmp eax, 0
   je .dot
   
-  invoke lstrcmp, [symbol], buttonUnaryMinus 
-  cmp eax, 0
-  je .unaryMinus
-  
   jmp .other
    
-.piOrEuler: 
+.checkFirst: 
   invoke lstrlen, buffer    
   cmp eax, 0
   je .allow
@@ -341,12 +339,6 @@ proc PushSymbolWrapper uses eax, symbol
   invoke lstrlen, buffer
   stdcall CountSymbol, eax, '.'
   cmp [quantity], 0
-  je .allow
-  jmp .finish
-
-.unaryMinus:
-  invoke lstrlen, buffer        
-  cmp eax, 0
   je .allow
   jmp .finish
   

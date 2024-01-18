@@ -317,9 +317,9 @@ static void pushSymbolWrapper(char *symbol)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
-	if (strcmp(symbol, "3.14") == 0 || strcmp(symbol, "2.72") == 0)
+	if (strcmp(symbol, "3.14") == 0 || strcmp(symbol, "2.72") == 0 || strcmp(symbol, "-") == 0)
 	{
-		if (strchr(buffer, '.') == NULL)
+		if (strlen(buffer) == 0)
 		{
 			pushSymbol(symbol);
 		}
@@ -327,13 +327,6 @@ static void pushSymbolWrapper(char *symbol)
 	else if (strcmp(symbol, ".") == 0)
 	{
 		if (strchr(buffer, '.') == NULL && strlen(buffer) != 0)
-		{
-			pushSymbol(symbol);
-		}
-	}
-	else if (strcmp(symbol, "-") == 0)
-	{
-		if (strlen(buffer) == 0)
 		{
 			pushSymbol(symbol);
 		}

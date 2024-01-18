@@ -326,9 +326,9 @@ static void pushSymbolWrapper(string symbol)
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 	string str(buffer);
 
-	if (symbol == "3.14" || symbol == "2.72")
+	if (symbol == "3.14" || symbol == "2.72" || symbol == "-")
 	{
-		if (str.find(".") == string::npos)
+		if (str.size() == 0)
 		{
 			pushSymbol(symbol);
 		}
@@ -336,13 +336,6 @@ static void pushSymbolWrapper(string symbol)
 	else if (symbol == ".")
 	{
 		if (str.find(".") == string::npos && str.size() != 0)
-		{
-			pushSymbol(symbol);
-		}
-	}
-	else if (symbol == "-")
-	{
-		if (str.size() == 0)
 		{
 			pushSymbol(symbol);
 		}

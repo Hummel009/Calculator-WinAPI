@@ -232,18 +232,13 @@ public class Main {
 			var str = Native.toString(buffer);
 
 			switch (symbol) {
-				case "3.14", "2.72" -> {
-					if (!str.contains(".")) {
+				case "3.14", "2.72", "-" -> {
+					if (str.isEmpty()) {
 						pushSymbol(symbol);
 					}
 				}
 				case "." -> {
 					if (!str.contains(".") && !str.isEmpty()) {
-						pushSymbol(symbol);
-					}
-				}
-				case "-" -> {
-					if (str.isEmpty()) {
 						pushSymbol(symbol);
 					}
 				}
