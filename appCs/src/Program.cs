@@ -38,7 +38,7 @@ namespace Hummel
         public const int DEFAULT_CAPACITY = 100;
         private static readonly IntPtr field;
         private static readonly List<string>? data;
-        private static WndProc? delegWndProc;
+        private static WinAPI.WndProc? delegWndProc;
 
         private static readonly int[] FACTORIAL = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600];
 
@@ -46,12 +46,13 @@ namespace Hummel
         {
             var className = "HummelCalculator";
             var windowTitle = "WinAPI";
-            delegWndProc = MyWndProc;
+            delegWndProc = ParentWndProc;
 
             var windowClass = new WinAPI.WNDCLASSEX
             {
+                cbSize = Marshal.SizeOf<WinAPI.WNDCLASSEX>(),
                 style = 0,
-                lpfnWndProc = Marshal.GetFunctionPointerForDelegate(delegWndProc!),
+                lpfnWndProc = delegWndProc,
                 cbClsExtra = 0,
                 cbWndExtra = 0,
                 hInstance = 0,
@@ -62,10 +63,10 @@ namespace Hummel
                 lpszClassName = className
             };
 
-            WinAPI.RegisterClassEx(ref windowClass);
+            var atom = WinAPI.RegisterClassEx(ref windowClass);
 
-            var screenWidth = WinAPI.GetSystemMetrics(WinAPI.SystemMetrics.SM_CXSCREEN);
-            var screenHeight = WinAPI.GetSystemMetrics(WinAPI.SystemMetrics.SM_CYSCREEN);
+            var screenWidth = WinAPI.GetSystemMetrics(WinAPI.SystemMetric.SM_CXSCREEN);
+            var screenHeight = WinAPI.GetSystemMetrics(WinAPI.SystemMetric.SM_CYSCREEN);
 
             var windowWidth = 260;
             var windowHeight = 458;
@@ -73,17 +74,17 @@ namespace Hummel
             var windowX = Math.Max(0, (screenWidth - windowWidth) / 2);
             var windowY = Math.Max(0, (screenHeight - windowHeight) / 2);
 
-            var hwnd = WinAPI.CreateWindowEx(0, className, windowTitle, WS_VISIBLE | WS_CAPTION | WS_SYSMENU, 0, 0, windowWidth, windowHeight, 0, 0, 0, 0);
+            WinAPI.CreateWindowEx(0, atom, windowTitle, WS_VISIBLE | WS_CAPTION | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, 0, 0, 0, 0);
 
             var msg = new WinAPI.MSG();
-            while (WinAPI.GetMessage(out msg, 0, 0, 0))
+            while (WinAPI.GetMessage(out msg, 0, 0, 0) != 0)
             {
                 WinAPI.TranslateMessage(ref msg);
                 WinAPI.DispatchMessage(ref msg);
             }
         }
-        public delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-        private static IntPtr MyWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+
+        private static IntPtr ParentWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
         {
             return WinAPI.DefWindowProc(hWnd, msg, wParam, lParam);
         }
