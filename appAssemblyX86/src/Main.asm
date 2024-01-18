@@ -264,7 +264,7 @@ proc PushSymbolWrapper uses eax, symbol
   je .finish
                    
   invoke lstrlen, buffer
-  stdcall GetBufferDots, eax
+  stdcall CountSymbol, eax, '.'
   cmp [quantity], 0
   je .allow
   jmp .finish
@@ -367,7 +367,6 @@ proc PushOperation, operation
   mov [dataPresence1], 0  
   mov [dataPresence2], 0
   invoke SetWindowText, [field], error  
-  jmp .finish     
   
 .finish:
   ret
@@ -387,11 +386,11 @@ proc RegisterField uses eax, window
 endp
    
 ; READY
-proc GetBufferDots uses eax edi ecx, bufferLen
-  mov [quantity], 0   
+proc CountSymbol uses eax edi ecx, bufferLen, symbol: byte
+  mov [quantity], 0 
+  mov al, [symbol]  
+  mov edi, buffer    
   mov ecx, [bufferLen]
-  mov al, '.'
-  mov edi, buffer
 
 ; loop: find symbol
 .cycle:
