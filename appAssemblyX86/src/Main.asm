@@ -268,7 +268,6 @@ proc CalculateWrapper
   jmp .resetData
   
 .twoOperandAction: 
-  ; TODO 
   invoke lstrlen, buffer
   stdcall CountSymbol, eax, '.'
   cmp [quantity], 0
@@ -279,11 +278,16 @@ proc CalculateWrapper
 .pushAsIs:  
   stdcall PushItem, buffer
   
-  invoke SetWindowText, [field], data2  
+  ; TODO 
+  
+  invoke SetWindowText, [field], data0 
+   
   jmp .resetData
   
 .oneOperandAction:
+
   ; TODO 
+  
   jmp .resetData
   
 .resetData:
