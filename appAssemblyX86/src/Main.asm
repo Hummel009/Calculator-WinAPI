@@ -1,8 +1,11 @@
 format PE GUI 4.0
 entry start
 
-include 'win32a.inc'  
-include 'Convert.asm'
+include 'win32a.inc' 
+include 'AtoF.asm'    
+include 'FtoA.asm'  
+include 'AtoI.asm'   
+include 'ItoA.asm'     
 
 section '.text' code readable executable
 
@@ -458,6 +461,26 @@ endp
 proc RegisterField uses eax, window   
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, fieldClassName, fieldText, WS_TABSTOP + WS_VISIBLE + WS_CHILD, 1, 1, 239, 48, [window], NULL, NULL, NULL 
   mov [field], eax 
+  ret
+endp
+
+; READY
+proc CountSymbol uses eax edi ecx, bufferLen, symbol: byte
+  mov [quantity], 0 
+  mov al, [symbol]  
+  mov edi, buffer    
+  mov ecx, [bufferLen]
+
+; loop: find symbol
+.cycle:
+  repne scasb
+  jnz .finish
+
+  inc [quantity]
+  jmp .cycle
+; end loop
+
+.finish:
   ret
 endp
 
