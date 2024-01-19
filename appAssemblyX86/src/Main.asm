@@ -108,7 +108,7 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
 @@:
   cmp [buttonId], 2 ; clear
   jne @F   
-  invoke SetWindowText, [field], empty, 255 
+  invoke SetWindowText, [field], empty 
   ; TODO 
   jmp .finish
 @@:
