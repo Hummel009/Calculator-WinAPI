@@ -276,13 +276,32 @@ proc CalculateWrapper
   invoke lstrlen, buffer
   stdcall CountSymbol, eax, '.'
   cmp [quantity], 0
-  jmp .pushAsIs
+  jmp .pushAsIs ; REPLACE WITH JNE AFTER FLOAT SUPPORT
   
   invoke lstrcat, buffer, float
 
 .pushAsIs:  
   stdcall PushItem, buffer
   
+  invoke lstrcmp, data1, buttonPlus
+  cmp eax, 0
+  je .doPlus 
+
+  invoke lstrcmp, data1, buttonMinus
+  cmp eax, 0
+  je .doMinus 
+
+  invoke lstrcmp, data1, buttonMultiple
+  cmp eax, 0
+  je .doMultiple
+
+  invoke lstrcmp, data1, buttonDivide
+  cmp eax, 0
+  je .doDivide
+
+  jmp .resetData 
+
+.doPlus:  
   stdcall ConvertFirstAtoI
   stdcall ConvertSecondAtoI
         
@@ -293,12 +312,54 @@ proc CalculateWrapper
 
   stdcall ConvertResItoA 
         
-  invoke SetWindowText, [field], buffer  
+  invoke SetWindowText, [field], buffer
+  jmp .resetData 
   
-  ; TODO 
-   
+.doMinus:
+  ; INCORRECT   
+  stdcall ConvertFirstAtoI
+  stdcall ConvertSecondAtoI
+        
+  finit
+  fld dword[intData0]
+  fsub dword[intData2]
+  fstp dword[intRes]
+
+  stdcall ConvertResItoA 
+        
+  invoke SetWindowText, [field], buffer
+  jmp .resetData   
+  
+.doMultiple:
+  ; INCORRECT  
+  stdcall ConvertFirstAtoI
+  stdcall ConvertSecondAtoI
+        
+  finit
+  fld dword[intData0]
+  fmul dword[intData2]
+  fstp dword[intRes]
+
+  stdcall ConvertResItoA 
+        
+  invoke SetWindowText, [field], buffer
   jmp .resetData
   
+.doDivide:
+  ; INCORRECT    
+  stdcall ConvertFirstAtoI
+  stdcall ConvertSecondAtoI
+        
+  finit
+  fld dword[intData0]
+  fdiv dword[intData2]
+  fstp dword[intRes]
+
+  stdcall ConvertResItoA 
+        
+  invoke SetWindowText, [field], buffer
+  jmp .resetData        
+
 .oneOperandAction:
 
   ; TODO 
@@ -444,7 +505,7 @@ proc PushOperation, operation
   invoke lstrlen, buffer
   stdcall CountSymbol, eax, '.'
   cmp [quantity], 0
-  jmp .pushAsIs
+  jmp .pushAsIs ; REPLACE WITH JNE AFTER FLOAT SUPPORT
   
   invoke lstrcat, buffer, float
 
