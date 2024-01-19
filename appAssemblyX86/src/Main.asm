@@ -388,11 +388,7 @@ proc CalculateWrapper
         
   invoke SetWindowText, [field], buffer
   jmp .resetData
-  
-.doInverse: 
-  ; TODO 
-  jmp .resetData
-  
+
 .doFactorial:
   stdcall ConvertFirstAtoI
 	mov ecx, [intData0]
@@ -412,9 +408,12 @@ proc CalculateWrapper
   stdcall ConvertResItoA 
         
   invoke SetWindowText, [field], buffer
-
   jmp .resetData
   
+.doInverse: 
+  ; TODO 
+  jmp .resetData
+    
 .doSquareRoot:
   ; TODO 
   
