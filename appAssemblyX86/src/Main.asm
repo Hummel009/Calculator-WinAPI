@@ -631,7 +631,7 @@ section '.data' data readable writeable
   
   field            dd 0
  
-  radixes          dd 10, 16, 16, 2
+  radixes          dd 10
   
 
   itoa.digits                   db '0123456789ABCDEF', 0
