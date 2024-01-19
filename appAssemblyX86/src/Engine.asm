@@ -17,7 +17,6 @@ proc ConvertSecondAtoI
   mov ebx, radixes
 
   stdcall atoi, [edx], [ebx]
-
   mov [intData2], eax
     
   ret
