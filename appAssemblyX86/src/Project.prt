@@ -4,9 +4,13 @@ include "Main.asm"
 
 if 2 * 2 = 5
 [options]
-  countAsm=1
+  countAsm=5
   countInc=0
 [asm]
   asm1="Main.asm"
+  asm2="AtoF.asm"
+  asm3="FtoA.asm"
+  asm4="AtoI.asm"
+  asm5="ItoA.asm"
 [inc]
 end if
