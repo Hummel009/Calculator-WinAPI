@@ -275,7 +275,7 @@ proc CalculateWrapper
   invoke lstrlen, buffer
   stdcall CountSymbol, eax, '.'
   cmp [quantity], 0
-  jne .pushAsIs
+  jmp .pushAsIs
   
   invoke lstrcat, buffer, float
 
@@ -285,7 +285,7 @@ proc CalculateWrapper
         ;;; TEST ASCII TO INT
   
         mov     ecx, 1
-        mov     edx, testPtrI
+        mov     edx, ptrData0
         mov     ebx, radixes
     @@:
         stdcall atoi, [edx], [ebx]
@@ -293,20 +293,36 @@ proc CalculateWrapper
         add     ebx, 4
         loop    @B
         
-        mov [testNumI], eax
+        mov [intData0], eax
         
+        mov     ecx, 1
+        mov     edx, ptrData2
+        mov     ebx, radixes
+    @@:
+        stdcall atoi, [edx], [ebx]
+        add     edx, 4
+        add     ebx, 4
+        loop    @B
+        
+        mov [intData2], eax
+        
+        finit
+        fld dword[intData0]
+        fadd dword[intData2]
+        fstp dword[intRes]
+
         ;;; TEST INT TO ASCII 
         
         mov     ecx, 1
-        mov     edx, testNumI
+        mov     edx, intRes
         mov     ebx, radixes
     @@:
-        stdcall itoa, [edx], [ebx], testBuf, FALSE
+        stdcall itoa, [edx], [ebx], buffer, FALSE
         add     edx, 4
         add     ebx, 4
         loop    @B            
         
-  invoke SetWindowText, [field], testBuf  
+  invoke SetWindowText, [field], buffer  
   
   ; TODO 
    
@@ -457,7 +473,7 @@ proc PushOperation, operation
   invoke lstrlen, buffer
   stdcall CountSymbol, eax, '.'
   cmp [quantity], 0
-  jne .pushAsIs
+  jmp .pushAsIs
   
   invoke lstrcat, buffer, float
 
@@ -571,18 +587,18 @@ section '.data' data readable writeable
   dataPresence0    db 0  
   dataPresence1    db 0  
   dataPresence2    db 0
+  ptrData0         dd data0
+  ptrData2         dd data2
+  intData0         dd 0      
+  intData2         dd 0
+  intRes           dd 0
   
   float            db '.0', 0  
   
   buttonId         dw 0 
   
   field            dd 0
-                                      
-  testBuf          db 255 dup(?)
-  testNumI         dd 0      
-  testPtrI         dd testStrI
-  testStrI         db '67', 0
-  
+ 
   radixes          dd 10, 16, 16, 2
   
 
