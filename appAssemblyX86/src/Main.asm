@@ -334,10 +334,10 @@ proc CalculateWrapper
   ; INCORRECT  
   stdcall ConvertFirstAtoI
   stdcall ConvertSecondAtoI
-        
+
   finit
   fld dword[intData0]
-  fmul dword[intData2]
+  fimul dword[intData2]
   fstp dword[intRes]
 
   stdcall ConvertResItoA 
@@ -352,7 +352,7 @@ proc CalculateWrapper
         
   finit
   fld dword[intData0]
-  fdiv dword[intData2]
+  fidiv dword[intData2]
   fstp dword[intRes]
 
   stdcall ConvertResItoA 
