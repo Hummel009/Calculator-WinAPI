@@ -282,6 +282,29 @@ proc CalculateWrapper
 .pushAsIs:  
   stdcall PushItem, buffer
   
+        mov     ecx, 1
+        mov     edx, testPtrI
+        mov     ebx, radixes
+    @@:
+        stdcall atoi, [edx], [ebx]
+        add     edx, 4
+        add     ebx, 4
+        loop    @B
+        
+        mov [testNumI], eax
+        
+        ;;;
+        
+        mov     ecx, 1
+        mov     edx, testNumI
+        mov     ebx, radixes
+    @@:
+        stdcall itoa, [edx], [ebx], testBuf, FALSE
+        add     edx, 4
+        add     ebx, 4
+        loop    @B    
+  invoke SetWindowText, [field], testBuf  
+  
   ; TODO 
    
   jmp .resetData
@@ -551,6 +574,18 @@ section '.data' data readable writeable
   buttonId         dw 0 
   
   field            dd 0
+                                      
+  testBuf          db 255 dup(?)
+  testNumI         dd 0      
+  testPtrI         dd testStrI
+  testStrI         db '67', 0
+  
+  radixes          dd 10, 16, 16, 2
+  
+
+  itoa.digits                   db '0123456789ABCDEF', 0
+  ftoa.ten                      dd 10           
+  atof.ten                      dd 10
 
   wc  WNDCLASS 0, WindowProc, 0, 0, NULL, NULL, NULL, COLOR_WINDOW + 1, NULL, className
   

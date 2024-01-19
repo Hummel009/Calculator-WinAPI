@@ -105,6 +105,3 @@ endl
         pop     ecx edi eax
         ret
 endp
-
-section '.data' data readable writeable
-  ftoa.ten                      dd 10

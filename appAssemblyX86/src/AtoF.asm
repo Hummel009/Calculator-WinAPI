@@ -80,6 +80,3 @@ proc    atof                    string
         pop     esi ecx eax
         ret
 endp
-
-section '.data' data readable writeable
-  atof.ten                      dd 10

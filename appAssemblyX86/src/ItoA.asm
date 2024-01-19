@@ -69,6 +69,3 @@ endl
         clc
         jmp     .theend
 endp
-
-section '.data' data readable writeable
-  itoa.digits                   db '0123456789ABCDEF', 0
