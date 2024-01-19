@@ -242,7 +242,7 @@ namespace Hummel
 
 					var operand1 = double.Parse(data[0]);
 					var operand2 = double.Parse(data[2]);
-					
+
 					var result = op switch
 					{
 						"+" => operand1 + operand2,
@@ -259,7 +259,7 @@ namespace Hummel
 				else if (new HashSet<string> { "!", "s", "i", "r" }.Contains(op))
 				{
 					var operand = double.Parse(data[0]);
-					
+
 					var result = op switch
 					{
 						"!" => FACTORIAL[(int)operand],
