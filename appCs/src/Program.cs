@@ -198,7 +198,6 @@ namespace Hummel
                         case BUTTON_SQUARE_ROOT_ID:
                             PushOperation("r");
                             break;
-
                         case BUTTON_EQUALS_ID:
                             CalculateWrapper();
                             break;
@@ -250,7 +249,7 @@ namespace Hummel
                         "-" => operand1 - operand2,
                         "*" => operand1 * operand2,
                         "/" => operand1 / operand2,
-                        _ => throw new Exception("Invalid operator: " + op),
+                        _ => throw new Exception("Invalid operator: " + op)
                     };
 
                     data.Clear();
@@ -267,7 +266,7 @@ namespace Hummel
                         "s" => operand * operand,
                         "i" => 1.0 / operand,
                         "r" => Math.Sqrt(operand),
-                        _ => throw new Exception("Invalid operator: " + op),
+                        _ => throw new Exception("Invalid operator: " + op)
                     };
 
                     data.Clear();
@@ -277,7 +276,7 @@ namespace Hummel
             }
         }
 
-        private static void PushOperation(String operation)
+        private static void PushOperation(string operation)
         {
             StringBuilder buffer = new(WinAPI.GetWindowTextLength(field) + 1);
             WinAPI.GetWindowText(field, buffer, buffer.Capacity);
@@ -296,7 +295,7 @@ namespace Hummel
             }
         }
 
-        private static void PushSymbolWrapper(String symbol)
+        private static void PushSymbolWrapper(string symbol)
         {
             StringBuilder buffer = new(WinAPI.GetWindowTextLength(field) + 1);
             WinAPI.GetWindowText(field, buffer, buffer.Capacity);
@@ -337,7 +336,7 @@ namespace Hummel
             }
         }
 
-        private static void PushSymbol(String symbol)
+        private static void PushSymbol(string symbol)
         {
             StringBuilder buffer = new(WinAPI.GetWindowTextLength(field) + 1);
             WinAPI.GetWindowText(field, buffer, buffer.Capacity);
@@ -357,7 +356,7 @@ namespace Hummel
             return WinAPI.CreateWindowEx(WS_EX_CLIENTEDGE, "STATIC", "", WS_TABSTOP | WS_VISIBLE | WS_CHILD, 1, 1, 239, 48, window, 0, 0, 0);
         }
 
-        private static void RegisterButton(IntPtr window, int id, String text, int gridX, int gridY)
+        private static void RegisterButton(IntPtr window, int id, string text, int gridX, int gridY)
         {
             var buttonWidth = 60;
             var buttonHeight = 60;
