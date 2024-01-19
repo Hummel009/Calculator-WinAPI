@@ -1,2 +1,3 @@
-appKotlinJvm/*.kt linguist-language=Kotlin (JVM)
-appKotlinNative/*.kt linguist-language=Kotlin (Native)
+appKotlinJvm/*.kt linguist-language=Kotlin JVM
+appKotlinNative/*.kt linguist-language=Kotlin Native
+appKotlinNative/*.kts linguist-language=Kotlin Script
