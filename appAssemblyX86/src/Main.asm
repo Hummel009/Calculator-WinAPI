@@ -617,8 +617,6 @@ section '.data' data readable writeable
   dataPresence0    db 0  
   dataPresence1    db 0  
   dataPresence2    db 0
-  ptrData0         dd data0
-  ptrData2         dd data2
   intData0         dd 0      
   intData2         dd 0
   intRes           dd 0
