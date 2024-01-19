@@ -306,9 +306,9 @@ proc CalculateWrapper
   stdcall ConvertSecondAtoI
         
   finit
-  fld dword[intData0]
-  fadd dword[intData2]
-  fstp dword[intRes]
+  fild dword[intData0]
+  fiadd dword[intData2]
+  fistp dword[intRes]
 
   stdcall ConvertResItoA 
         
@@ -321,9 +321,9 @@ proc CalculateWrapper
   stdcall ConvertSecondAtoI
         
   finit
-  fld dword[intData0]
-  fsub dword[intData2]
-  fstp dword[intRes]
+  fild dword[intData0]
+  fisub dword[intData2]
+  fistp dword[intRes]
 
   stdcall ConvertResItoA 
         
@@ -336,9 +336,9 @@ proc CalculateWrapper
   stdcall ConvertSecondAtoI
 
   finit
-  fld dword[intData0]
+  fild dword[intData0]
   fimul dword[intData2]
-  fstp dword[intRes]
+  fistp dword[intRes]
 
   stdcall ConvertResItoA 
         
@@ -351,9 +351,9 @@ proc CalculateWrapper
   stdcall ConvertSecondAtoI
         
   finit
-  fld dword[intData0]
+  fild dword[intData0]
   fidiv dword[intData2]
-  fstp dword[intRes]
+  fistp dword[intRes]
 
   stdcall ConvertResItoA 
         
