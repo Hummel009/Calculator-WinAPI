@@ -612,7 +612,8 @@ section '.data' data readable writeable
   buffer           db 255 dup(?) 
   empty            db '', 0 
   error            db 'Error!', 0
-  
+                               
+  radix            dd 10
   data0            db 255 dup(?)   
   data1            db 255 dup(?)
   data2            db 255 dup(?)
@@ -631,7 +632,6 @@ section '.data' data readable writeable
   
   field            dd 0
  
-  radixes          dd 10
   
 
   itoa.digits                   db '0123456789ABCDEF', 0
