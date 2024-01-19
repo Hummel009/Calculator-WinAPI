@@ -11,7 +11,7 @@ proc ConvertFirstAtoI
   mov dword[localData0+ecx], eax
   inc ecx
   
-  cmp ebx, 255
+  cmp ebx, 254
   je .exit
   
 .iterinc:
@@ -48,7 +48,7 @@ proc ConvertSecondAtoI
   mov dword[localData2+ecx], eax
   inc ecx
   
-  cmp ebx, 255
+  cmp ebx, 254
   je .exit
   
 .iterinc:
