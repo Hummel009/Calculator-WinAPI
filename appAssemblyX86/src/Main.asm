@@ -316,7 +316,6 @@ proc CalculateWrapper
   jmp .resetData 
   
 .doMinus:
-  ; INCORRECT   
   stdcall ConvertFirstAtoI
   stdcall ConvertSecondAtoI
         
@@ -331,7 +330,6 @@ proc CalculateWrapper
   jmp .resetData   
   
 .doMultiple:
-  ; INCORRECT  
   stdcall ConvertFirstAtoI
   stdcall ConvertSecondAtoI
 
@@ -345,8 +343,7 @@ proc CalculateWrapper
   invoke SetWindowText, [field], buffer
   jmp .resetData
   
-.doDivide:
-  ; INCORRECT    
+.doDivide: 
   stdcall ConvertFirstAtoI
   stdcall ConvertSecondAtoI
         
