@@ -2,7 +2,7 @@
 proc ConvertFirstAtoI
   mov ecx, 1
   mov edx, ptrData0
-  mov ebx, radixes
+  mov ebx, radix
 
   stdcall atoi, [edx], [ebx]
   mov [intData0], eax
@@ -14,7 +14,7 @@ endp
 proc ConvertSecondAtoI  
   mov ecx, 1
   mov edx, ptrData2
-  mov ebx, radixes
+  mov ebx, radix
 
   stdcall atoi, [edx], [ebx]
   mov [intData2], eax
@@ -26,7 +26,7 @@ endp
 proc ConvertResItoA  
   mov ecx, 1
   mov edx, intRes
-  mov ebx, radixes
+  mov ebx, radix
 
   stdcall itoa, [edx], [ebx], buffer, TRUE
 

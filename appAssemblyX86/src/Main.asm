@@ -629,10 +629,7 @@ section '.data' data readable writeable
   float            db '.0', 0  
   
   buttonId         dw 0 
-  
   field            dd 0
- 
-  
 
   itoa.digits                   db '0123456789ABCDEF', 0
   ftoa.ten                      dd 10           
