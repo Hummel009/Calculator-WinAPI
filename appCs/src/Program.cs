@@ -64,7 +64,7 @@ namespace Hummel
 				hInstance = 0,
 				hIcon = 0,
 				hCursor = 0,
-				hbrBackground = 0,
+				hbrBackground = new((long) COLOR_WINDOW + 1),
 				lpszMenuName = "",
 				lpszClassName = className
 			};
