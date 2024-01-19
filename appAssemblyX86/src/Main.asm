@@ -65,13 +65,13 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
 .wmcreate:      
   stdcall RegisterField, [window]
   
-  stdcall RegisterButton, [window], 0, buttonP, 0 + 1, 60 * 1 - 10  
-  stdcall RegisterButton, [window], 1, buttonE, 60 + 1, 60 * 1 - 10  
+  ;stdcall RegisterButton, [window], 0, buttonP, 0 + 1, 60 * 1 - 10  
+  ;stdcall RegisterButton, [window], 1, buttonE, 60 + 1, 60 * 1 - 10  
   stdcall RegisterButton, [window], 2, buttonC, 120 + 1, 60 * 1 - 10  
-  stdcall RegisterButton, [window], 3, buttonFactorial, 180 + 1, 60 * 1 - 10
-  stdcall RegisterButton, [window], 4, buttonInverse, 0 + 1, 60 * 2 - 10  
-  stdcall RegisterButton, [window], 5, buttonSquare, 60 + 1, 60 * 2 - 10  
-  stdcall RegisterButton, [window], 6, buttonSquareRoot, 120 + 1, 60 * 2 - 10  
+  ;stdcall RegisterButton, [window], 3, buttonFactorial, 180 + 1, 60 * 1 - 10
+  ;stdcall RegisterButton, [window], 4, buttonInverse, 0 + 1, 60 * 2 - 10  
+  ;stdcall RegisterButton, [window], 5, buttonSquare, 60 + 1, 60 * 2 - 10  
+  ;stdcall RegisterButton, [window], 6, buttonSquareRoot, 120 + 1, 60 * 2 - 10  
   stdcall RegisterButton, [window], 7, buttonDivide, 180 + 1, 60 * 2 - 10
   stdcall RegisterButton, [window], 8, button7, 0 + 1, 60 * 3 - 10  
   stdcall RegisterButton, [window], 9, button8, 60 + 1, 60 * 3 - 10  
@@ -87,7 +87,7 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   stdcall RegisterButton, [window], 19, buttonPlus, 180 + 1, 60 * 5 - 10 
   stdcall RegisterButton, [window], 20, buttonUnaryMinus, 0 + 1, 60 * 6 - 10  
   stdcall RegisterButton, [window], 21, button0, 60 + 1, 60 * 6 - 10  
-  stdcall RegisterButton, [window], 22, buttonDot, 120 + 1, 60 * 6 - 10  
+  ;stdcall RegisterButton, [window], 22, buttonDot, 120 + 1, 60 * 6 - 10  
   stdcall RegisterButton, [window], 23, buttonEquals, 180 + 1, 60 * 6 - 10
 
   jmp .finish
