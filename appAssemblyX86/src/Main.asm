@@ -68,9 +68,9 @@ proc WindowProc uses ebx esi edi, window, msg, wParam, lParam
   stdcall RegisterButtonD, [window], 0, buttonP, 0 + 1, 60 * 1 - 10  
   stdcall RegisterButtonD, [window], 1, buttonE, 60 + 1, 60 * 1 - 10  
   stdcall RegisterButton, [window], 2, buttonC, 120 + 1, 60 * 1 - 10  
-  stdcall RegisterButtonD, [window], 3, buttonFactorial, 180 + 1, 60 * 1 - 10
+  stdcall RegisterButton, [window], 3, buttonFactorial, 180 + 1, 60 * 1 - 10
   stdcall RegisterButtonD, [window], 4, buttonInverse, 0 + 1, 60 * 2 - 10  
-  stdcall RegisterButtonD, [window], 5, buttonSquare, 60 + 1, 60 * 2 - 10  
+  stdcall RegisterButton, [window], 5, buttonSquare, 60 + 1, 60 * 2 - 10  
   stdcall RegisterButtonD, [window], 6, buttonSquareRoot, 120 + 1, 60 * 2 - 10  
   stdcall RegisterButton, [window], 7, buttonDivide, 180 + 1, 60 * 2 - 10
   stdcall RegisterButton, [window], 8, button7, 0 + 1, 60 * 3 - 10  
@@ -358,23 +358,71 @@ proc CalculateWrapper
 
 .oneOperandAction:
 
-  ; TODO 
-  
+  invoke lstrcmp, data1, buttonSquare
+  cmp eax, 0
+  je .doSquare 
+
+  invoke lstrcmp, data1, buttonInverse
+  cmp eax, 0
+  je .doInverse
+
+  invoke lstrcmp, data1, buttonFactorial
+  cmp eax, 0
+  je .doFactorial
+
+  invoke lstrcmp, data1, buttonSquareRoot
+  cmp eax, 0
+  je .doSquareRoot 
+
   jmp .resetData
+  
+.doSquare: 
+  stdcall ConvertFirstAtoI
+        
+  finit
+  fild dword[intData0]
+  fimul dword[intData0]
+  fistp dword[intRes]
+
+  stdcall ConvertResItoA 
+        
+  invoke SetWindowText, [field], buffer
+  jmp .resetData
+  
+.doInverse: 
+  ; TODO 
+  jmp .resetData
+  
+.doFactorial:
+  stdcall ConvertFirstAtoI
+	mov ecx, [intData0]
+	mov eax, ecx
+	
+.cycle:
+	cmp ecx, 1
+	jle .brk
+	
+	sub ecx, 1
+	mul ecx
+	jmp .cycle
+  
+.brk:
+  mov [intRes], eax  
+
+  stdcall ConvertResItoA 
+        
+  invoke SetWindowText, [field], buffer
+
+  jmp .resetData
+  
+.doSquareRoot:
+  ; TODO 
   
 .resetData:
   mov [dataPresence0], 0
   mov [dataPresence1], 0  
   mov [dataPresence2], 0
   ret 
-  
-.error:
-  mov [dataPresence0], 0
-  mov [dataPresence1], 0  
-  mov [dataPresence2], 0 
-  invoke SetWindowText, [field], error  
-  ret 
-  
 endp
 
 ; READY
