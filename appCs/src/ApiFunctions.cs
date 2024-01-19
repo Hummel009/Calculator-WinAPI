@@ -63,7 +63,7 @@ namespace Hummel
         public static extern bool SetWindowText(IntPtr hwnd, string? lpString);
 
         [DllImport("user32.dll")]
-        public static extern int GetWindowText(IntPtr hWnd, StringBuilder? lpString, int nMaxCount);
+        public static extern void GetWindowText(IntPtr hWnd, StringBuilder? lpString, int nMaxCount);
 
         [DllImport("user32.dll")]
         public static extern int GetWindowTextLength(IntPtr hWnd);

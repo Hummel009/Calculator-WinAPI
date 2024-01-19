@@ -243,24 +243,14 @@ namespace Hummel
 
                     var operand1 = double.Parse(data[0]);
                     var operand2 = double.Parse(data[2]);
-
-                    double result;
-                    switch (op)
+                    
+                    var result = op switch
                     {
-                        case "+":
-                            result = operand1 + operand2;
-                            break;
-                        case "-":
-                            result = operand1 - operand2;
-                            break;
-                        case "*":
-                            result = operand1 * operand2;
-                            break;
-                        case "/":
-                            result = operand1 / operand2;
-                            break;
-                        default:
-                            throw new Exception("Invalid operator: " + op);
+                        "+" => operand1 + operand2,
+                        "-" => operand1 - operand2,
+                        "*" => operand1 * operand2,
+                        "/" => operand1 / operand2,
+                        _ => throw new Exception("Invalid operator: " + op),
                     };
 
                     data.Clear();
@@ -270,23 +260,14 @@ namespace Hummel
                 else if (new HashSet<string> { "!", "s", "i", "r" }.Contains(op))
                 {
                     var operand = double.Parse(data[0]);
-                    double result;
-                    switch (op)
+                    
+                    var result = op switch
                     {
-                        case "!":
-                            result = FACTORIAL[(int)operand];
-                            break;
-                        case "s":
-                            result = operand * operand;
-                            break;
-                        case "i":
-                            result = 1.0 / operand;
-                            break;
-                        case "r":
-                            result = Math.Sqrt(operand);
-                            break;
-                        default:
-                            throw new Exception("Invalid operator: " + op);
+                        "!" => FACTORIAL[(int)operand],
+                        "s" => operand * operand,
+                        "i" => 1.0 / operand,
+                        "r" => Math.Sqrt(operand),
+                        _ => throw new Exception("Invalid operator: " + op),
                     };
 
                     data.Clear();
