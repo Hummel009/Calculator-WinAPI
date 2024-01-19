@@ -282,6 +282,8 @@ proc CalculateWrapper
 .pushAsIs:  
   stdcall PushItem, buffer
   
+        ;;; TEST ASCII TO INT
+  
         mov     ecx, 1
         mov     edx, testPtrI
         mov     ebx, radixes
@@ -293,7 +295,7 @@ proc CalculateWrapper
         
         mov [testNumI], eax
         
-        ;;;
+        ;;; TEST INT TO ASCII 
         
         mov     ecx, 1
         mov     edx, testNumI
@@ -302,7 +304,8 @@ proc CalculateWrapper
         stdcall itoa, [edx], [ebx], testBuf, FALSE
         add     edx, 4
         add     ebx, 4
-        loop    @B    
+        loop    @B            
+        
   invoke SetWindowText, [field], testBuf  
   
   ; TODO 
