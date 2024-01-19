@@ -1,0 +1,2 @@
+appKotlinJvm/*.kt linguist-language=Kotlin (JVM)
+appKotlinNative/*.kt linguist-language=Kotlin (Native)
