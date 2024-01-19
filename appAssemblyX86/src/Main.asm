@@ -1,7 +1,8 @@
 format PE GUI 4.0
 entry start
 
-include 'win32a.inc' 
+include 'win32a.inc'   
+include 'Engine.asm' 
 include 'AtoF.asm'    
 include 'FtoA.asm'  
 include 'AtoI.asm'   
@@ -282,45 +283,15 @@ proc CalculateWrapper
 .pushAsIs:  
   stdcall PushItem, buffer
   
-        ;;; TEST ASCII TO INT
-  
-        mov     ecx, 1
-        mov     edx, ptrData0
-        mov     ebx, radixes
-    @@:
-        stdcall atoi, [edx], [ebx]
-        add     edx, 4
-        add     ebx, 4
-        loop    @B
+  stdcall ConvertFirstAtoI
+  stdcall ConvertSecondAtoI
         
-        mov [intData0], eax
-        
-        mov     ecx, 1
-        mov     edx, ptrData2
-        mov     ebx, radixes
-    @@:
-        stdcall atoi, [edx], [ebx]
-        add     edx, 4
-        add     ebx, 4
-        loop    @B
-        
-        mov [intData2], eax
-        
-        finit
-        fld dword[intData0]
-        fadd dword[intData2]
-        fstp dword[intRes]
+  finit
+  fld dword[intData0]
+  fadd dword[intData2]
+  fstp dword[intRes]
 
-        ;;; TEST INT TO ASCII 
-        
-        mov     ecx, 1
-        mov     edx, intRes
-        mov     ebx, radixes
-    @@:
-        stdcall itoa, [edx], [ebx], buffer, FALSE
-        add     edx, 4
-        add     ebx, 4
-        loop    @B            
+  stdcall ConvertResItoA 
         
   invoke SetWindowText, [field], buffer  
   
