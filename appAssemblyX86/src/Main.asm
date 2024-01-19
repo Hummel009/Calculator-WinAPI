@@ -273,8 +273,7 @@ proc CalculateWrapper
   jmp .resetData
   
 .twoOperandAction: 
-  invoke lstrlen, buffer
-  stdcall CountSymbol, eax, '.'
+  stdcall CountBufferDot
   cmp [quantity], 0
   jmp .pushAsIs ; REPLACE WITH JNE AFTER FLOAT SUPPORT
   
@@ -410,9 +409,8 @@ proc PushSymbolWrapper uses eax, symbol
   invoke lstrlen, buffer               
   cmp eax, 0
   je .finish
-                   
-  invoke lstrlen, buffer
-  stdcall CountSymbol, eax, '.'
+                 
+  stdcall CountBufferDot
   cmp [quantity], 0
   je .allow
   jmp .finish
@@ -499,8 +497,7 @@ proc PushOperation, operation
   cmp [dataPresence0], 0
   jne .error
   
-  invoke lstrlen, buffer
-  stdcall CountSymbol, eax, '.'
+  stdcall CountBufferDot
   cmp [quantity], 0
   jmp .pushAsIs ; REPLACE WITH JNE AFTER FLOAT SUPPORT
   
@@ -536,11 +533,13 @@ proc RegisterField uses eax, window
 endp
 
 ; READY
-proc CountSymbol uses eax edi ecx, bufferLen, symbol: byte
+proc CountBufferDot uses eax edi ecx  
   mov [quantity], 0 
-  mov al, [symbol]  
-  mov edi, buffer    
-  mov ecx, [bufferLen]
+   
+  invoke lstrlen, buffer
+  mov ecx, eax      
+  mov edi, buffer 
+  mov al, '.'     
 
 ; loop: find symbol
 .cycle:
