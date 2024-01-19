@@ -317,7 +317,7 @@ proc CalculateWrapper
 .doMinus:
   stdcall ConvertFirstAtoI
   stdcall ConvertSecondAtoI
-        
+
   finit
   fild dword[intData0]
   fisub dword[intData2]
@@ -610,7 +610,7 @@ section '.data' data readable writeable
   error            db 'Error!', 0
                                
   radix            dd 10
-  data0            db 255 dup(?)   
+  data0            db 255 dup(?) 
   data1            db 255 dup(?)
   data2            db 255 dup(?)
   dataPresence0    db 0  
@@ -619,6 +619,9 @@ section '.data' data readable writeable
   intData0         dd 0      
   intData2         dd 0
   intRes           dd 0
+  
+  localData0       db 255 dup(?)  
+  localData2       db 255 dup(?)  
   
   float            db '.0', 0  
   
