@@ -257,7 +257,8 @@ static void calculate()
 			}
 			else
 			{
-				throw  exception();
+				delete[] buffer;
+				throw exception();
 			}
 
 			data.clear();
@@ -287,7 +288,8 @@ static void calculate()
 			}
 			else
 			{
-				throw  exception();
+				delete[] buffer;
+				throw exception();
 			}
 
 			data.clear();
