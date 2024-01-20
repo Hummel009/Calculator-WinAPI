@@ -233,7 +233,6 @@ static void calculate()
 		if (ops1.count(op) > 0)
 		{
 			string str(buffer);
-			delete[] buffer;
 			data.push_back(str);
 
 			double operand1 = stod(data[0]);
@@ -258,7 +257,7 @@ static void calculate()
 			}
 			else
 			{
-				throw new exception();
+				throw  exception();
 			}
 
 			data.clear();
@@ -288,7 +287,7 @@ static void calculate()
 			}
 			else
 			{
-				throw new exception();
+				throw  exception();
 			}
 
 			data.clear();
@@ -296,6 +295,7 @@ static void calculate()
 			SetWindowTextA(field, to_string(result).c_str());
 		}
 	}
+	delete[] buffer;
 }
 
 static void pushOperation(string operation)
@@ -306,7 +306,6 @@ static void pushOperation(string operation)
 	if (data.size() == 0)
 	{
 		string str(buffer);
-		delete[] buffer;
 		data.push_back(str);
 		data.push_back(operation);
 		SetWindowTextA(field, "");
@@ -316,6 +315,7 @@ static void pushOperation(string operation)
 		data.clear();
 		SetWindowTextA(field, "Error!");
 	}
+	delete[] buffer;
 }
 
 static void pushSymbol(string symbol);
