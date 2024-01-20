@@ -6,35 +6,36 @@
 
 using namespace std;
 
-#define BUTTON_0_ID 0
-#define BUTTON_1_ID 1
-#define BUTTON_2_ID 2
-#define BUTTON_3_ID 3
-#define BUTTON_4_ID 4
-#define BUTTON_5_ID 5
-#define BUTTON_6_ID 6
-#define BUTTON_7_ID 7
-#define BUTTON_8_ID 8
-#define BUTTON_9_ID 9
-#define BUTTON_C_ID 10
-#define BUTTON_DIVIDE_ID 11
-#define BUTTON_DOT_ID 12
-#define BUTTON_EQUALS_ID 13
-#define BUTTON_E_ID 14
-#define BUTTON_FACTORIAL_ID 15
-#define BUTTON_INVERSE_ID 16
-#define BUTTON_MINUS_ID 17
-#define BUTTON_MULTIPLE_ID 18
-#define BUTTON_PI_ID 19
-#define BUTTON_PLUS_ID 20
-#define BUTTON_SQUARE_ID 21
-#define BUTTON_SQUARE_ROOT_ID 22
-#define BUTTON_UNARY_MINUS_ID 23
+const int BUTTON_0_ID = 0;
+const int BUTTON_1_ID = 1;
+const int BUTTON_2_ID = 2;
+const int BUTTON_3_ID = 3;
+const int BUTTON_4_ID = 4;
+const int BUTTON_5_ID = 5;
+const int BUTTON_6_ID = 6;
+const int BUTTON_7_ID = 7;
+const int BUTTON_8_ID = 8;
+const int BUTTON_9_ID = 9;
+const int BUTTON_C_ID = 10;
+const int BUTTON_DIVIDE_ID = 11;
+const int BUTTON_DOT_ID = 12;
+const int BUTTON_EQUALS_ID = 13;
+const int BUTTON_E_ID = 14;
+const int BUTTON_FACTORIAL_ID = 15;
+const int BUTTON_INVERSE_ID = 16;
+const int BUTTON_MINUS_ID = 17;
+const int BUTTON_MULTIPLE_ID = 18;
+const int BUTTON_PI_ID = 19;
+const int BUTTON_PLUS_ID = 20;
+const int BUTTON_SQUARE_ID = 21;
+const int BUTTON_SQUARE_ROOT_ID = 22;
+const int BUTTON_UNARY_MINUS_ID = 23;
 
-#define DEFAULT_CAPACITY 100
+const int DEFAULT_CAPACITY = 100;
 
 static HWND field;
 static vector<string> data;
+static char buffer[DEFAULT_CAPACITY];
 
 static vector<int> factorial = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
@@ -221,7 +222,6 @@ static void calculateWrapper()
 
 static void calculate()
 {
-	char *buffer = new char[DEFAULT_CAPACITY];
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 
 	if (data.size() == 2)
@@ -233,7 +233,6 @@ static void calculate()
 		if (ops1.count(op) > 0)
 		{
 			string str(buffer);
-			delete[] buffer;
 			data.push_back(str);
 
 			double operand1 = stod(data[0]);
@@ -258,7 +257,7 @@ static void calculate()
 			}
 			else
 			{
-				throw new exception();
+				throw exception();
 			}
 
 			data.clear();
@@ -288,7 +287,7 @@ static void calculate()
 			}
 			else
 			{
-				throw new exception();
+				throw exception();
 			}
 
 			data.clear();
@@ -300,13 +299,11 @@ static void calculate()
 
 static void pushOperation(string operation)
 {
-	char *buffer = new char[DEFAULT_CAPACITY];
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 
 	if (data.size() == 0)
 	{
 		string str(buffer);
-		delete[] buffer;
 		data.push_back(str);
 		data.push_back(operation);
 		SetWindowTextA(field, "");
@@ -321,7 +318,6 @@ static void pushOperation(string operation)
 static void pushSymbol(string symbol);
 static void pushSymbolWrapper(string symbol)
 {
-	char *buffer = new char[DEFAULT_CAPACITY];
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 	string str(buffer);
 
@@ -356,12 +352,10 @@ static void pushSymbolWrapper(string symbol)
 			}
 		}
 	}
-	delete[] buffer;
 }
 
 static void pushSymbol(string symbol)
 {
-	char *buffer = new char[DEFAULT_CAPACITY];
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 	string str(buffer);
 	if (str == "Error!")
@@ -372,7 +366,6 @@ static void pushSymbol(string symbol)
 	{
 		SetWindowTextA(field, (str + symbol).c_str());
 	}
-	delete[] buffer;
 }
 
 static HWND registerField(HWND window)
