@@ -221,7 +221,6 @@ static void calculateWrapper()
 		if (strcmp(op, "+") == 0 || strcmp(op, "-") == 0 || strcmp(op, "*") == 0 || strcmp(op, "/") == 0)
 		{
 			push(buffer);
-			free(buffer);
 
 			double operand1 = strtod(data[0], NULL);
 			double operand2 = strtod(data[2], NULL);
@@ -285,10 +284,12 @@ static void calculateWrapper()
 			free(str);
 		}
 	}
+	free(buffer);
 	resetData();
 	return;
 
 exception:
+	free(buffer);
 	resetData();
 	SetWindowTextA(field, "Error!");
 }
@@ -300,7 +301,6 @@ static void pushOperation(char *operation)
 	if (data_presence[0] == FALSE)
 	{
 		push(buffer);
-		free(buffer);
 		push(operation);
 		SetWindowTextA(field, "");
 	}
@@ -309,6 +309,7 @@ static void pushOperation(char *operation)
 		resetData();
 		SetWindowTextA(field, "Error!");
 	}
+	free(buffer);
 }
 
 static void pushSymbol(char *symbol);
