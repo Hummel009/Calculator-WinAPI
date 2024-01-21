@@ -7,38 +7,38 @@ import com.sun.jna.platform.win32.WinUser.*
 import kotlin.math.max
 import kotlin.math.sqrt
 
-const val WM_COMMAND: Int = 0x0111
-const val COLOR_WINDOW: Int = 0x5
+private const val WM_COMMAND: Int = 0x0111
+private const val COLOR_WINDOW: Int = 0x5
 
-const val BUTTON_0_ID: Int = 0
-const val BUTTON_1_ID: Int = 1
-const val BUTTON_2_ID: Int = 2
-const val BUTTON_3_ID: Int = 3
-const val BUTTON_4_ID: Int = 4
-const val BUTTON_5_ID: Int = 5
-const val BUTTON_6_ID: Int = 6
-const val BUTTON_7_ID: Int = 7
-const val BUTTON_8_ID: Int = 8
-const val BUTTON_9_ID: Int = 9
-const val BUTTON_C_ID: Int = 10
-const val BUTTON_DIVIDE_ID: Int = 11
-const val BUTTON_DOT_ID: Int = 12
-const val BUTTON_EQUALS_ID: Int = 13
-const val BUTTON_E_ID: Int = 14
-const val BUTTON_FACTORIAL_ID: Int = 15
-const val BUTTON_INVERSE_ID: Int = 16
-const val BUTTON_MINUS_ID: Int = 17
-const val BUTTON_MULTIPLE_ID: Int = 18
-const val BUTTON_PI_ID: Int = 19
-const val BUTTON_PLUS_ID: Int = 20
-const val BUTTON_SQUARE_ID: Int = 21
-const val BUTTON_SQUARE_ROOT_ID: Int = 22
-const val BUTTON_UNARY_MINUS_ID: Int = 23
+private const val BUTTON_0_ID: Int = 0
+private const val BUTTON_1_ID: Int = 1
+private const val BUTTON_2_ID: Int = 2
+private const val BUTTON_3_ID: Int = 3
+private const val BUTTON_4_ID: Int = 4
+private const val BUTTON_5_ID: Int = 5
+private const val BUTTON_6_ID: Int = 6
+private const val BUTTON_7_ID: Int = 7
+private const val BUTTON_8_ID: Int = 8
+private const val BUTTON_9_ID: Int = 9
+private const val BUTTON_C_ID: Int = 10
+private const val BUTTON_DIVIDE_ID: Int = 11
+private const val BUTTON_DOT_ID: Int = 12
+private const val BUTTON_EQUALS_ID: Int = 13
+private const val BUTTON_E_ID: Int = 14
+private const val BUTTON_FACTORIAL_ID: Int = 15
+private const val BUTTON_INVERSE_ID: Int = 16
+private const val BUTTON_MINUS_ID: Int = 17
+private const val BUTTON_MULTIPLE_ID: Int = 18
+private const val BUTTON_PI_ID: Int = 19
+private const val BUTTON_PLUS_ID: Int = 20
+private const val BUTTON_SQUARE_ID: Int = 21
+private const val BUTTON_SQUARE_ROOT_ID: Int = 22
+private const val BUTTON_UNARY_MINUS_ID: Int = 23
 
-const val DEFAULT_CAPACITY: Int = 100
+private const val DEFAULT_CAPACITY: Int = 100
 
-lateinit var field: HWND
-lateinit var data: MutableList<String>
+private lateinit var field: HWND
+private lateinit var data: MutableList<String>
 
 private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
 
@@ -93,7 +93,7 @@ fun main() {
 	}
 }
 
-class WndProc : WindowProc {
+private class WndProc : WindowProc {
 	override fun callback(window: HWND, msg: Int, wParam: WPARAM, lParam: LPARAM): LRESULT {
 		when (msg) {
 			WM_CREATE -> {
