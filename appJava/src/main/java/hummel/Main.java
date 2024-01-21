@@ -10,40 +10,40 @@ import java.util.Set;
 import static com.sun.jna.platform.win32.WinUser.*;
 
 public class Main {
-	public static final int WM_COMMAND = 0x0111;
-	public static final int COLOR_WINDOW = 0x5;
+	private static final int WM_COMMAND = 0x0111;
+	private static final int COLOR_WINDOW = 0x5;
 
-	public static final int BUTTON_0_ID = 0;
-	public static final int BUTTON_1_ID = 1;
-	public static final int BUTTON_2_ID = 2;
-	public static final int BUTTON_3_ID = 3;
-	public static final int BUTTON_4_ID = 4;
-	public static final int BUTTON_5_ID = 5;
-	public static final int BUTTON_6_ID = 6;
-	public static final int BUTTON_7_ID = 7;
-	public static final int BUTTON_8_ID = 8;
-	public static final int BUTTON_9_ID = 9;
-	public static final int BUTTON_C_ID = 10;
-	public static final int BUTTON_DIVIDE_ID = 11;
-	public static final int BUTTON_DOT_ID = 12;
-	public static final int BUTTON_EQUALS_ID = 13;
-	public static final int BUTTON_E_ID = 14;
-	public static final int BUTTON_FACTORIAL_ID = 15;
-	public static final int BUTTON_INVERSE_ID = 16;
-	public static final int BUTTON_MINUS_ID = 17;
-	public static final int BUTTON_MULTIPLE_ID = 18;
-	public static final int BUTTON_PI_ID = 19;
-	public static final int BUTTON_PLUS_ID = 20;
-	public static final int BUTTON_SQUARE_ID = 21;
-	public static final int BUTTON_SQUARE_ROOT_ID = 22;
-	public static final int BUTTON_UNARY_MINUS_ID = 23;
+	private static final int BUTTON_0_ID = 0;
+	private static final int BUTTON_1_ID = 1;
+	private static final int BUTTON_2_ID = 2;
+	private static final int BUTTON_3_ID = 3;
+	private static final int BUTTON_4_ID = 4;
+	private static final int BUTTON_5_ID = 5;
+	private static final int BUTTON_6_ID = 6;
+	private static final int BUTTON_7_ID = 7;
+	private static final int BUTTON_8_ID = 8;
+	private static final int BUTTON_9_ID = 9;
+	private static final int BUTTON_C_ID = 10;
+	private static final int BUTTON_DIVIDE_ID = 11;
+	private static final int BUTTON_DOT_ID = 12;
+	private static final int BUTTON_EQUALS_ID = 13;
+	private static final int BUTTON_E_ID = 14;
+	private static final int BUTTON_FACTORIAL_ID = 15;
+	private static final int BUTTON_INVERSE_ID = 16;
+	private static final int BUTTON_MINUS_ID = 17;
+	private static final int BUTTON_MULTIPLE_ID = 18;
+	private static final int BUTTON_PI_ID = 19;
+	private static final int BUTTON_PLUS_ID = 20;
+	private static final int BUTTON_SQUARE_ID = 21;
+	private static final int BUTTON_SQUARE_ROOT_ID = 22;
+	private static final int BUTTON_UNARY_MINUS_ID = 23;
 
-	public static final int DEFAULT_CAPACITY = 100;
+	private static final int DEFAULT_CAPACITY = 100;
 
-	public static HWND field;
-	public static List<String> data;
+	private static HWND field;
+	private static List<String> data;
 
-	private static final int[] FACTORIAL = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
+	private static final int[] FACTORIAL = new int[]{1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
 	public static void main(String[] args) {
 		var className = "HummelCalculator";
@@ -83,7 +83,7 @@ public class Main {
 		}
 	}
 
-	public static class WndProc implements WindowProc {
+	private static class WndProc implements WindowProc {
 		@Override
 		public LRESULT callback(HWND window, int msg, WPARAM wParam, LPARAM lParam) {
 			switch (msg) {
@@ -172,6 +172,7 @@ public class Main {
 			}
 		}
 
+		@SuppressWarnings("NumericCastThatLosesPrecision")
 		private static void calculate(HWND field) {
 			var buffer = new char[DEFAULT_CAPACITY];
 			ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY);
