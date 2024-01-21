@@ -242,7 +242,7 @@ private fun pushSymbolWrapper(symbol: String) {
 		val str = buffer.toKString()
 
 		when (symbol) {
-			"3.14", "2.72", "-"  -> {
+			"3.14", "2.72", "-" -> {
 				if (str.isEmpty()) {
 					pushSymbol(symbol)
 				}
