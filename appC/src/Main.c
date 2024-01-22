@@ -220,7 +220,7 @@ static void calculateWrapper()
 	if (data_presence[0] == TRUE && data_presence[1] == TRUE)
 	{
 		char *op = (char *)malloc(DEFAULT_CAPACITY);
-		strcpy_s(op, sizeof(op), data[1]);;
+		strcpy_s(op, sizeof(op), data[1]);
 
 		if (strcmp(op, "+") == 0 || strcmp(op, "-") == 0 || strcmp(op, "*") == 0 || strcmp(op, "/") == 0)
 		{
