@@ -2,8 +2,8 @@ package hummel
 
 import com.sun.jna.Native
 import com.sun.jna.Pointer
-import com.sun.jna.platform.win32.WinDef.*
-import com.sun.jna.platform.win32.WinUser.*
+import com.sun.jna.platform.win32.WinDef
+import com.sun.jna.platform.win32.WinUser
 import kotlin.math.max
 import kotlin.math.sqrt
 
@@ -37,7 +37,7 @@ private const val BUTTON_UNARY_MINUS_ID: Int = 23
 
 private const val DEFAULT_CAPACITY: Int = 100
 
-private lateinit var field: HWND
+private lateinit var field: WinDef.HWND
 private lateinit var data: MutableList<String>
 
 private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
@@ -46,7 +46,7 @@ fun main() {
 	val className = "HummelCalculator"
 	val windowTitle = "WinAPI"
 
-	val windowClass = WNDCLASSEX()
+	val windowClass = WinUser.WNDCLASSEX()
 	windowClass.cbSize = windowClass.size()
 	windowClass.style = 0
 	windowClass.lpfnWndProc = WndProc()
@@ -55,15 +55,15 @@ fun main() {
 	windowClass.hInstance = null
 	windowClass.hIcon = null
 	windowClass.hCursor = null
-	windowClass.hbrBackground = HBRUSH(Pointer(COLOR_WINDOW.toLong()))
+	windowClass.hbrBackground = WinDef.HBRUSH(Pointer(COLOR_WINDOW.toLong()))
 	windowClass.lpszMenuName = null
 	windowClass.lpszClassName = className
 	windowClass.hIcon = null
 
 	ExUser32.INSTANCE.RegisterClassEx(windowClass)
 
-	val screenWidth = ExUser32.INSTANCE.GetSystemMetrics(SM_CXSCREEN)
-	val screenHeight = ExUser32.INSTANCE.GetSystemMetrics(SM_CYSCREEN)
+	val screenWidth = ExUser32.INSTANCE.GetSystemMetrics(WinUser.SM_CXSCREEN)
+	val screenHeight = ExUser32.INSTANCE.GetSystemMetrics(WinUser.SM_CYSCREEN)
 
 	val windowWidth = 260
 	val windowHeight = 458
@@ -75,7 +75,7 @@ fun main() {
 		0,
 		className,
 		windowTitle,
-		WS_VISIBLE or WS_CAPTION or WS_SYSMENU,
+		WinUser.WS_VISIBLE or WinUser.WS_CAPTION or WinUser.WS_SYSMENU,
 		windowX,
 		windowY,
 		windowWidth,
@@ -86,17 +86,17 @@ fun main() {
 		null
 	)
 
-	val msg = MSG()
+	val msg = WinUser.MSG()
 	while (ExUser32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {
 		ExUser32.INSTANCE.TranslateMessage(msg)
 		ExUser32.INSTANCE.DispatchMessage(msg)
 	}
 }
 
-private class WndProc : WindowProc {
-	override fun callback(window: HWND, msg: Int, wParam: WPARAM, lParam: LPARAM): LRESULT {
+private class WndProc : WinUser.WindowProc {
+	override fun callback(window: WinDef.HWND, msg: Int, wParam: WinDef.WPARAM, lParam: WinDef.LPARAM): WinDef.LRESULT {
 		when (msg) {
-			WM_CREATE -> {
+			WinUser.WM_CREATE -> {
 				data = ArrayList()
 				field = registerField(window)
 
@@ -166,8 +166,8 @@ private class WndProc : WindowProc {
 				}
 			}
 
-			WM_CLOSE -> ExUser32.INSTANCE.DestroyWindow(window)
-			WM_DESTROY -> ExUser32.INSTANCE.PostQuitMessage(0)
+			WinUser.WM_CLOSE -> ExUser32.INSTANCE.DestroyWindow(window)
+			WinUser.WM_DESTROY -> ExUser32.INSTANCE.PostQuitMessage(0)
 		}
 		return ExUser32.INSTANCE.DefWindowProc(window, msg, wParam, lParam)
 	}
@@ -181,7 +181,7 @@ private class WndProc : WindowProc {
 		}
 	}
 
-	private fun calculate(field: HWND?) {
+	private fun calculate(field: WinDef.HWND?) {
 		val buffer = CharArray(DEFAULT_CAPACITY)
 		ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY)
 
@@ -280,12 +280,12 @@ private class WndProc : WindowProc {
 		}
 	}
 
-	private fun registerField(window: HWND): HWND {
+	private fun registerField(window: WinDef.HWND): WinDef.HWND {
 		return ExUser32.INSTANCE.CreateWindowEx(
 			0,
 			"STATIC",
 			"",
-			WS_TABSTOP or WS_VISIBLE or WS_CHILD,
+			WinUser.WS_TABSTOP or WinUser.WS_VISIBLE or WinUser.WS_CHILD,
 			1,
 			1,
 			239,
@@ -297,7 +297,7 @@ private class WndProc : WindowProc {
 		)
 	}
 
-	private fun registerButton(window: HWND, id: Int, text: String, gridX: Int, gridY: Int) {
+	private fun registerButton(window: WinDef.HWND, id: Int, text: String, gridX: Int, gridY: Int) {
 		val buttonWidth = 60
 		val buttonHeight = 60
 
@@ -305,17 +305,17 @@ private class WndProc : WindowProc {
 			0,
 			"BUTTON",
 			text,
-			WS_TABSTOP or WS_VISIBLE or WS_CHILD,
+			WinUser.WS_TABSTOP or WinUser.WS_VISIBLE or WinUser.WS_CHILD,
 			buttonWidth * gridX + 1,
 			buttonHeight * gridY + 50,
 			buttonWidth,
 			buttonHeight,
 			window,
-			HMENU(Pointer(id.toLong())),
+			WinDef.HMENU(Pointer(id.toLong())),
 			null,
 			null
 		)
 	}
 
-	private fun WPARAM.loword(): Int = (this.toLong() and 0xFFFF).toInt()
+	private fun WinDef.WPARAM.loword(): Int = (this.toLong() and 0xFFFF).toInt()
 }

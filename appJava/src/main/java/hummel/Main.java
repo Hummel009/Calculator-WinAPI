@@ -2,17 +2,16 @@ package hummel;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinUser;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.sun.jna.platform.win32.WinUser.*;
-
 public class Main {
 	private static final int WM_COMMAND = 0x0111;
 	private static final int COLOR_WINDOW = 0x5;
-
 	private static final int BUTTON_0_ID = 0;
 	private static final int BUTTON_1_ID = 1;
 	private static final int BUTTON_2_ID = 2;
@@ -40,7 +39,7 @@ public class Main {
 
 	private static final int DEFAULT_CAPACITY = 100;
 
-	private static HWND field;
+	private static WinDef.HWND field;
 	private static List<String> data;
 
 	private static final int[] FACTORIAL = new int[]{1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
@@ -49,7 +48,7 @@ public class Main {
 		var className = "HummelCalculator";
 		var windowTitle = "WinAPI";
 
-		var windowClass = new WNDCLASSEX();
+		var windowClass = new WinUser.WNDCLASSEX();
 		windowClass.cbSize = windowClass.size();
 		windowClass.style = 0;
 		windowClass.lpfnWndProc = new WndProc();
@@ -58,15 +57,15 @@ public class Main {
 		windowClass.hInstance = null;
 		windowClass.hIcon = null;
 		windowClass.hCursor = null;
-		windowClass.hbrBackground = new HBRUSH(new Pointer(COLOR_WINDOW));
+		windowClass.hbrBackground = new WinDef.HBRUSH(new Pointer(COLOR_WINDOW));
 		windowClass.lpszMenuName = null;
 		windowClass.lpszClassName = className;
 		windowClass.hIcon = null;
 
 		ExUser32.INSTANCE.RegisterClassEx(windowClass);
 
-		var screenWidth = ExUser32.INSTANCE.GetSystemMetrics(SM_CXSCREEN);
-		var screenHeight = ExUser32.INSTANCE.GetSystemMetrics(SM_CYSCREEN);
+		var screenWidth = ExUser32.INSTANCE.GetSystemMetrics(WinUser.SM_CXSCREEN);
+		var screenHeight = ExUser32.INSTANCE.GetSystemMetrics(WinUser.SM_CYSCREEN);
 
 		var windowWidth = 260;
 		var windowHeight = 458;
@@ -74,20 +73,21 @@ public class Main {
 		var windowX = Math.max(0, (screenWidth - windowWidth) / 2);
 		var windowY = Math.max(0, (screenHeight - windowHeight) / 2);
 
-		ExUser32.INSTANCE.CreateWindowEx(0, className, windowTitle, WS_VISIBLE | WS_CAPTION | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, null, null, null, null);
+		ExUser32.INSTANCE.CreateWindowEx(0, className, windowTitle, WinUser.WS_VISIBLE | WinUser.WS_CAPTION | WinUser.WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, null, null, null, null);
 
-		var msg = new MSG();
+		var msg = new WinUser.MSG();
 		while (ExUser32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {
 			ExUser32.INSTANCE.TranslateMessage(msg);
 			ExUser32.INSTANCE.DispatchMessage(msg);
 		}
 	}
 
-	private static class WndProc implements WindowProc {
+	private static class WndProc implements WinUser.WindowProc {
+
 		@Override
-		public LRESULT callback(HWND window, int msg, WPARAM wParam, LPARAM lParam) {
+		public WinDef.LRESULT callback(WinDef.HWND window, int msg, WinDef.WPARAM wParam, WinDef.LPARAM lParam) {
 			switch (msg) {
-				case WM_CREATE -> {
+				case WinUser.WM_CREATE -> {
 					data = new ArrayList<>();
 					field = registerField(window);
 
@@ -157,8 +157,8 @@ public class Main {
 					}
 				}
 
-				case WM_CLOSE -> ExUser32.INSTANCE.DestroyWindow(window);
-				case WM_DESTROY -> ExUser32.INSTANCE.PostQuitMessage(0);
+				case WinUser.WM_CLOSE -> ExUser32.INSTANCE.DestroyWindow(window);
+				case WinUser.WM_DESTROY -> ExUser32.INSTANCE.PostQuitMessage(0);
 			}
 			return ExUser32.INSTANCE.DefWindowProc(window, msg, wParam, lParam);
 		}
@@ -173,7 +173,7 @@ public class Main {
 		}
 
 		@SuppressWarnings("NumericCastThatLosesPrecision")
-		private static void calculate(HWND field) {
+		private static void calculate(WinDef.HWND field) {
 			var buffer = new char[DEFAULT_CAPACITY];
 			ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY);
 
@@ -270,18 +270,18 @@ public class Main {
 			}
 		}
 
-		private static HWND registerField(HWND window) {
-			return ExUser32.INSTANCE.CreateWindowEx(0, "STATIC", "", WS_TABSTOP | WS_VISIBLE | WS_CHILD, 1, 1, 239, 48, window, null, null, null);
+		private static WinDef.HWND registerField(WinDef.HWND window) {
+			return ExUser32.INSTANCE.CreateWindowEx(0, "STATIC", "", WinUser.WS_TABSTOP | WinUser.WS_VISIBLE | WinUser.WS_CHILD, 1, 1, 239, 48, window, null, null, null);
 		}
 
-		private static void registerButton(HWND window, int id, String text, int gridX, int gridY) {
+		private static void registerButton(WinDef.HWND window, int id, String text, int gridX, int gridY) {
 			var buttonWidth = 60;
 			var buttonHeight = 60;
 
-			ExUser32.INSTANCE.CreateWindowEx(0, "BUTTON", text, WS_TABSTOP | WS_VISIBLE | WS_CHILD, buttonWidth * gridX + 1, buttonHeight * gridY + 50, buttonWidth, buttonHeight, window, new HMENU(new Pointer(id)), null, null);
+			ExUser32.INSTANCE.CreateWindowEx(0, "BUTTON", text, WinUser.WS_TABSTOP | WinUser.WS_VISIBLE | WinUser.WS_CHILD, buttonWidth * gridX + 1, buttonHeight * gridY + 50, buttonWidth, buttonHeight, window, new WinDef.HMENU(new Pointer(id)), null, null);
 		}
 
-		private static int loword(WPARAM wparam) {
+		private static int loword(WinDef.WPARAM wparam) {
 			return (int) (wparam.longValue() & 0xFFFF);
 		}
 	}
