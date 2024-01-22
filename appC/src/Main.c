@@ -31,6 +31,8 @@
 
 #define DEFAULT_CAPACITY 100
 
+const char* error = "Error!";
+
 static HWND field;
 static char *data[3];
 static BOOL data_presence[3];
@@ -298,7 +300,7 @@ static void calculateWrapper()
 exception:
 	free(buffer);
 	resetData();
-	SetWindowTextA(field, "Error!");
+	SetWindowTextA(field, error);
 }
 
 static void pushOperation(const char *operation)
@@ -314,7 +316,7 @@ static void pushOperation(const char *operation)
 	else
 	{
 		resetData();
-		SetWindowTextA(field, "Error!");
+		SetWindowTextA(field, error);
 	}
 	free(buffer);
 }
@@ -361,7 +363,7 @@ static void pushSymbol(const char *symbol)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
-	if (strcmp(buffer, "Error!") == 0)
+	if (strcmp(buffer, error) == 0)
 	{
 		SetWindowTextA(field, symbol);
 	}
