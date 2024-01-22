@@ -177,11 +177,11 @@ int main()
 	windowClass.lpfnWndProc = wndProc;
 	windowClass.cbClsExtra = 0;
 	windowClass.cbWndExtra = 0;
-	windowClass.hInstance = NULL;
-	windowClass.hIcon = NULL;
-	windowClass.hCursor = NULL;
+	windowClass.hInstance = nullptr;
+	windowClass.hIcon = nullptr;
+	windowClass.hCursor = nullptr;
 	windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	windowClass.lpszMenuName = NULL;
+	windowClass.lpszMenuName = nullptr;
 	windowClass.lpszClassName = className.c_str();
 
 	RegisterClassA(&windowClass);
@@ -195,10 +195,10 @@ int main()
 	int windowX = max(0, (screenWidth - windowWidth) / 2);
 	int windowY = max(0, (screenHeight - windowHeight) / 2);
 
-	CreateWindowExA(0, className.c_str(), windowTitle.c_str(), WS_VISIBLE | WS_CAPTION | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
+	CreateWindowExA(0, className.c_str(), windowTitle.c_str(), WS_VISIBLE | WS_CAPTION | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, nullptr, nullptr, nullptr, nullptr);
 
 	MSG msg;
-	while (GetMessageA(&msg, NULL, 0u, 0u) != 0)
+	while (GetMessageA(&msg, nullptr, 0u, 0u) != 0)
 	{
 		TranslateMessage(&msg);
 		DispatchMessageA(&msg);
@@ -389,9 +389,9 @@ static HWND registerField(HWND window)
 		239,
 		48,
 		window,
-		NULL,
-		NULL,
-		NULL);
+		nullptr,
+		nullptr,
+		nullptr);
 }
 
 static void registerButton(HWND window, int id, string text, int gridX, int gridY)
@@ -410,6 +410,6 @@ static void registerButton(HWND window, int id, string text, int gridX, int grid
 		buttonHeight,
 		window,
 		reinterpret_cast<HMENU>(id),
-		NULL,
-		NULL);
+		nullptr,
+		nullptr);
 }
