@@ -244,6 +244,7 @@ static void calculateWrapper()
 			}
 			else
 			{
+				free(op);
 				goto exception;
 			}
 
@@ -259,7 +260,12 @@ static void calculateWrapper()
 			double result;
 			if (strcmp(op, "!") == 0)
 			{
-				result = factorial[(int)operand];
+				if ((int)operand >= 0 && (int)operand <= 12 ) {
+					result = factorial[(int)operand];
+				} else {
+					free(op);
+					goto exception;
+				}
 			}
 			else if (strcmp(op, "s") == 0)
 			{
@@ -275,6 +281,7 @@ static void calculateWrapper()
 			}
 			else
 			{
+				free(op);
 				goto exception;
 			}
 
@@ -283,6 +290,7 @@ static void calculateWrapper()
 			SetWindowTextA(field, str);
 			free(str);
 		}
+		free(op);
 	}
 	free(buffer);
 	resetData();
