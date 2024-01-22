@@ -37,14 +37,14 @@ static BOOL data_presence[3];
 
 static int factorial[] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
-static void registerButton(HWND window, int id, char *text, int gridX, int gridY);
+static void registerButton(HWND window, int id, const char *text, int gridX, int gridY);
 static HWND registerField(HWND window);
-static void pushSymbolWrapper(char *symbol);
-static void pushOperation(char *operation);
+static void pushSymbolWrapper(const char *symbol);
+static void pushOperation(const char *operation);
 static void calculateWrapper();
 static void initData();
 static void resetData();
-static void push(char *str);
+static void push(const char *str);
 
 static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -157,6 +157,8 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 		case BUTTON_EQUALS_ID:
 			calculateWrapper();
 			break;
+		default:
+			break;
 		}
 		break;
 
@@ -166,14 +168,16 @@ static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	default:
+		break;
 	}
 	return DefWindowProcA(window, msg, wParam, lParam);
 }
 
 int main()
 {
-	char *className = "HummelCalculator";
-	char *windowTitle = "WinAPI";
+	const char *className = "HummelCalculator";
+	const char *windowTitle = "WinAPI";
 
 	WNDCLASSA windowClass;
 	windowClass.style = 0;
@@ -216,7 +220,7 @@ static void calculateWrapper()
 	if (data_presence[0] == TRUE && data_presence[1] == TRUE)
 	{
 		char *op = (char *)malloc(DEFAULT_CAPACITY);
-		strcpy(op, data[1]);
+		strcpy_s(op, sizeof(op), data[1]);;
 
 		if (strcmp(op, "+") == 0 || strcmp(op, "-") == 0 || strcmp(op, "*") == 0 || strcmp(op, "/") == 0)
 		{
@@ -249,7 +253,7 @@ static void calculateWrapper()
 			}
 
 			char *str = (char *)malloc(DEFAULT_CAPACITY);
-			sprintf(str, "%f", result);
+			snprintf(str, sizeof(str), "%f", result);
 			SetWindowTextA(field, str);
 			free(str);
 		}
@@ -281,7 +285,7 @@ static void calculateWrapper()
 			}
 
 			char *str = (char *)malloc(DEFAULT_CAPACITY);
-			sprintf(str, "%f", result);
+			snprintf(str, sizeof(str), "%f", result);
 			SetWindowTextA(field, str);
 			free(str);
 		}
@@ -297,7 +301,7 @@ exception:
 	SetWindowTextA(field, "Error!");
 }
 
-static void pushOperation(char *operation)
+static void pushOperation(const char *operation)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
@@ -315,21 +319,21 @@ static void pushOperation(char *operation)
 	free(buffer);
 }
 
-static void pushSymbol(char *symbol);
-static void pushSymbolWrapper(char *symbol)
+static void pushSymbol(const char *symbol);
+static void pushSymbolWrapper(const char *symbol)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 	if (strcmp(symbol, "3.14") == 0 || strcmp(symbol, "2.72") == 0 || strcmp(symbol, "-") == 0)
 	{
-		if (strlen(buffer) == 0)
+		if (strnlen(buffer, sizeof(buffer)) == 0)
 		{
 			pushSymbol(symbol);
 		}
 	}
 	else if (strcmp(symbol, ".") == 0)
 	{
-		if (strchr(buffer, '.') == NULL && strlen(buffer) != 0)
+		if (strchr(buffer, '.') == NULL && strnlen(buffer, sizeof(buffer)) != 0)
 		{
 			pushSymbol(symbol);
 		}
@@ -342,7 +346,7 @@ static void pushSymbolWrapper(char *symbol)
 		}
 		else
 		{
-			char *op = data[1];
+			const char *op = data[1];
 
 			if (strcmp(op, "!") != 0 && strcmp(op, "s") != 0 && strcmp(op, "i") != 0 && strcmp(op, "r") != 0)
 			{
@@ -353,7 +357,7 @@ static void pushSymbolWrapper(char *symbol)
 	free(buffer);
 }
 
-static void pushSymbol(char *symbol)
+static void pushSymbol(const char *symbol)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
@@ -363,7 +367,7 @@ static void pushSymbol(char *symbol)
 	}
 	else
 	{
-		strcat(buffer, symbol);
+		strcat_s(buffer, sizeof(buffer), symbol);
 		SetWindowTextA(field, buffer);
 	}
 	free(buffer);
@@ -386,7 +390,7 @@ static HWND registerField(HWND window)
 		NULL);
 }
 
-static void registerButton(HWND window, int id, char *text, int gridX, int gridY)
+static void registerButton(HWND window, int id, const char *text, int gridX, int gridY)
 {
 	int buttonWidth = 60;
 	int buttonHeight = 60;
@@ -406,23 +410,23 @@ static void registerButton(HWND window, int id, char *text, int gridX, int gridY
 		NULL);
 }
 
-static void push(char *str)
+static void push(const char *str)
 {
 	if (data_presence[0] == FALSE)
 	{
-		strcpy(data[0], str);
+		strcpy_s(data[0], sizeof(data[0]), str);
 		data_presence[0] = TRUE;
 		return;
 	}
 	else if (data_presence[1] == FALSE)
 	{
-		strcpy(data[1], str);
+		strcpy_s(data[1], sizeof(data[1]), str);
 		data_presence[1] = TRUE;
 		return;
 	}
 	else if (data_presence[2] == FALSE)
 	{
-		strcpy(data[2], str);
+		strcpy_s(data[2], sizeof(data[2]), str);
 		data_presence[2] = TRUE;
 		return;
 	}
