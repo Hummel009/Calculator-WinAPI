@@ -2,7 +2,7 @@
 
 namespace Hummel
 {
-	public class Program
+	public static class Program
 	{
 		private const int COLOR_WINDOW = 0x5;
 
@@ -42,8 +42,6 @@ namespace Hummel
 		private const int BUTTON_SQUARE_ID = 21;
 		private const int BUTTON_SQUARE_ROOT_ID = 22;
 		private const int BUTTON_UNARY_MINUS_ID = 23;
-
-		private const int DEFAULT_CAPACITY = 100;
 
 		private static IntPtr field;
 		private static List<string>? data;
