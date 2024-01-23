@@ -6,37 +6,37 @@
 
 using namespace std;
 
-const int BUTTON_0_ID = 0;
-const int BUTTON_1_ID = 1;
-const int BUTTON_2_ID = 2;
-const int BUTTON_3_ID = 3;
-const int BUTTON_4_ID = 4;
-const int BUTTON_5_ID = 5;
-const int BUTTON_6_ID = 6;
-const int BUTTON_7_ID = 7;
-const int BUTTON_8_ID = 8;
-const int BUTTON_9_ID = 9;
-const int BUTTON_C_ID = 10;
-const int BUTTON_DIVIDE_ID = 11;
-const int BUTTON_DOT_ID = 12;
-const int BUTTON_EQUALS_ID = 13;
-const int BUTTON_E_ID = 14;
-const int BUTTON_FACTORIAL_ID = 15;
-const int BUTTON_INVERSE_ID = 16;
-const int BUTTON_MINUS_ID = 17;
-const int BUTTON_MULTIPLE_ID = 18;
-const int BUTTON_PI_ID = 19;
-const int BUTTON_PLUS_ID = 20;
-const int BUTTON_SQUARE_ID = 21;
-const int BUTTON_SQUARE_ROOT_ID = 22;
-const int BUTTON_UNARY_MINUS_ID = 23;
+const static int BUTTON_0_ID = 0;
+const static int BUTTON_1_ID = 1;
+const static int BUTTON_2_ID = 2;
+const static int BUTTON_3_ID = 3;
+const static int BUTTON_4_ID = 4;
+const static int BUTTON_5_ID = 5;
+const static int BUTTON_6_ID = 6;
+const static int BUTTON_7_ID = 7;
+const static int BUTTON_8_ID = 8;
+const static int BUTTON_9_ID = 9;
+const static int BUTTON_C_ID = 10;
+const static int BUTTON_DIVIDE_ID = 11;
+const static int BUTTON_DOT_ID = 12;
+const static int BUTTON_EQUALS_ID = 13;
+const static int BUTTON_E_ID = 14;
+const static int BUTTON_FACTORIAL_ID = 15;
+const static int BUTTON_INVERSE_ID = 16;
+const static int BUTTON_MINUS_ID = 17;
+const static int BUTTON_MULTIPLE_ID = 18;
+const static int BUTTON_PI_ID = 19;
+const static int BUTTON_PLUS_ID = 20;
+const static int BUTTON_SQUARE_ID = 21;
+const static int BUTTON_SQUARE_ROOT_ID = 22;
+const static int BUTTON_UNARY_MINUS_ID = 23;
 
-const int DEFAULT_CAPACITY = 100;
+const static int DEFAULT_CAPACITY = 100;
+
+const static vector<int> factorial = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
 static HWND field;
 static vector<string> data;
-
-static vector<int> factorial = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
 static void registerButton(HWND window, int id, string text, int gridX, int gridY);
 static HWND registerField(HWND window);
