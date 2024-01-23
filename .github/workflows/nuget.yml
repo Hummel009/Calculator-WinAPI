@@ -30,3 +30,4 @@ jobs:
         path: |
           ./appCs/bin/Debug/net8.0/*.exe
           ./appCs/bin/Debug/net8.0/*.dll
+          ./appCs/bin/Debug/net8.0/*.json
