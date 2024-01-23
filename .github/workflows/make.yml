@@ -13,10 +13,6 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
-    - name: Set up MinGW
-      uses: egor-tensin/setup-mingw@master
-      with:
-        platform: x64
     - name: Build with Make
       working-directory:  ./appC
       run: make
@@ -29,10 +25,6 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
-    - name: Set up MinGW
-      uses: egor-tensin/setup-mingw@master
-      with:
-        platform: x64
     - name: Build with Make
       working-directory:  ./appCpp
       run: make
