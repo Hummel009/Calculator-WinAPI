@@ -213,7 +213,7 @@ void calculateWrapper()
 	{
 		calculate();
 	}
-	catch (exception _)
+	catch (exception &_)
 	{
 		storage.clear();
 		SetWindowTextA(field, "Error!");
