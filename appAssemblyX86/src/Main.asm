@@ -233,40 +233,40 @@ endp
 ; TODO
 proc CalculateWrapper  
   invoke GetWindowText, [field], buffer, 255
-  cmp [dataPresence0], 1
+  cmp [storagePresence0], 1
   jne .resetData
-  cmp [dataPresence1], 1
+  cmp [storagePresence1], 1
   jne .resetData 
 
-  invoke lstrcmp, data1, buttonPlus
+  invoke lstrcmp, storage1, buttonPlus
   cmp eax, 0
   je .twoOperandAction 
 
-  invoke lstrcmp, data1, buttonMinus
+  invoke lstrcmp, storage1, buttonMinus
   cmp eax, 0
   je .twoOperandAction 
 
-  invoke lstrcmp, data1, buttonMultiple
+  invoke lstrcmp, storage1, buttonMultiple
   cmp eax, 0
   je .twoOperandAction
 
-  invoke lstrcmp, data1, buttonDivide
+  invoke lstrcmp, storage1, buttonDivide
   cmp eax, 0
   je .twoOperandAction 
 
-  invoke lstrcmp, data1, buttonFactorial
+  invoke lstrcmp, storage1, buttonFactorial
   cmp eax, 0
   je .oneOperandAction   
 
-  invoke lstrcmp, data1, buttonSquare
+  invoke lstrcmp, storage1, buttonSquare
   cmp eax, 0
   je .oneOperandAction  
 
-  invoke lstrcmp, data1, buttonSquareRoot
+  invoke lstrcmp, storage1, buttonSquareRoot
   cmp eax, 0
   je .oneOperandAction 
 
-  invoke lstrcmp, data1, buttonInverse
+  invoke lstrcmp, storage1, buttonInverse
   cmp eax, 0
   je .oneOperandAction 
   
@@ -282,19 +282,19 @@ proc CalculateWrapper
 .pushAsIs:  
   stdcall PushItem, buffer
   
-  invoke lstrcmp, data1, buttonPlus
+  invoke lstrcmp, storage1, buttonPlus
   cmp eax, 0
   je .doPlus 
 
-  invoke lstrcmp, data1, buttonMinus
+  invoke lstrcmp, storage1, buttonMinus
   cmp eax, 0
   je .doMinus 
 
-  invoke lstrcmp, data1, buttonMultiple
+  invoke lstrcmp, storage1, buttonMultiple
   cmp eax, 0
   je .doMultiple
 
-  invoke lstrcmp, data1, buttonDivide
+  invoke lstrcmp, storage1, buttonDivide
   cmp eax, 0
   je .doDivide
 
@@ -305,8 +305,8 @@ proc CalculateWrapper
   stdcall ConvertSecondAtoI
         
   finit
-  fild dword[intData0]
-  fiadd dword[intData2]
+  fild dword[intStorage0]
+  fiadd dword[intStorage2]
   fistp dword[intRes]
 
   stdcall ConvertResItoA 
@@ -319,8 +319,8 @@ proc CalculateWrapper
   stdcall ConvertSecondAtoI
 
   finit
-  fild dword[intData0]
-  fisub dword[intData2]
+  fild dword[intStorage0]
+  fisub dword[intStorage2]
   fistp dword[intRes]
 
   stdcall ConvertResItoA 
@@ -333,8 +333,8 @@ proc CalculateWrapper
   stdcall ConvertSecondAtoI
 
   finit
-  fild dword[intData0]
-  fimul dword[intData2]
+  fild dword[intStorage0]
+  fimul dword[intStorage2]
   fistp dword[intRes]
 
   stdcall ConvertResItoA 
@@ -347,8 +347,8 @@ proc CalculateWrapper
   stdcall ConvertSecondAtoI
         
   finit
-  fild dword[intData0]
-  fidiv dword[intData2]
+  fild dword[intStorage0]
+  fidiv dword[intStorage2]
   fistp dword[intRes]
 
   stdcall ConvertResItoA 
@@ -358,19 +358,19 @@ proc CalculateWrapper
 
 .oneOperandAction:
 
-  invoke lstrcmp, data1, buttonSquare
+  invoke lstrcmp, storage1, buttonSquare
   cmp eax, 0
   je .doSquare 
 
-  invoke lstrcmp, data1, buttonInverse
+  invoke lstrcmp, storage1, buttonInverse
   cmp eax, 0
   je .doInverse
 
-  invoke lstrcmp, data1, buttonFactorial
+  invoke lstrcmp, storage1, buttonFactorial
   cmp eax, 0
   je .doFactorial
 
-  invoke lstrcmp, data1, buttonSquareRoot
+  invoke lstrcmp, storage1, buttonSquareRoot
   cmp eax, 0
   je .doSquareRoot 
 
@@ -380,8 +380,8 @@ proc CalculateWrapper
   stdcall ConvertFirstAtoI
         
   finit
-  fild dword[intData0]
-  fimul dword[intData0]
+  fild dword[intStorage0]
+  fimul dword[intStorage0]
   fistp dword[intRes]
 
   stdcall ConvertResItoA 
@@ -391,7 +391,7 @@ proc CalculateWrapper
 
 .doFactorial:
   stdcall ConvertFirstAtoI
-	mov ecx, [intData0]
+	mov ecx, [intStorage0]
 	mov eax, ecx
 	
 .cycle:
@@ -418,9 +418,9 @@ proc CalculateWrapper
   ; TODO 
   
 .resetData:
-  mov [dataPresence0], 0
-  mov [dataPresence1], 0  
-  mov [dataPresence2], 0
+  mov [storagePresence0], 0
+  mov [storagePresence1], 0  
+  mov [storagePresence2], 0
   ret 
 endp
 
@@ -463,25 +463,25 @@ proc PushSymbolWrapper uses eax, symbol
   jmp .finish
   
 .other: 
-  cmp [dataPresence0], 0
+  cmp [storagePresence0], 0
   jne .checkOp
   
   jmp .allow
 
 .checkOp:
-  invoke lstrcmp, data1, buttonFactorial
+  invoke lstrcmp, storage1, buttonFactorial
   cmp eax, 0
   je .finish  
   
-  invoke lstrcmp, data1, buttonSquare
+  invoke lstrcmp, storage1, buttonSquare
   cmp eax, 0
   je .finish    
   
-  invoke lstrcmp, data1, buttonSquareRoot
+  invoke lstrcmp, storage1, buttonSquareRoot
   cmp eax, 0
   je .finish 
   
-  invoke lstrcmp, data1, buttonInverse
+  invoke lstrcmp, storage1, buttonInverse
   cmp eax, 0
   je .finish
 
@@ -512,27 +512,27 @@ endp
     
 ; READY
 proc PushItem, item
-  cmp [dataPresence0], 0
+  cmp [storagePresence0], 0
   jne @F
   
-  invoke lstrcpy, data0, [item]
-  mov [dataPresence0], 1
+  invoke lstrcpy, storage0, [item]
+  mov [storagePresence0], 1
   jmp .finish
   
 @@:
-  cmp [dataPresence1], 0
+  cmp [storagePresence1], 0
   jne @F
   
-  invoke lstrcpy, data1, [item]
-  mov [dataPresence1], 1
+  invoke lstrcpy, storage1, [item]
+  mov [storagePresence1], 1
   jmp .finish
 
 @@:
-  cmp [dataPresence2], 0
+  cmp [storagePresence2], 0
   jne .finish
   
-  invoke lstrcpy, data2, [item]
-  mov [dataPresence2], 1
+  invoke lstrcpy, storage2, [item]
+  mov [storagePresence2], 1
   
 .finish: 
   ret
@@ -541,7 +541,7 @@ endp
 ; READY
 proc PushOperation, operation
   invoke GetWindowText, [field], buffer, 255
-  cmp [dataPresence0], 0
+  cmp [storagePresence0], 0
   jne .error
   
   stdcall CountBufferDot
@@ -557,9 +557,9 @@ proc PushOperation, operation
   jmp .finish     
   
 .error:   
-  mov [dataPresence0], 0
-  mov [dataPresence1], 0  
-  mov [dataPresence2], 0
+  mov [storagePresence0], 0
+  mov [storagePresence1], 0  
+  mov [storagePresence2], 0
   invoke SetWindowText, [field], error  
   
 .finish:
@@ -663,18 +663,18 @@ section '.data' data readable writeable
   error            db 'Error!', 0
                                
   radix            dd 10
-  data0            db 255 dup(?) 
-  data1            db 255 dup(?)
-  data2            db 255 dup(?)
-  dataPresence0    db 0  
-  dataPresence1    db 0  
-  dataPresence2    db 0
-  intData0         dd 0      
-  intData2         dd 0
+  storage0            db 255 dup(?) 
+  storage1            db 255 dup(?)
+  storage2            db 255 dup(?)
+  storagePresence0    db 0  
+  storagePresence1    db 0  
+  storagePresence2    db 0
+  intStorage0         dd 0      
+  intStorage2         dd 0
   intRes           dd 0
   
-  localData0       db 255 dup(?)  
-  localData2       db 255 dup(?)  
+  localstorage0       db 255 dup(?)  
+  localstorage2       db 255 dup(?)  
   
   float            db '.0', 0  
   

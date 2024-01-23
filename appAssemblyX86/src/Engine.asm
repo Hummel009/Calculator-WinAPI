@@ -4,11 +4,11 @@ proc ConvertFirstAtoI
   mov ecx, 0
   
 .cycle:
-  cmp [data0+ebx], '-'
+  cmp [storage0+ebx], '-'
   je .iterinc
   
-  mov eax, dword[data0+ebx]
-  mov dword[localData0+ecx], eax
+  mov eax, dword[storage0+ebx]
+  mov dword[localstorage0+ecx], eax
   inc ecx
   
   cmp ebx, 254
@@ -22,15 +22,15 @@ proc ConvertFirstAtoI
   cmp ebx, ecx
   jne .next
   
-  stdcall atoi, localData0, [radix] 
-  mov [intData0], eax   
-  neg [intData0]
+  stdcall atoi, localstorage0, [radix] 
+  mov [intStorage0], eax   
+  neg [intStorage0]
 
   ret
 
 .next:
-  stdcall atoi, localData0, [radix]
-  mov [intData0], eax 
+  stdcall atoi, localstorage0, [radix]
+  mov [intStorage0], eax 
 
   ret
 endp
@@ -41,11 +41,11 @@ proc ConvertSecondAtoI
   mov ecx, 0
 
 .cycle:
-  cmp [data2+ebx], '-'
+  cmp [storage2+ebx], '-'
   je .iterinc
   
-  mov eax, dword[data2+ebx]
-  mov dword[localData2+ecx], eax
+  mov eax, dword[storage2+ebx]
+  mov dword[localstorage2+ecx], eax
   inc ecx
   
   cmp ebx, 254
@@ -59,15 +59,15 @@ proc ConvertSecondAtoI
   cmp ebx, ecx
   jne .next
     
-  stdcall atoi, localData2, [radix]
-  mov [intData2], eax  
-  neg [intData2]
+  stdcall atoi, localstorage2, [radix]
+  mov [intStorage2], eax  
+  neg [intStorage2]
   
   ret
 
 .next:  
-  stdcall atoi, localData2, [radix]
-  mov [intData2], eax
+  stdcall atoi, localstorage2, [radix]
+  mov [intStorage2], eax
 
   ret
 endp

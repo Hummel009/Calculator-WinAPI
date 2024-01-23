@@ -43,12 +43,12 @@ namespace Hummel
 		private const int BUTTON_SQUARE_ROOT_ID = 22;
 		private const int BUTTON_UNARY_MINUS_ID = 23;
 
+		private static readonly List<string> storage = [];
+		private static readonly int[] factorial = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600];
+
 		private static IntPtr field;
-		private static List<string>? data;
 
-		private static readonly int[] FACTORIAL = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600];
-
-		public static void Main(string[] args)
+		public static void Main()
 		{
 			var className = "HummelCalculator";
 			var windowTitle = "WinAPI";
@@ -93,7 +93,6 @@ namespace Hummel
 			switch (msg)
 			{
 				case WM_CREATE:
-					data = [];
 					field = RegisterField(window);
 
 					RegisterButton(window, BUTTON_PI_ID, "p", 0, 0);
@@ -169,7 +168,7 @@ namespace Hummel
 							PushSymbolWrapper("-");
 							break;
 						case BUTTON_C_ID:
-							data!.Clear();
+							storage!.Clear();
 							WinAPI.SetWindowText(field, "");
 							break;
 						case BUTTON_DIVIDE_ID:
@@ -219,7 +218,7 @@ namespace Hummel
 			}
 			catch (Exception)
 			{
-				data!.Clear();
+				storage!.Clear();
 				WinAPI.SetWindowText(field, "Error!");
 			}
 		}
@@ -230,16 +229,16 @@ namespace Hummel
 			WinAPI.GetWindowText(field, buffer, buffer.Capacity);
 			var str = buffer.ToString();
 
-			if (data!.Count == 2)
+			if (storage!.Count == 2)
 			{
-				var op = data[1];
+				var op = storage[1];
 
 				if (new HashSet<string> { "+", "-", "*", "/" }.Contains(op))
 				{
-					data.Add(str);
+					storage.Add(str);
 
-					var operand1 = double.Parse(data[0]);
-					var operand2 = double.Parse(data[2]);
+					var operand1 = double.Parse(storage[0]);
+					var operand2 = double.Parse(storage[2]);
 
 					var result = op switch
 					{
@@ -250,24 +249,24 @@ namespace Hummel
 						_ => throw new Exception("Invalid operator: " + op)
 					};
 
-					data.Clear();
+					storage.Clear();
 
 					WinAPI.SetWindowText(field, result.ToString());
 				}
 				else if (new HashSet<string> { "!", "s", "i", "r" }.Contains(op))
 				{
-					var operand = double.Parse(data[0]);
+					var operand = double.Parse(storage[0]);
 
 					var result = op switch
 					{
-						"!" => FACTORIAL[(int)operand],
+						"!" => factorial[(int)operand],
 						"s" => operand * operand,
 						"i" => 1.0 / operand,
 						"r" => Math.Sqrt(operand),
 						_ => throw new Exception("Invalid operator: " + op)
 					};
 
-					data.Clear();
+					storage.Clear();
 
 					WinAPI.SetWindowText(field, result.ToString());
 				}
@@ -280,15 +279,15 @@ namespace Hummel
 			WinAPI.GetWindowText(field, buffer, buffer.Capacity);
 			var str = buffer.ToString();
 
-			if (data!.Count == 0)
+			if (storage!.Count == 0)
 			{
-				data.Add(str);
-				data.Add(operation);
+				storage.Add(str);
+				storage.Add(operation);
 				WinAPI.SetWindowText(field, "");
 			}
 			else
 			{
-				data.Clear();
+				storage.Clear();
 				WinAPI.SetWindowText(field, "Error!");
 			}
 		}
@@ -317,13 +316,13 @@ namespace Hummel
 					}
 					break;
 				default:
-					if (data!.Count == 0)
+					if (storage!.Count == 0)
 					{
 						PushSymbol(symbol);
 					}
 					else
 					{
-						var op = data[1];
+						var op = storage[1];
 
 						if (!new HashSet<string> { "!", "s", "i", "r" }.Contains(op))
 						{

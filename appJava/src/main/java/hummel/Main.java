@@ -39,10 +39,10 @@ public class Main {
 
 	private static final int DEFAULT_CAPACITY = 100;
 
-	private static WinDef.HWND field;
-	private static List<String> data;
-
+	private static final List<String> STORAGE = new ArrayList<>();
 	private static final int[] FACTORIAL = new int[]{1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
+
+	private static WinDef.HWND field;
 
 	public static void main(String[] args) {
 		var className = "HummelCalculator";
@@ -88,7 +88,6 @@ public class Main {
 		public WinDef.LRESULT callback(WinDef.HWND window, int msg, WinDef.WPARAM wParam, WinDef.LPARAM lParam) {
 			switch (msg) {
 				case WinUser.WM_CREATE -> {
-					data = new ArrayList<>();
 					field = registerField(window);
 
 					registerButton(window, BUTTON_PI_ID, "π", 0, 0);
@@ -139,7 +138,7 @@ public class Main {
 						case BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper("-");
 
 						case BUTTON_C_ID -> {
-							data.clear();
+							STORAGE.clear();
 							ExUser32.INSTANCE.SetWindowText(field, "");
 						}
 
@@ -167,7 +166,7 @@ public class Main {
 			try {
 				calculate(field);
 			} catch (Exception e) {
-				data.clear();
+				STORAGE.clear();
 				ExUser32.INSTANCE.SetWindowText(field, "Error!");
 			}
 		}
@@ -177,14 +176,14 @@ public class Main {
 			var buffer = new char[DEFAULT_CAPACITY];
 			ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY);
 
-			if (data.size() == 2) {
-				var operator = data.get(1);
+			if (STORAGE.size() == 2) {
+				var operator = STORAGE.get(1);
 
 				if (Set.of("+", "-", "*", "/").contains(operator)) {
-					data.add(Native.toString(buffer));
+					STORAGE.add(Native.toString(buffer));
 
-					var operand1 = Double.parseDouble(data.get(0));
-					var operand2 = Double.parseDouble(data.get(2));
+					var operand1 = Double.parseDouble(STORAGE.get(0));
+					var operand2 = Double.parseDouble(STORAGE.get(2));
 
 					var result = switch (operator) {
 						case "+" -> operand1 + operand2;
@@ -194,11 +193,11 @@ public class Main {
 						default -> throw new IllegalArgumentException("Invalid operator: " + operator);
 					};
 
-					data.clear();
+					STORAGE.clear();
 
 					ExUser32.INSTANCE.SetWindowText(field, String.valueOf(result));
 				} else if (Set.of("!", "s", "i", "r").contains(operator)) {
-					var operand = Double.parseDouble(data.getFirst());
+					var operand = Double.parseDouble(STORAGE.getFirst());
 
 					var result = switch (operator) {
 						case "!" -> FACTORIAL[(int) operand];
@@ -208,7 +207,7 @@ public class Main {
 						default -> throw new IllegalArgumentException("Invalid operator: " + operator);
 					};
 
-					data.clear();
+					STORAGE.clear();
 
 					ExUser32.INSTANCE.SetWindowText(field, String.valueOf(result));
 				}
@@ -219,12 +218,12 @@ public class Main {
 			var buffer = new char[DEFAULT_CAPACITY];
 			ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY);
 
-			if (data.isEmpty()) {
-				data.add(Native.toString(buffer));
-				data.add(operation);
+			if (STORAGE.isEmpty()) {
+				STORAGE.add(Native.toString(buffer));
+				STORAGE.add(operation);
 				ExUser32.INSTANCE.SetWindowText(field, "");
 			} else {
-				data.clear();
+				STORAGE.clear();
 				ExUser32.INSTANCE.SetWindowText(field, "Error!");
 			}
 		}
@@ -246,10 +245,10 @@ public class Main {
 					}
 				}
 				default -> {
-					if (data.isEmpty()) {
+					if (STORAGE.isEmpty()) {
 						pushSymbol(symbol);
 					} else {
-						var operator = data.get(1);
+						var operator = STORAGE.get(1);
 
 						if (!Set.of("!", "s", "i", "r").contains(operator)) {
 							pushSymbol(symbol);

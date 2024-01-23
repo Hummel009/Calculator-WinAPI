@@ -37,10 +37,10 @@ private const val BUTTON_UNARY_MINUS_ID: Int = 23
 
 private const val DEFAULT_CAPACITY: Int = 100
 
-private lateinit var field: WinDef.HWND
-private lateinit var data: MutableList<String>
-
+private val storage: MutableList<String> = ArrayList()
 private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
+
+private lateinit var field: WinDef.HWND
 
 fun main() {
 	val className = "HummelCalculator"
@@ -97,7 +97,6 @@ private class WndProc : WinUser.WindowProc {
 	override fun callback(window: WinDef.HWND, msg: Int, wParam: WinDef.WPARAM, lParam: WinDef.LPARAM): WinDef.LRESULT {
 		when (msg) {
 			WinUser.WM_CREATE -> {
-				data = ArrayList()
 				field = registerField(window)
 
 				registerButton(window, BUTTON_PI_ID, "π", 0, 0)
@@ -148,7 +147,7 @@ private class WndProc : WinUser.WindowProc {
 					BUTTON_UNARY_MINUS_ID -> pushSymbolWrapper("-")
 
 					BUTTON_C_ID -> {
-						data.clear()
+						storage.clear()
 						ExUser32.INSTANCE.SetWindowText(field, "")
 					}
 
@@ -176,7 +175,7 @@ private class WndProc : WinUser.WindowProc {
 		try {
 			calculate(field)
 		} catch (e: Exception) {
-			data.clear()
+			storage.clear()
 			ExUser32.INSTANCE.SetWindowText(field, "Error!")
 		}
 	}
@@ -185,14 +184,14 @@ private class WndProc : WinUser.WindowProc {
 		val buffer = CharArray(DEFAULT_CAPACITY)
 		ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY)
 
-		if (data.size == 2) {
-			val operator = data[1]
+		if (storage.size == 2) {
+			val operator = storage[1]
 
 			if (operator in setOf("+", "-", "*", "/")) {
-				data.add(Native.toString(buffer))
+				storage.add(Native.toString(buffer))
 
-				val operand1 = data[0].toDouble()
-				val operand2 = data[2].toDouble()
+				val operand1 = storage[0].toDouble()
+				val operand2 = storage[2].toDouble()
 
 				val result = when (operator) {
 					"+" -> operand1 + operand2
@@ -202,11 +201,11 @@ private class WndProc : WinUser.WindowProc {
 					else -> throw IllegalArgumentException("Invalid operator: $operator")
 				}
 
-				data.clear()
+				storage.clear()
 
 				ExUser32.INSTANCE.SetWindowText(field, "$result")
 			} else if (operator in setOf("!", "s", "i", "r")) {
-				val operand = data[0].toDouble()
+				val operand = storage[0].toDouble()
 
 				val result = when (operator) {
 					"!" -> factorial[operand.toInt()].toDouble()
@@ -216,7 +215,7 @@ private class WndProc : WinUser.WindowProc {
 					else -> throw IllegalArgumentException("Invalid operator: $operator")
 				}
 
-				data.clear()
+				storage.clear()
 
 				ExUser32.INSTANCE.SetWindowText(field, "$result")
 			}
@@ -227,12 +226,12 @@ private class WndProc : WinUser.WindowProc {
 		val buffer = CharArray(DEFAULT_CAPACITY)
 		ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY)
 
-		if (data.isEmpty()) {
-			data.add(Native.toString(buffer))
-			data.add(operation)
+		if (storage.isEmpty()) {
+			storage.add(Native.toString(buffer))
+			storage.add(operation)
 			ExUser32.INSTANCE.SetWindowText(field, "")
 		} else {
-			data.clear()
+			storage.clear()
 			ExUser32.INSTANCE.SetWindowText(field, "Error!")
 		}
 	}
@@ -256,10 +255,10 @@ private class WndProc : WinUser.WindowProc {
 			}
 
 			else -> {
-				if (data.isEmpty()) {
+				if (storage.isEmpty()) {
 					pushSymbol(symbol)
 				} else {
-					val operator = data[1]
+					val operator = storage[1]
 
 					if (operator !in setOf("!", "s", "i", "r")) {
 						pushSymbol(symbol)

@@ -34,8 +34,8 @@
 const char *error = "Error!";
 
 HWND field;
-char *data[3];
-BOOL data_presence[3];
+char *storage[3];
+BOOL storage_presence[3];
 
 const int factorial[] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
@@ -44,8 +44,8 @@ HWND registerField(HWND window);
 void pushSymbolWrapper(const char *symbol);
 void pushOperation(const char *operation);
 void calculateWrapper();
-void initData();
-void resetData();
+void initstorage();
+void resetstorage();
 void push(const char *str);
 
 LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -55,7 +55,7 @@ LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 	switch (msg)
 	{
 	case WM_CREATE:
-		initData();
+		initstorage();
 		field = registerField(window);
 
 		registerButton(window, BUTTON_PI_ID, "p", 0, 0);
@@ -129,7 +129,7 @@ LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 			pushSymbolWrapper("-");
 			break;
 		case BUTTON_C_ID:
-			resetData();
+			resetstorage();
 			SetWindowTextA(field, "");
 			break;
 		case BUTTON_DIVIDE_ID:
@@ -219,17 +219,17 @@ void calculateWrapper()
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
 
-	if (data_presence[0] == TRUE && data_presence[1] == TRUE)
+	if (storage_presence[0] == TRUE && storage_presence[1] == TRUE)
 	{
 		char *op = (char *)malloc(DEFAULT_CAPACITY);
-		strcpy_s(op, sizeof(op), data[1]);
+		strcpy_s(op, sizeof(op), storage[1]);
 
 		if (strcmp(op, "+") == 0 || strcmp(op, "-") == 0 || strcmp(op, "*") == 0 || strcmp(op, "/") == 0)
 		{
 			push(buffer);
 
-			double operand1 = strtod(data[0], NULL);
-			double operand2 = strtod(data[2], NULL);
+			double operand1 = strtod(storage[0], NULL);
+			double operand2 = strtod(storage[2], NULL);
 
 			double result;
 			if (strcmp(op, "+") == 0)
@@ -261,7 +261,7 @@ void calculateWrapper()
 		}
 		else if (strcmp(op, "!") == 0 || strcmp(op, "s") == 0 || strcmp(op, "i") == 0 || strcmp(op, "r") == 0)
 		{
-			double operand = strtod(data[0], NULL);
+			double operand = strtod(storage[0], NULL);
 
 			double result;
 			if (strcmp(op, "!") == 0 && (int)operand >= 0 && (int)operand <= 12)
@@ -294,12 +294,12 @@ void calculateWrapper()
 		free(op);
 	}
 	free(buffer);
-	resetData();
+	resetstorage();
 	return;
 
 exception:
 	free(buffer);
-	resetData();
+	resetstorage();
 	SetWindowTextA(field, error);
 }
 
@@ -307,7 +307,7 @@ void pushOperation(const char *operation)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
-	if (data_presence[0] == FALSE)
+	if (storage_presence[0] == FALSE)
 	{
 		push(buffer);
 		push(operation);
@@ -315,7 +315,7 @@ void pushOperation(const char *operation)
 	}
 	else
 	{
-		resetData();
+		resetstorage();
 		SetWindowTextA(field, error);
 	}
 	free(buffer);
@@ -342,13 +342,13 @@ void pushSymbolWrapper(const char *symbol)
 	}
 	else
 	{
-		if (data_presence[0] == FALSE)
+		if (storage_presence[0] == FALSE)
 		{
 			pushSymbol(symbol);
 		}
 		else
 		{
-			const char *op = data[1];
+			const char *op = storage[1];
 
 			if (strcmp(op, "!") != 0 && strcmp(op, "s") != 0 && strcmp(op, "i") != 0 && strcmp(op, "r") != 0)
 			{
@@ -414,40 +414,40 @@ void registerButton(HWND window, int id, const char *text, int gridX, int gridY)
 
 void push(const char *str)
 {
-	if (data_presence[0] == FALSE)
+	if (storage_presence[0] == FALSE)
 	{
-		strcpy_s(data[0], sizeof(data[0]), str);
-		data_presence[0] = TRUE;
+		strcpy_s(storage[0], sizeof(storage[0]), str);
+		storage_presence[0] = TRUE;
 		return;
 	}
-	else if (data_presence[1] == FALSE)
+	else if (storage_presence[1] == FALSE)
 	{
-		strcpy_s(data[1], sizeof(data[1]), str);
-		data_presence[1] = TRUE;
+		strcpy_s(storage[1], sizeof(storage[1]), str);
+		storage_presence[1] = TRUE;
 		return;
 	}
-	else if (data_presence[2] == FALSE)
+	else if (storage_presence[2] == FALSE)
 	{
-		strcpy_s(data[2], sizeof(data[2]), str);
-		data_presence[2] = TRUE;
+		strcpy_s(storage[2], sizeof(storage[2]), str);
+		storage_presence[2] = TRUE;
 		return;
 	}
 }
 
-void initData()
+void initstorage()
 {
-	data[0] = (char *)malloc(DEFAULT_CAPACITY);
-	data[1] = (char *)malloc(DEFAULT_CAPACITY);
-	data[2] = (char *)malloc(DEFAULT_CAPACITY);
-	data_presence[0] = FALSE;
-	data_presence[1] = FALSE;
-	data_presence[2] = FALSE;
+	storage[0] = (char *)malloc(DEFAULT_CAPACITY);
+	storage[1] = (char *)malloc(DEFAULT_CAPACITY);
+	storage[2] = (char *)malloc(DEFAULT_CAPACITY);
+	storage_presence[0] = FALSE;
+	storage_presence[1] = FALSE;
+	storage_presence[2] = FALSE;
 }
 
-void resetData()
+void resetstorage()
 {
-	free(data[0]);
-	free(data[1]);
-	free(data[2]);
-	initData();
+	free(storage[0]);
+	free(storage[1]);
+	free(storage[2]);
+	initstorage();
 }
