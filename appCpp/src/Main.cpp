@@ -213,7 +213,7 @@ void calculateWrapper()
 	{
 		calculate();
 	}
-	catch (exception &e)
+	catch (exception _)
 	{
 		storage.clear();
 		SetWindowTextA(field, "Error!");
@@ -228,10 +228,10 @@ void calculate()
 	if (storage.size() == 2)
 	{
 		string op = storage[1];
-		set<string> ops1 = {"+", "-", "*", "/"};
-		set<string> ops2 = {"!", "s", "i", "r"};
+		set<string, less<>> ops1 = {"+", "-", "*", "/"};
+		set<string, less<>> ops2 = {"!", "s", "i", "r"};
 
-		if (ops1.count(op) > 0)
+		if (ops1.contains(op))
 		{
 			string str(buffer.get());
 			storage.push_back(str);
@@ -265,7 +265,7 @@ void calculate()
 
 			SetWindowTextA(field, to_string(result).c_str());
 		}
-		else if (ops2.count(op) > 0)
+		else if (ops2.contains(op))
 		{
 			auto operand = stod(storage[0]);
 
@@ -303,7 +303,7 @@ void pushOperation(string operation)
 	auto buffer = make_unique<char[]>(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer.get(), DEFAULT_CAPACITY);
 
-	if (storage.size() == 0)
+	if (storage.empty())
 	{
 		string str(buffer.get());
 		storage.push_back(str);
@@ -326,30 +326,30 @@ void pushSymbolWrapper(string symbol)
 
 	if (symbol == "3.14" || symbol == "2.72" || symbol == "-")
 	{
-		if (str.size() == 0)
+		if (str.empty())
 		{
 			pushSymbol(symbol);
 		}
 	}
 	else if (symbol == ".")
 	{
-		if (str.find(".") == string::npos && str.size() != 0)
+		if (str.find(".") == string::npos && !str.empty())
 		{
 			pushSymbol(symbol);
 		}
 	}
 	else
 	{
-		if (storage.size() == 0)
+		if (storage.empty())
 		{
 			pushSymbol(symbol);
 		}
 		else
 		{
 			string op = storage[1];
-			set<string> ops = {"!", "s", "i", "r"};
+			set<string, less<>> ops = {"!", "s", "i", "r"};
 
-			if (ops.count(op) <= 0)
+			if (!ops.contains(op))
 			{
 				pushSymbol(symbol);
 			}
