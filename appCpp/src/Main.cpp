@@ -3,6 +3,7 @@
 #include <vector>
 #include <set>
 #include <cmath>
+#include <memory>
 
 using namespace std;
 
@@ -33,10 +34,10 @@ const int BUTTON_UNARY_MINUS_ID = 23;
 
 const int DEFAULT_CAPACITY = 100;
 
-HWND field;
-vector<string> data;
+const vector<int> FACTORIAL = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
-const vector<int> factorial = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
+HWND field;
+vector<string> storage;
 
 void registerButton(HWND window, int id, string text, int gridX, int gridY);
 HWND registerField(HWND window);
@@ -46,7 +47,7 @@ void calculateWrapper();
 
 LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	int buttonId = LOWORD(wParam);
+	auto buttonId = LOWORD(wParam);
 
 	switch (msg)
 	{
@@ -124,7 +125,7 @@ LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 			pushSymbolWrapper("-");
 			break;
 		case BUTTON_C_ID:
-			data.clear();
+			storage.clear();
 			SetWindowTextA(field, "");
 			break;
 		case BUTTON_DIVIDE_ID:
@@ -169,8 +170,8 @@ LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 
 int main()
 {
-	string className = "HummelCalculator";
-	string windowTitle = "WinAPI";
+	auto className = "HummelCalculator";
+	auto windowTitle = "WinAPI";
 
 	WNDCLASSA windowClass;
 	windowClass.style = 0;
@@ -182,20 +183,20 @@ int main()
 	windowClass.hCursor = nullptr;
 	windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	windowClass.lpszMenuName = nullptr;
-	windowClass.lpszClassName = className.c_str();
+	windowClass.lpszClassName = className;
 
 	RegisterClassA(&windowClass);
 
-	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	auto screenWidth = GetSystemMetrics(SM_CXSCREEN);
+	auto screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-	int windowWidth = 248;
-	int windowHeight = 440;
+	auto windowWidth = 248;
+	auto windowHeight = 440;
 
-	int windowX = max(0, (screenWidth - windowWidth) / 2);
-	int windowY = max(0, (screenHeight - windowHeight) / 2);
+	auto windowX = max(0, (screenWidth - windowWidth) / 2);
+	auto windowY = max(0, (screenHeight - windowHeight) / 2);
 
-	CreateWindowExA(0, className.c_str(), windowTitle.c_str(), WS_VISIBLE | WS_CAPTION | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, nullptr, nullptr, nullptr, nullptr);
+	CreateWindowExA(0, className, windowTitle, WS_VISIBLE | WS_CAPTION | WS_SYSMENU, windowX, windowY, windowWidth, windowHeight, nullptr, nullptr, nullptr, nullptr);
 
 	MSG msg;
 	while (GetMessageA(&msg, nullptr, 0u, 0u) != 0)
@@ -214,29 +215,29 @@ void calculateWrapper()
 	}
 	catch (exception &e)
 	{
-		data.clear();
+		storage.clear();
 		SetWindowTextA(field, "Error!");
 	}
 }
 
 void calculate()
 {
-	char *buffer = new char[DEFAULT_CAPACITY];
-	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
+	auto buffer = make_unique<char[]>(DEFAULT_CAPACITY);
+	GetWindowTextA(field, buffer.get(), DEFAULT_CAPACITY);
 
-	if (data.size() == 2)
+	if (storage.size() == 2)
 	{
-		string op = data[1];
+		string op = storage[1];
 		set<string> ops1 = {"+", "-", "*", "/"};
 		set<string> ops2 = {"!", "s", "i", "r"};
 
 		if (ops1.count(op) > 0)
 		{
-			string str(buffer);
-			data.push_back(str);
+			string str(buffer.get());
+			storage.push_back(str);
 
-			double operand1 = stod(data[0]);
-			double operand2 = stod(data[2]);
+			auto operand1 = stod(storage[0]);
+			auto operand2 = stod(storage[2]);
 
 			double result;
 			if (op == "+")
@@ -257,22 +258,21 @@ void calculate()
 			}
 			else
 			{
-				delete[] buffer;
 				throw exception();
 			}
 
-			data.clear();
+			storage.clear();
 
 			SetWindowTextA(field, to_string(result).c_str());
 		}
 		else if (ops2.count(op) > 0)
 		{
-			double operand = stod(data[0]);
+			auto operand = stod(storage[0]);
 
 			double result;
 			if (op == "!")
 			{
-				result = factorial[(int)operand];
+				result = FACTORIAL[(int)operand];
 			}
 			else if (op == "s")
 			{
@@ -288,44 +288,41 @@ void calculate()
 			}
 			else
 			{
-				delete[] buffer;
 				throw exception();
 			}
 
-			data.clear();
+			storage.clear();
 
 			SetWindowTextA(field, to_string(result).c_str());
 		}
 	}
-	delete[] buffer;
 }
 
 void pushOperation(string operation)
 {
-	char *buffer = new char[DEFAULT_CAPACITY];
-	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
+	auto buffer = make_unique<char[]>(DEFAULT_CAPACITY);
+	GetWindowTextA(field, buffer.get(), DEFAULT_CAPACITY);
 
-	if (data.size() == 0)
+	if (storage.size() == 0)
 	{
-		string str(buffer);
-		data.push_back(str);
-		data.push_back(operation);
+		string str(buffer.get());
+		storage.push_back(str);
+		storage.push_back(operation);
 		SetWindowTextA(field, "");
 	}
 	else
 	{
-		data.clear();
+		storage.clear();
 		SetWindowTextA(field, "Error!");
 	}
-	delete[] buffer;
 }
 
 void pushSymbol(string symbol);
 void pushSymbolWrapper(string symbol)
 {
-	char *buffer = new char[DEFAULT_CAPACITY];
-	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
-	string str(buffer);
+	auto buffer = make_unique<char[]>(DEFAULT_CAPACITY);
+	GetWindowTextA(field, buffer.get(), DEFAULT_CAPACITY);
+	string str(buffer.get());
 
 	if (symbol == "3.14" || symbol == "2.72" || symbol == "-")
 	{
@@ -343,13 +340,13 @@ void pushSymbolWrapper(string symbol)
 	}
 	else
 	{
-		if (data.size() == 0)
+		if (storage.size() == 0)
 		{
 			pushSymbol(symbol);
 		}
 		else
 		{
-			string op = data[1];
+			string op = storage[1];
 			set<string> ops = {"!", "s", "i", "r"};
 
 			if (ops.count(op) <= 0)
@@ -358,14 +355,13 @@ void pushSymbolWrapper(string symbol)
 			}
 		}
 	}
-	delete[] buffer;
 }
 
 void pushSymbol(string symbol)
 {
-	char *buffer = new char[DEFAULT_CAPACITY];
-	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
-	string str(buffer);
+	auto buffer = make_unique<char[]>(DEFAULT_CAPACITY);
+    GetWindowTextA(field, buffer.get(), DEFAULT_CAPACITY);
+	string str(buffer.get());
 	if (str == "Error!")
 	{
 		SetWindowTextA(field, symbol.c_str());
@@ -374,7 +370,6 @@ void pushSymbol(string symbol)
 	{
 		SetWindowTextA(field, (str + symbol).c_str());
 	}
-	delete[] buffer;
 }
 
 HWND registerField(HWND window)
@@ -396,8 +391,8 @@ HWND registerField(HWND window)
 
 void registerButton(HWND window, int id, string text, int gridX, int gridY)
 {
-	int buttonWidth = 60;
-	int buttonHeight = 60;
+	auto buttonWidth = 60;
+	auto buttonHeight = 60;
 
 	CreateWindowExA(
 		WS_EX_CLIENTEDGE,

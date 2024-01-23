@@ -1,5 +1,5 @@
 CXX       := g++
-CXX_FLAGS := -std=c++11 -ggdb
+CXX_FLAGS := -std=c++23 -ggdb
 
 LD_FLAGS  := -luser32 -lgdi32
 
