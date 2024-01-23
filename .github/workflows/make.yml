@@ -1,4 +1,4 @@
-name: C/C++ with CMake
+name: C/C++ with Make
 on:
   push:
     branches:
@@ -13,9 +13,9 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
-    - name: Build with CMake
+    - name: Build with Make
       working-directory:  ./appC
-      run: cmake make
+      run: make
     - name: Upload Artifact
       uses: actions/upload-artifact@main
       with:
@@ -25,9 +25,9 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
-    - name: Build with CMake
+    - name: Build with Make
       working-directory:  ./appCpp
-      run: cmake make
+      run: make
     - name: Upload Artifact
       uses: actions/upload-artifact@main
       with:
