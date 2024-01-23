@@ -37,7 +37,7 @@ HWND field;
 char *data[3];
 BOOL data_presence[3];
 
-int factorial[] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
+const int factorial[] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
 void registerButton(HWND window, int id, const char *text, int gridX, int gridY);
 HWND registerField(HWND window);
