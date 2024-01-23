@@ -197,7 +197,7 @@ public class Main {
 
 					ExUser32.INSTANCE.SetWindowText(field, String.valueOf(result));
 				} else if (Set.of("!", "s", "i", "r").contains(operator)) {
-					var operand = Double.parseDouble(STORAGE.getFirst());
+					var operand = Double.parseDouble(STORAGE.get(0));
 
 					var result = switch (operator) {
 						case "!" -> FACTORIAL[(int) operand];
