@@ -44,8 +44,8 @@ HWND registerField(HWND window);
 void pushSymbolWrapper(const char *symbol);
 void pushOperation(const char *operation);
 void calculateWrapper();
-void initstorage();
-void resetstorage();
+void initStorage();
+void resetStorage();
 void push(const char *str);
 
 LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -55,7 +55,7 @@ LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 	switch (msg)
 	{
 	case WM_CREATE:
-		initstorage();
+		initStorage();
 		field = registerField(window);
 
 		registerButton(window, BUTTON_PI_ID, "p", 0, 0);
@@ -129,7 +129,7 @@ LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 			pushSymbolWrapper("-");
 			break;
 		case BUTTON_C_ID:
-			resetstorage();
+			resetStorage();
 			SetWindowTextA(field, "");
 			break;
 		case BUTTON_DIVIDE_ID:
@@ -294,12 +294,12 @@ void calculateWrapper()
 		free(op);
 	}
 	free(buffer);
-	resetstorage();
+	resetStorage();
 	return;
 
 exception:
 	free(buffer);
-	resetstorage();
+	resetStorage();
 	SetWindowTextA(field, error);
 }
 
@@ -315,7 +315,7 @@ void pushOperation(const char *operation)
 	}
 	else
 	{
-		resetstorage();
+		resetStorage();
 		SetWindowTextA(field, error);
 	}
 	free(buffer);
@@ -379,7 +379,7 @@ HWND registerField(HWND window)
 {
 	return CreateWindowExA(
 		WS_EX_CLIENTEDGE,
-		"",
+		"STATIC",
 		"",
 		WS_TABSTOP | WS_VISIBLE | WS_CHILD,
 		1,
@@ -434,7 +434,7 @@ void push(const char *str)
 	}
 }
 
-void initstorage()
+void initStorage()
 {
 	storage[0] = (char *)malloc(DEFAULT_CAPACITY);
 	storage[1] = (char *)malloc(DEFAULT_CAPACITY);
@@ -444,10 +444,10 @@ void initstorage()
 	storage_presence[2] = FALSE;
 }
 
-void resetstorage()
+void resetStorage()
 {
 	free(storage[0]);
 	free(storage[1]);
 	free(storage[2]);
-	initstorage();
+	initStorage();
 }

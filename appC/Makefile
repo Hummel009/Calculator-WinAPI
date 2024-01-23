@@ -1,5 +1,5 @@
 CXX       := gcc
-CXX_FLAGS := -std=c11 -ggdb
+CXX_FLAGS := -std=c2x -ggdb
 
 LD_FLAGS  := -luser32 -lgdi32
 
