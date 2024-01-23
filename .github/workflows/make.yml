@@ -13,10 +13,9 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
-    - name: Set up GCC
-      uses: egor-tensin/setup-gcc@v1
+    - name: Set up MinGW
+      uses: egor-tensin/setup-mingw@main
       with:
-        version: latest
         platform: x64
     - name: Build with Make
       working-directory:  ./appC
@@ -30,10 +29,9 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@main
-    - name: Set up GCC
-      uses: egor-tensin/setup-gcc@v1
+    - name: Set up MinGW
+      uses: egor-tensin/setup-mingw@main
       with:
-        version: latest
         platform: x64
     - name: Build with Make
       working-directory:  ./appCpp
