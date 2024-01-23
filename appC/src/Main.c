@@ -31,24 +31,24 @@
 
 #define DEFAULT_CAPACITY 100
 
-const char* error = "Error!";
+const char *error = "Error!";
 
-static HWND field;
-static char *data[3];
-static BOOL data_presence[3];
+HWND field;
+char *data[3];
+BOOL data_presence[3];
 
-static int factorial[] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
+int factorial[] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
-static void registerButton(HWND window, int id, const char *text, int gridX, int gridY);
-static HWND registerField(HWND window);
-static void pushSymbolWrapper(const char *symbol);
-static void pushOperation(const char *operation);
-static void calculateWrapper();
-static void initData();
-static void resetData();
-static void push(const char *str);
+void registerButton(HWND window, int id, const char *text, int gridX, int gridY);
+HWND registerField(HWND window);
+void pushSymbolWrapper(const char *symbol);
+void pushOperation(const char *operation);
+void calculateWrapper();
+void initData();
+void resetData();
+void push(const char *str);
 
-static LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	int buttonId = LOWORD(wParam);
 
@@ -214,7 +214,7 @@ int main()
 	}
 }
 
-static void calculateWrapper()
+void calculateWrapper()
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
@@ -303,7 +303,7 @@ exception:
 	SetWindowTextA(field, error);
 }
 
-static void pushOperation(const char *operation)
+void pushOperation(const char *operation)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
@@ -321,8 +321,8 @@ static void pushOperation(const char *operation)
 	free(buffer);
 }
 
-static void pushSymbol(const char *symbol);
-static void pushSymbolWrapper(const char *symbol)
+void pushSymbol(const char *symbol);
+void pushSymbolWrapper(const char *symbol)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
@@ -359,7 +359,7 @@ static void pushSymbolWrapper(const char *symbol)
 	free(buffer);
 }
 
-static void pushSymbol(const char *symbol)
+void pushSymbol(const char *symbol)
 {
 	char *buffer = (char *)malloc(DEFAULT_CAPACITY);
 	GetWindowTextA(field, buffer, DEFAULT_CAPACITY);
@@ -375,11 +375,11 @@ static void pushSymbol(const char *symbol)
 	free(buffer);
 }
 
-static HWND registerField(HWND window)
+HWND registerField(HWND window)
 {
 	return CreateWindowExA(
 		WS_EX_CLIENTEDGE,
-		"STATIC",
+		"",
 		"",
 		WS_TABSTOP | WS_VISIBLE | WS_CHILD,
 		1,
@@ -392,7 +392,7 @@ static HWND registerField(HWND window)
 		NULL);
 }
 
-static void registerButton(HWND window, int id, const char *text, int gridX, int gridY)
+void registerButton(HWND window, int id, const char *text, int gridX, int gridY)
 {
 	int buttonWidth = 60;
 	int buttonHeight = 60;
@@ -412,7 +412,7 @@ static void registerButton(HWND window, int id, const char *text, int gridX, int
 		NULL);
 }
 
-static void push(const char *str)
+void push(const char *str)
 {
 	if (data_presence[0] == FALSE)
 	{
@@ -434,7 +434,7 @@ static void push(const char *str)
 	}
 }
 
-static void initData()
+void initData()
 {
 	data[0] = (char *)malloc(DEFAULT_CAPACITY);
 	data[1] = (char *)malloc(DEFAULT_CAPACITY);
@@ -444,7 +444,7 @@ static void initData()
 	data_presence[2] = FALSE;
 }
 
-static void resetData()
+void resetData()
 {
 	free(data[0]);
 	free(data[1]);
