@@ -36,6 +36,7 @@ private const val BUTTON_SQUARE_ROOT_ID: Int = 22
 private const val BUTTON_UNARY_MINUS_ID: Int = 23
 
 private const val DEFAULT_CAPACITY: Int = 100
+private const val ERROR: String = "Error!"
 
 private val storage: MutableList<String> = ArrayList()
 private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
@@ -176,7 +177,7 @@ private class WndProc : WinUser.WindowProc {
 			calculate(field)
 		} catch (e: Exception) {
 			storage.clear()
-			ExUser32.INSTANCE.SetWindowText(field, "Error!")
+			ExUser32.INSTANCE.SetWindowText(field, ERROR)
 		}
 	}
 
@@ -232,7 +233,7 @@ private class WndProc : WinUser.WindowProc {
 			ExUser32.INSTANCE.SetWindowText(field, "")
 		} else {
 			storage.clear()
-			ExUser32.INSTANCE.SetWindowText(field, "Error!")
+			ExUser32.INSTANCE.SetWindowText(field, ERROR)
 		}
 	}
 
@@ -272,7 +273,7 @@ private class WndProc : WinUser.WindowProc {
 		val buffer = CharArray(DEFAULT_CAPACITY)
 		ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY)
 		val str = Native.toString(buffer)
-		if (str == "Error!") {
+		if (str == ERROR) {
 			ExUser32.INSTANCE.SetWindowText(field, symbol)
 		} else {
 			ExUser32.INSTANCE.SetWindowText(field, str + symbol)

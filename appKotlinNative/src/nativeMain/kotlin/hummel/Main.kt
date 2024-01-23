@@ -31,6 +31,7 @@ private const val BUTTON_SQUARE_ROOT_ID: Int = 22
 private const val BUTTON_UNARY_MINUS_ID: Int = 23
 
 private const val DEFAULT_CAPACITY: Int = 100
+private const val ERROR = "Error!"
 
 private val storage: MutableList<String> = ArrayList()
 private val factorial: Array<Int> = arrayOf(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600)
@@ -170,7 +171,7 @@ private fun calculateWrapper() {
 		calculate(field)
 	} catch (e: Exception) {
 		storage.clear()
-		SetWindowTextW(field, "Error!")
+		SetWindowTextW(field, ERROR)
 	}
 }
 
@@ -229,7 +230,7 @@ private fun pushOperation(operation: String) {
 			SetWindowTextW(field, "")
 		} else {
 			storage.clear()
-			SetWindowTextW(field, "Error!")
+			SetWindowTextW(field, ERROR)
 		}
 	}
 }
@@ -274,7 +275,7 @@ private fun pushSymbol(symbol: String) {
 		val buffer = allocArray<WCHARVar>(DEFAULT_CAPACITY)
 		GetWindowTextW(field, buffer.reinterpret(), DEFAULT_CAPACITY)
 		val str = buffer.toKString()
-		if (str == "Error!") {
+		if (str == ERROR) {
 			SetWindowTextW(field, symbol)
 		} else {
 			SetWindowTextW(field, str + symbol)

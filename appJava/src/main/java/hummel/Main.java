@@ -38,6 +38,7 @@ public class Main {
 	private static final int BUTTON_UNARY_MINUS_ID = 23;
 
 	private static final int DEFAULT_CAPACITY = 100;
+	private static final String ERROR = "Error!";
 
 	private static final List<String> STORAGE = new ArrayList<>();
 	private static final int[] FACTORIAL = new int[]{1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
@@ -83,7 +84,6 @@ public class Main {
 	}
 
 	private static class WndProc implements WinUser.WindowProc {
-
 		@Override
 		public WinDef.LRESULT callback(WinDef.HWND window, int msg, WinDef.WPARAM wParam, WinDef.LPARAM lParam) {
 			switch (msg) {
@@ -167,7 +167,7 @@ public class Main {
 				calculate(field);
 			} catch (Exception e) {
 				STORAGE.clear();
-				ExUser32.INSTANCE.SetWindowText(field, "Error!");
+				ExUser32.INSTANCE.SetWindowText(field, ERROR);
 			}
 		}
 
@@ -224,7 +224,7 @@ public class Main {
 				ExUser32.INSTANCE.SetWindowText(field, "");
 			} else {
 				STORAGE.clear();
-				ExUser32.INSTANCE.SetWindowText(field, "Error!");
+				ExUser32.INSTANCE.SetWindowText(field, ERROR);
 			}
 		}
 
@@ -262,7 +262,7 @@ public class Main {
 			var buffer = new char[DEFAULT_CAPACITY];
 			ExUser32.INSTANCE.GetWindowText(field, buffer, DEFAULT_CAPACITY);
 			var str = Native.toString(buffer);
-			if ("Error!".equals(str)) {
+			if (ERROR.equals(str)) {
 				ExUser32.INSTANCE.SetWindowText(field, symbol);
 			} else {
 				ExUser32.INSTANCE.SetWindowText(field, str + symbol);
