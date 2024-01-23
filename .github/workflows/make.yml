@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Set up MinGW
-      uses: egor-tensin/setup-mingw@main
+      uses: egor-tensin/setup-mingw@master
       with:
         platform: x64
     - name: Build with Make
@@ -30,7 +30,7 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - name: Set up MinGW
-      uses: egor-tensin/setup-mingw@main
+      uses: egor-tensin/setup-mingw@master
       with:
         platform: x64
     - name: Build with Make
