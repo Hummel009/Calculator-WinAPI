@@ -16,11 +16,6 @@ jobs:
     - name: Build with Make
       working-directory:  ./appC
       run: make
-    - name: Upload Artifact
-      uses: actions/upload-artifact@main
-      with:
-        name: compiled-artifact-c
-        path: ./appC/bin/*.exe
   build-cpp:
     runs-on: windows-latest
     steps:
@@ -28,8 +23,3 @@ jobs:
     - name: Build with Make
       working-directory:  ./appCpp
       run: make
-    - name: Upload Artifact
-      uses: actions/upload-artifact@main
-      with:
-        name: compiled-artifact-cpp
-        path: ./appCpp/bin/*.exe
