@@ -1,0 +1,33 @@
+name: C# with Nuget
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: Setup .NET
+      uses: actions/setup-dotnet@main
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore Dependencies
+      working-directory:  ./appCs
+      run: dotnet restore
+    - name: Build with Nuget
+      working-directory:  ./appCs
+      run: dotnet build --no-restore
+    - name: Upload Artifact
+      uses: actions/upload-artifact@main
+      with:
+        name: compiled-artifact-cs
+        path: |
+          ./appCs/bin/Debug/net8.0/*.exe
+          ./appCs/bin/Debug/net8.0/*.dll
+          ./appCs/bin/Debug/net8.0/*.json
