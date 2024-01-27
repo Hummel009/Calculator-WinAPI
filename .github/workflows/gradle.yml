@@ -22,11 +22,3 @@ jobs:
         uses: gradle/gradle-build-action@main
         with:
           arguments: build
-      - name: Upload Artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: compiled-artifact
-          path: |
-            ./appKotlinNative/build/bin/mingwX64/releaseExecutable/*.exe
-            ./appKotlinJvm/build/libs/*.jar
-            ./appJava/build/libs/*.jar
