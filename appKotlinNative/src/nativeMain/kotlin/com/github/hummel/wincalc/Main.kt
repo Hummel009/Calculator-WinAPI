@@ -1,4 +1,4 @@
-package hummel
+package com.github.hummel.wincalc
 
 import kotlinx.cinterop.*
 import platform.windows.*

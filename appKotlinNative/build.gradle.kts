@@ -5,7 +5,7 @@ plugins {
 	id("org.jetbrains.kotlin.multiplatform")
 }
 
-group = "hummel"
+group = "com.github.hummel"
 version = LocalDate.now().format(DateTimeFormatter.ofPattern("yy.MM.dd"))
 
 java {

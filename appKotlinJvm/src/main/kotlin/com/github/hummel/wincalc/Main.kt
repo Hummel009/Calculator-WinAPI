@@ -1,4 +1,4 @@
-package hummel
+package com.github.hummel.wincalc
 
 import com.sun.jna.Native
 import com.sun.jna.Pointer
