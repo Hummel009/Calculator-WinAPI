@@ -175,7 +175,7 @@ private class WndProc : WinUser.WindowProc {
 	private fun calculateWrapper() {
 		try {
 			calculate(field)
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 			storage.clear()
 			ExUser32.INSTANCE.SetWindowText(field, ERROR)
 		}

@@ -169,7 +169,7 @@ private fun wndProc(window: HWND?, msg: UINT, wParam: WPARAM, lParam: LPARAM): L
 private fun calculateWrapper() {
 	try {
 		calculate(field)
-	} catch (e: Exception) {
+	} catch (_: Exception) {
 		storage.clear()
 		SetWindowTextW(field, ERROR)
 	}
