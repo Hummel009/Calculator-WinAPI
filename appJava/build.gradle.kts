@@ -28,9 +28,6 @@ application {
 }
 
 tasks {
-	named<JavaExec>("run") {
-		standardInput = System.`in`
-	}
 	jar {
 		manifest {
 			attributes(

@@ -12,7 +12,7 @@ version = LocalDate.now().format(DateTimeFormatter.ofPattern("yy.MM.dd"))
 val embed: Configuration by configurations.creating
 
 dependencies {
-	embed("org.jetbrains.kotlin:kotlin-stdlib:1.9.24")
+	embed("org.jetbrains.kotlin:kotlin-stdlib:2.0.0")
 	embed("net.java.dev.jna:jna:5.14.0")
 	embed("net.java.dev.jna:jna-platform:5.14.0")
 	implementation("net.java.dev.jna:jna:5.14.0")
@@ -30,9 +30,6 @@ application {
 }
 
 tasks {
-	named<JavaExec>("run") {
-		standardInput = System.`in`
-	}
 	jar {
 		manifest {
 			attributes(
